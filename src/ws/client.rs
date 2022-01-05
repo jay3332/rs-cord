@@ -13,7 +13,7 @@ pub struct Ws {
 }
 
 impl Ws {
-    pub async fn new(url: &str, token: String) -> Result<Ws> { // TODO: error type
+    pub async fn new(url: &str, token: String) -> Result<Ws> {
         let url = Url::parse(url).unwrap_or_else(|e| panic!("Failed to parse url: {}", e));
 
         let stream = connect_async_with_config(url, WebSocketConfig {
