@@ -5,7 +5,7 @@ use std::fmt::Display;
 pub struct Client {
     /// The client for Discord's RESTful API.  
     pub http: (),
-    
+
     /// The client for Discord's Gateway, or websocket API.
     pub gateway: (),
 }

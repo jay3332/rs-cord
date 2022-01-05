@@ -11,13 +11,15 @@ keywords = [
 ]
 license = "MIT"
 readme = "README.md"
+homepage = "https://github.com/jay3332/rs-cord"
 repository = "https://github.com/jay3332/rs-cord"
+documentation = "https://docs.rs/rs-cord/latest/rs_cord"
 description = "A high-level Rust crate around the Discord API, aimed to be easy and straight-forward to use."
 
 [dependencies.reqwest]
 version = "0.11"
 default-features = false
-features = ["json", "multipart", "stream"]
+features = ["json", "multipart", "stream", "rustls-tls"]
 
 [dependencies.tokio]
 version = "1"
@@ -26,4 +28,4 @@ features = ["full"]
 [dependencies.tokio-tungstenite]
 version = "0.16"
 default-features = false
-features = ["connect"]
+features = ["connect", "rustls-tls-webpki-roots"]
