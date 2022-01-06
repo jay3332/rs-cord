@@ -17,6 +17,10 @@ documentation = "https://docs.rs/rs-cord/latest/rs_cord"
 description = "A high-level Rust crate around the Discord API, aimed to be easy and straight-forward to use."
 
 [dependencies]
+<<<<<<< HEAD
+=======
+serde = "1.0"
+>>>>>>> 40d1f1f912276a2e88c274966db520d5150126ba
 serde_json = "1.0"
 
 [dependencies.reqwest]
