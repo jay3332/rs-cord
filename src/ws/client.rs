@@ -1,26 +1,24 @@
+use crate::internal::prelude::*;
+use crate::http::HttpClient;
 use super::WsStream;
 
-use std::env::consts;
-
+use flate2::read::ZlibDecoder;
+use futures_util::{SinkExt, StreamExt};
+use serde_json::{json, Value};
 use tokio_tungstenite::{connect_async_with_config, tungstenite::protocol::{Message, WebSocketConfig}};
 use url::Url;
 
-use flate2::read::ZlibDecoder;
+use std::env::consts;
 
-use futures_util::{SinkExt, StreamExt};
-
-use serde_json::{json, Value};
-
-use crate::internal::prelude::*;
-
-pub struct Gateway {
+pub struct Gateway<'h> {
+    pub http: &'h HttpClient,
     pub stream: WsStream,
     pub url: Url,
     pub token: String,
 }
 
 impl Gateway {
-    pub async fn new(url: &str, token: String) -> Result<Self> {
+    pub async fn new(http: &HttpClient, url: &str, token: String) -> Result<Self> {
         let url = Url::parse(url).unwrap_or_else(|e| panic!("Failed to parse url: {}", e));
 
         let stream = connect_async_with_config(url, WebSocketConfig {
@@ -29,11 +27,11 @@ impl Gateway {
             max_frame_size: None,
         }).await?;
 
-        Ok(Ws { stream, url, token })
+        Ok(Self { http, stream, url, token })
     }
 
     pub async fn connect(reconnect: bool) -> Result<()> {
-        Ok(()) // TODO
+        Ok(())  // TODO
     }
 
     pub async fn recv_json(&mut self) -> Result<Option<Value>> {
@@ -80,7 +78,7 @@ pub fn handle_ws_message(message: Option<Message>) -> Result<Option<Value>> {
             Some(Message::Text(text)) => {
                 serde_json::from_str(&text).map(Some).map_err(Error::from)?
             },
-            Some(Message::Close(Some(frame))) => None, // TODO: handle close
+            Some(Message::Close(Some(frame))) => None,  // TODO: handle close
             _ => None,
         }
     )
