@@ -5,6 +5,8 @@ pub mod constants;
 pub mod error;
 mod http;
 mod internal;
+pub mod types;
+
 #[macro_use]
 mod macros;
 
