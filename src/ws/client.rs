@@ -66,7 +66,7 @@ impl Gateway {
             })
         ).await?)
     }
-]
+}
 
 #[inline]
 pub fn handle_ws_message(message: Option<Message>) -> Result<Option<Value>> {
