@@ -2,17 +2,17 @@ use super::Snowflake;
 use serde::{Serialize, Deserialize};
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
-pub struct UserPayload {
-    id: Snowflake,
-    username: String,
-    discriminator: String,
-    avatar: Option<String>,
-    bot: bool,
-    mfa_enabled: bool,
-    locale: Option<String>,
-    verified: bool,
-    email: Option<String>,
-    flags: u64,
-    premium_type: Option<u8>,
-    public_flags: u64,
+pub struct UserData {
+    pub id: Snowflake,
+    pub username: String,
+    pub discriminator: String,
+    pub avatar: Option<String>,
+    pub bot: bool,
+    pub mfa_enabled: bool,
+    pub locale: Option<String>,
+    pub verified: bool,
+    pub email: Option<String>,
+    pub flags: u64,
+    pub premium_type: Option<u8>,
+    pub public_flags: u64,
 }

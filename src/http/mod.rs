@@ -1,4 +1,6 @@
 use crate::constants::DISCORD_API_URL;
+use crate::{types, ThreadSafeResult};
+use crate::route;
 
 use reqwest::Method;
 use reqwest::header::{AUTHORIZATION, CONTENT_TYPE, USER_AGENT, HeaderMap, HeaderValue};
@@ -33,8 +35,10 @@ pub struct Route<'a> {
 }
 
 impl<'a> Route<'a> {
+    pub const API_VERSION: u8 = 9;
+
     pub fn url(&self) -> String {
-        format!("{}/{}", DISCORD_API_URL, self.route)
+        format!("{}/v{}/{}", DISCORD_API_URL, Self::API_VERSION, self.route)
     }
 }
 
@@ -76,7 +80,7 @@ impl<'c, 'r> HttpClientRequestBuilder<'c, 'r> {
         env!("CARGO_PKG_VERSION"),
     );
 
-    fn _build_request(&self) -> Result<reqwest::RequestBuilder, crate::ThreadSafeError> {
+    fn _build_request(&self) -> ThreadSafeResult<reqwest::RequestBuilder> {
         let url = self.route.url();
 
         let mut headers = HeaderMap::new();
@@ -118,7 +122,7 @@ impl<'c, 'r> HttpClientRequestBuilder<'c, 'r> {
     }
 
     /// Adds a JSON payload to the request. Must be serializable.
-    pub fn json(&mut self, json: impl serde::Serialize) -> Result<&mut Self, crate::ThreadSafeError> {
+    pub fn json(&mut self, json: impl serde::Serialize) -> ThreadSafeResult<&mut Self> {
         self.content_type = Some("application/json".to_string());
         self.body = Some(serde_json::to_vec(&json)?);
 
@@ -141,7 +145,7 @@ impl<'c, 'r> HttpClientRequestBuilder<'c, 'r> {
     ///     })
     ///     .send_expecting_json::<MessagePayload>()
     ///     .await?;
-    pub async fn send_expecting_json<T>(&self) -> Result<T, crate::ThreadSafeError>
+    pub async fn send_expecting_json<T>(&self) -> ThreadSafeResult<T>
         where
             T: serde::de::DeserializeOwned,
     {
@@ -157,7 +161,7 @@ pub struct HttpClient {
     client: reqwest::Client,
     
     /// The authentication token to be used.
-    token: Option<String>,
+    pub(crate) token: Option<String>,
 }
 
 impl HttpClient {
@@ -181,6 +185,7 @@ impl HttpClient {
         self
     }
 
+    /// Generates a new request builder.
     pub fn request<'c, 'r>(&'c self, route: Route<'r>) -> HttpClientRequestBuilder<'c, 'r> {
         HttpClientRequestBuilder {
             client: self,
@@ -191,5 +196,19 @@ impl HttpClient {
             body: None,
             query: Vec::<(String, String)>::new(),
         }
+    }
+
+    /// GET /gateway
+    pub async fn get_gateway(&self) -> ThreadSafeResult<types::gateway::GetGatewayData> {
+        self.request(route!(GET, "/gateway"))
+            .send_expecting_json::<types::gateway::GetGatewayData>()
+            .await
+    }
+
+    /// GET /gateway/bot
+    pub async fn get_gateway_bot(&self) -> ThreadSafeResult<types::gateway::GetGatewayBotData> {
+        self.request(route!(GET, "/gateway/bot"))
+            .send_expecting_json::<types::gateway::GetGatewayBotData>()
+            .await
     }
 }

@@ -1,2 +1,2 @@
 #[macro_use]
-pub(crate) mod route;
+pub mod route;

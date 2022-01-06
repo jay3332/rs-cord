@@ -1,14 +1,14 @@
 #[macro_export]
 macro_rules! route {
-    ($method:ident, $route:literal, $($k:ident=$v:expr),*$(,)*) => {{
+    ($method:ident, $route:literal $(,)* $($k:ident=$v:expr),* $(,)*) => {{
         use crate::http::{RequestMethod, Route};
         Route {
             method: RequestMethod::$method,
-            route: format!($route, $($k=$v),*),
+            route: format!($route, $($k=$v),*).as_str(),
         }
     }};
 
-    ($method:expr, $route:literal, $($k:ident=$v:expr),*$(,)*) => {{
+    ($method:expr, $route:literal $(,)* $($k:ident=$v:expr),* $(,)*) => {{
         use crate::http::Route;
         Route {
             method: $method,

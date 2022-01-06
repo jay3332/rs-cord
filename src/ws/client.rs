@@ -1,41 +1,50 @@
-use crate::internal::prelude::*;
 use crate::http::HttpClient;
+use crate::internal::prelude::*;
+use crate::types::gateway::GetGatewayBotData;
+
 use super::WsStream;
 
 use flate2::read::ZlibDecoder;
 use futures_util::{SinkExt, StreamExt};
 use serde_json::{json, Value};
-use tokio_tungstenite::{connect_async_with_config, tungstenite::protocol::{Message, WebSocketConfig}};
-use url::Url;
+
+use tokio_tungstenite::connect_async_with_config;
+use tokio_tungstenite::tungstenite::protocol::{Message, WebSocketConfig};
 
 use std::env::consts;
 
 pub struct Gateway<'h> {
-    pub http: &'h HttpClient,
+    http: &'h HttpClient,
+    info: GetGatewayBotData,
     pub stream: WsStream,
-    pub url: Url,
-    pub token: String,
 }
 
-impl Gateway {
-    pub async fn new(http: &HttpClient, url: &str, token: String) -> Result<Self> {
-        let url = Url::parse(url).unwrap_or_else(|e| panic!("Failed to parse url: {}", e));
+impl<'h> Gateway<'h> {
+    pub async fn new(http: &'h HttpClient) -> Result<Gateway<'h>> {
+        if http.token.is_none() {
+            return Err(Error::from("A token is required in order to initiate the gateway."))
+        }
 
-        let stream = connect_async_with_config(url, WebSocketConfig {
+        let info = http.get_gateway_bot().await.map_err(Error::from)?;
+
+        let (stream, _) = connect_async_with_config((&info).url.clone(), Some(WebSocketConfig {
             max_send_queue: None,
             max_message_size: None,
             max_frame_size: None,
-        }).await?;
+            accept_unmasked_frames: false,
+        })).await?;
 
-        Ok(Self { http, stream, url, token })
+        Ok(Self { http, info: info.clone(), stream })
     }
 
-    pub async fn connect(reconnect: bool) -> Result<()> {
-        Ok(())  // TODO
+    pub async fn connect(&mut self, _reconnect: bool) -> Result<()> {
+        self.identify().await?;
+        
+        Ok(())
     }
 
     pub async fn recv_json(&mut self) -> Result<Option<Value>> {
-        handle_ws_message(self.stream.next().await)
+        handle_ws_message(self.stream.next().await.transpose()?)
     }
 
     pub async fn send_json(&mut self, payload: &Value) -> Result<()> {
@@ -51,12 +60,12 @@ impl Gateway {
             &json!({
                 "op": 2_u8,
                 "d": {
-                    "token": self.token,
-                    "intents": self.intents.value,
+                    "token": self.http.token,
+                    "intents": 0_u32,  // self.intents.value,
                     "compress": true,
                     "large_threshold": 250_u8,
-                    // shard
-                    "presence": self.presence,
+                    // shard: ...
+                    "presence": null,  // self.presence,
                     "properties": {
                         "$os": consts::OS,
                         "$browser": "rs-cord",
@@ -78,7 +87,7 @@ pub fn handle_ws_message(message: Option<Message>) -> Result<Option<Value>> {
             Some(Message::Text(text)) => {
                 serde_json::from_str(&text).map(Some).map_err(Error::from)?
             },
-            Some(Message::Close(Some(frame))) => None,  // TODO: handle close
+            Some(Message::Close(Some(_))) => None,  // TODO: handle close
             _ => None,
         }
     )
