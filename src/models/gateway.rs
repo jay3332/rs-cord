@@ -1,12 +1,12 @@
 use bitflags::__impl_bitflags;
-use serde::{Serialize, Deserialize, Serializer, Deserializer};
+use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
 /// A set of bitflags which represent what gateway events the client should receive.
 /// These can be constructed manually, or by using the [`intents!`] macro.
 #[derive(Copy, Clone)]
 pub struct Intents {
     /// The raw bits that represent the intent bitflag.
-    /// This is used internally by the library, and should not be modified. 
+    /// This is used internally by the library, and should not be modified.
     pub bits: u32,
 }
 
@@ -16,7 +16,7 @@ __impl_bitflags! {
         GUILDS = 1 << 0;
 
         /// Enables all member-related gateway events.
-        /// 
+        ///
         /// This is a privileged intent. You must toggle the intent in your Developer Portal in order to use this intent.
         GUILD_MEMBERS = 1 << 1;
 
@@ -25,7 +25,7 @@ __impl_bitflags! {
 
         /// Enables all gateway events related to emojis and stickers.
         GUILD_EMOJIS_AND_STICKERS = 1 << 3;
-        
+
         /// Enables all gateway events related to guild integrations.
         GUILD_INTEGRATIONS = 1 << 4;
 
@@ -39,8 +39,8 @@ __impl_bitflags! {
         GUILD_VOICE_STATES = 1 << 7;
 
         /// Enables all gateway events related to member presences.
-        /// 
-        /// This is a privileged intent. You must toggle the intent in your Developer Portal in order to use this intent.  
+        ///
+        /// This is a privileged intent. You must toggle the intent in your Developer Portal in order to use this intent.
         /// Note that this intent is also a relatively heavy intent for larger bots - it is recommended to only enable this intent when absolutely necessary.
         GUILD_PRESENCES = 1 << 8;
 
@@ -128,10 +128,10 @@ impl<'de> Deserialize<'de> for Intents {
 impl Intents {
     /// Initializes a new set of intent flags that contain all possible intents that are not privileged.
     /// Note that it is generally recommended to explicitly specify intents rather than use this function.
-    /// 
+    ///
     /// Currently, this is the default intent set when one is not specified.
     /// This is subject to change in the future to an empty intent set to encourage more explicit intent declarations.
-    /// 
+    ///
     /// # See
     /// [`intents!`]
     pub fn non_privileged() -> Self {

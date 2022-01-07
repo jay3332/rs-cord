@@ -1,9 +1,9 @@
 use std::fmt::Display;
 use std::sync::Arc;
 
-use crate::Intents;
-use crate::http::HttpClient;
 use crate::gateway::Gateway;
+use crate::http::HttpClient;
+use crate::Intents;
 
 /// An authenticated client which will be able to interact with the Discord API,
 /// through both the REST and Gateway (websocket) APIs.
@@ -15,7 +15,7 @@ pub struct Client {
     pub gateway: Option<Gateway>,
 
     /// The stored intent flags to use when connecting to the gateway.
-    /// 
+    ///
     /// # See
     /// - [`intents!`]
     /// - [`Intents`]
@@ -50,7 +50,7 @@ impl Client {
     }
 
     /// Set the authentication token to be used.
-    /// 
+    ///
     /// This method is chainable and modifies in place.
     pub fn with_token(mut self, token: impl Display) -> Self {
         self.token = Some(token.to_string());
@@ -59,11 +59,11 @@ impl Client {
     }
 
     /// Sets the gateway intent flags to be used.
-    /// 
+    ///
     /// This method is chainable and modifies in place.
     pub fn with_intents(mut self, intents: Intents) -> Self {
         self.intents = intents;
-        
+
         self
     }
 
@@ -72,9 +72,11 @@ impl Client {
             return;
         }
 
-        self.http = Some(
-            Arc::new(HttpClient::new_with_token(self.token.clone().expect("An authentication token must be provided.")))
-        );
+        self.http = Some(Arc::new(HttpClient::new_with_token(
+            self.token
+                .clone()
+                .expect("An authentication token must be provided."),
+        )));
     }
 
     async fn init_gateway(&mut self) -> crate::error::Result<()> {

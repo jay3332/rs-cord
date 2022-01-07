@@ -8,10 +8,10 @@ pub const DISCORD_API_URL: &'static str = "https://discord.com/api";
 pub enum OpCode {
     /// An event was dispatched.
     Dispatch = 0,
-    
+
     /// Fired periodically by the client to keep the connection alive.
     Heartbeat = 1,
-    
+
     /// Starts a new session during initial handshake.
     Identify = 2,
 
@@ -20,7 +20,7 @@ pub enum OpCode {
 
     /// Used to join, move, or leave voice channels.
     VoiceStateUpdate = 4,
-    
+
     /// Resume a previous gateway session that was disconnected.
     Resume = 6,
 
