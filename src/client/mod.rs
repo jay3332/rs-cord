@@ -1,9 +1,14 @@
+pub mod state;
+
 use std::fmt::Display;
 use std::sync::Arc;
 
 use crate::gateway::Gateway;
 use crate::http::HttpClient;
-use crate::Intents;
+use crate::{Intents, User};
+pub use state::ClientState;
+
+use tokio::sync::Mutex;
 
 /// An authenticated client which will be able to interact with the Discord API,
 /// through both the REST and Gateway (websocket) APIs.
@@ -12,7 +17,7 @@ pub struct Client {
     pub http: Option<Arc<HttpClient>>,
 
     /// The client for Discord's Gateway, or websocket API.
-    pub gateway: Option<Gateway>,
+    pub gateway: Option<Arc<Mutex<Gateway>>>,
 
     /// The stored intent flags to use when connecting to the gateway.
     ///
@@ -23,6 +28,9 @@ pub struct Client {
 
     /// The authentication token to be used.
     pub(crate) token: Option<String>,
+
+    /// The current user that this client represents. Only applicable if the client has logged in.
+    pub(crate) user: Option<User>,
 }
 
 impl Client {
@@ -38,6 +46,7 @@ impl Client {
             gateway: None,
             intents: Intents::non_privileged(),
             token: None,
+            user: None,
         }
     }
 
@@ -67,6 +76,40 @@ impl Client {
         self
     }
 
+    /// Retrieves the current client state.
+    ///
+    /// # Panics
+    /// - The HTTP client is not initialized.
+    /// - No token has been provided yet.
+    pub fn state(&self) -> ClientState {
+        ClientState {
+            client: self,
+            http: self.http.clone().expect("HTTP client is not initialized."),
+            token: self.token.clone().expect("No token has been provided yet."),
+        }
+    }
+
+    /// Starts the client by authenticating via HTTP and connecting via the gateway.
+    ///
+    /// # Panics
+    /// - No authentication token has been provided yet.
+    pub async fn start(&mut self) -> crate::error::Result<()> {
+        self.init_http();
+        self.init_gateway().await?;
+
+        self.user = Some(User::from_user_data(
+            self.http.as_ref().unwrap().get_self().await?,
+        ));
+        
+        self.gateway
+            .as_ref()
+            .unwrap()
+            .lock()
+            .await
+            .connect(false)
+            .await
+    }
+
     fn init_http(&mut self) {
         if self.http.is_some() {
             return;
@@ -84,7 +127,9 @@ impl Client {
             return Ok(());
         }
 
-        self.gateway = Some(Gateway::new(self.http.clone().unwrap(), self.intents).await?);
+        self.gateway = Some(Arc::new(Mutex::new(
+            Gateway::new(self.http.clone().unwrap(), self.intents).await?,
+        )));
 
         Ok(())
     }

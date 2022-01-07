@@ -14,4 +14,4 @@ pub mod types;
 pub use client::Client;
 pub use error::{Error as RsCordError, ThreadSafeError, ThreadSafeResult};
 pub use internal::prelude;
-pub use models::gateway::Intents;
+pub use models::*;

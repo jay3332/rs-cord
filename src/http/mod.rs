@@ -202,4 +202,11 @@ impl HttpClient {
             .send_expecting_json::<types::gateway::GetGatewayBotData>()
             .await
     }
+
+    /// GET /users/@me
+    pub async fn get_self(&self) -> ThreadSafeResult<types::user::UserData> {
+        self.request(route!(GET, "/users/@me"))
+            .send_expecting_json::<types::user::UserData>()
+            .await
+    }
 }

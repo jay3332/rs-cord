@@ -23,6 +23,10 @@ int-enum = "0.4"
 serde_json = "1.0"
 url = "2.2"
 
+[dependencies.chrono]
+version = "0.4"
+optional = true
+
 [dependencies.reqwest]
 version = "0.11"
 default-features = false
@@ -45,3 +49,6 @@ features = ["full"]
 version = "0.16"
 default-features = false
 features = ["connect", "rustls-tls-webpki-roots"]
+
+[features]
+default = ["chrono"]
