@@ -9,6 +9,8 @@
         <a href="https://docs.rs/rs-cord"><b>Documentation</b></a> 
         • 
         <a href="https://crates.io/crates/rs-cord"><b>Crates.io</b></a>
+        • 
+        <a href="https://discord.gg/uch68Ujf38"><b>Discord</b></a>
     </sup>
 </p>
 
@@ -94,3 +96,9 @@ async fn main() {
         .expect("failed to start client");
 }
 ```
+
+## Need help?
+You can [join our Discord server](https://discord.gg/uch68Ujf38) in order to get help on all things rs-cord.
+
+## Contributing
+Make sure to format your code using `cargo fmt`. Additionally, make sure it passes `cargo check` with minimal to zero warnings.
