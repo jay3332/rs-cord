@@ -4,6 +4,8 @@ pub type Result<T> = StdResult<T, Error>;
 pub type ThreadSafeError = Box<dyn StdError + Send + Sync>;
 pub type ThreadSafeResult<T> = StdResult<T, ThreadSafeError>;
 
+use crate::gateway::GatewayError;
+
 use tokio_tungstenite::tungstenite::error::Error as TungsteniteError;
 
 #[derive(Debug)]
@@ -11,6 +13,7 @@ pub enum Error {
     Generic(ThreadSafeError),
     Serde(serde_json::Error),
     Tungstenite(TungsteniteError),
+    Gateway(GatewayError),
 }
 
 impl From<&'static str> for Error {
@@ -34,5 +37,11 @@ impl From<ThreadSafeError> for Error {
 impl From<TungsteniteError> for Error {
     fn from(err: TungsteniteError) -> Error {
         Error::Tungstenite(err)
+    }
+}
+
+impl From<GatewayError> for Error {
+    fn from(err: GatewayError) -> Error {
+        Error::Gateway(err)
     }
 }

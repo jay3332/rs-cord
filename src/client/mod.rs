@@ -18,7 +18,7 @@ pub struct Client {
 impl Client {
     /// Create a client with no configurations.
     /// You must eventually provide a token in order to start the client.
-    /// 
+    ///
     /// # See
     /// - [`Client::new_with_token`]
     /// - [`Client::with_token`]
@@ -34,7 +34,7 @@ impl Client {
     pub fn new_with_token(token: impl Display) -> Self {
         let mut client = Self::new().with_token(token);
         client.init_http();
-        
+
         client
     }
 
@@ -50,6 +50,10 @@ impl Client {
             return;
         }
 
-        self.http = Some(HttpClient::new_with_token(self.token.clone().expect("An authentication token must be provided.")));
+        self.http = Some(HttpClient::new_with_token(
+            self.token
+                .clone()
+                .expect("An authentication token must be provided."),
+        ));
     }
 }
