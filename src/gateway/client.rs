@@ -120,6 +120,13 @@ impl Gateway {
             return Err(GatewayError::NoHello.into());
         }
 
+        if let Some(h) = &self.last_heartbeat {
+            // If it isn't time to heartbeat, then... don't heartbeat.
+            if h.elapsed().as_secs() <= self.heartbeat_interval.unwrap() as u64 {
+                return Ok(());
+            }
+        }
+
         self.last_heartbeat = Some(Instant::now());
         self.heartbeat().await
     }
