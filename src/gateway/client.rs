@@ -1,6 +1,6 @@
 use crate::http::HttpClient;
 use crate::internal::prelude::*;
-use crate::types::gateway::GetGatewayBotData;
+use crate::types::gateway::{GetGatewayBotData, HelloData};
 use crate::Intents;
 
 use super::WsStream;
@@ -20,6 +20,7 @@ pub struct Gateway {
     info: GetGatewayBotData,
     pub(crate) intents: Intents,
     pub stream: WsStream,
+    heartbeat_interval: u16,
 }
 
 impl Gateway {
@@ -52,7 +53,17 @@ impl Gateway {
     }
 
     pub async fn connect(&mut self, _reconnect: bool) -> Result<()> {
+        let hello: HelloData = serde_json::from_value(self.recv_json().await)?;
+        self.heartbeat_interval = hello.heartbeat_interval;
+
+        // start heartbeat
+
         self.identify().await?;
+
+        loop {
+            let _ = self.recv_json().await;
+            // handle events
+        }
 
         Ok(())
     }

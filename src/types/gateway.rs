@@ -6,6 +6,11 @@ pub struct GetGatewayData {
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct HelloData {
+    pub heartbeat_interval: u16,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct SessionStartLimitData {
     pub total: u64,
     pub remaining: u64,
