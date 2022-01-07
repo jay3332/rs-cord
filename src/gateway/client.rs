@@ -1,3 +1,4 @@
+use super::GatewayError;
 use crate::http::HttpClient;
 use crate::internal::prelude::*;
 use crate::types::gateway::{GetGatewayBotData, HelloData};
@@ -57,7 +58,8 @@ impl Gateway {
     }
 
     pub async fn connect(&mut self, _reconnect: bool) -> Result<()> {
-        let hello: HelloData = serde_json::from_value(self.recv_json().await?.ok_or(GatewayError::NoHello)?)?;
+        let hello: HelloData =
+            serde_json::from_value(self.recv_json().await?.ok_or(GatewayError::NoHello)?)?;
         self.heartbeat_interval = Some(hello.heartbeat_interval);
 
         // start heartbeat
