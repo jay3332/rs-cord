@@ -7,17 +7,16 @@ use super::WsStream;
 
 use flate2::read::ZlibDecoder;
 use futures_util::{SinkExt, StreamExt};
-use serde_json::{json, Value};
+use serde_json::Value;
 
 use tokio_tungstenite::connect_async_with_config;
 use tokio_tungstenite::tungstenite::protocol::{Message, WebSocketConfig};
 
-use std::env::consts;
 use std::sync::Arc;
 
 pub struct Gateway {
-    http: Arc<HttpClient>,
-    info: GetGatewayBotData,
+    pub(crate) http: Arc<HttpClient>,
+    pub info: GetGatewayBotData,
     pub(crate) intents: Intents,
     pub stream: WsStream,
 }
@@ -66,27 +65,6 @@ impl Gateway {
             .map(Message::Text)
             .map_err(Error::from)
             .map(|m| self.stream.send(m))?
-            .await?)
-    }
-
-    async fn identify(&mut self) -> Result<()> {
-        Ok(self
-            .send_json(&json!({
-                "op": 2_u8,
-                "d": {
-                    "token": self.http.token,
-                    "intents": self.intents.bits(),
-                    "compress": true,
-                    "large_threshold": 250_u8,
-                    // shard: ...
-                    "presence": null,  // self.presence,
-                    "properties": {
-                        "$os": consts::OS,
-                        "$browser": "rs-cord",
-                        "$device": "rs-cord",
-                    }
-                }
-            }))
             .await?)
     }
 }

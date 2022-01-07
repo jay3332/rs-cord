@@ -1,4 +1,5 @@
 use bitflags::__impl_bitflags;
+use int_enum::IntEnum;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
 /// A set of bitflags which represent what gateway events the client should receive.
@@ -142,4 +143,42 @@ impl Intents {
     fn privileged() -> Self {
         Self::GUILD_PRESENCES | Self::GUILD_MEMBERS
     }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq, IntEnum, Serialize, Deserialize)]
+#[non_exhaustive]
+#[repr(u8)]
+pub enum OpCode {
+    /// An event was dispatched.
+    Dispatch = 0,
+
+    /// Fired periodically by the client to keep the connection alive.
+    Heartbeat = 1,
+
+    /// Starts a new session during initial handshake.
+    Identify = 2,
+
+    /// Update the client presence/status.
+    StatusUpdate = 3,
+
+    /// Used to join, move, or leave voice channels.
+    VoiceStateUpdate = 4,
+
+    /// Resume a previous gateway session that was disconnected.
+    Resume = 6,
+
+    /// Used to tell clients to reconnect to the gateway.
+    Reconnect = 7,
+
+    /// Used to request guild members.
+    RequestGuildMembers = 8,
+
+    /// Used to notify clients that their session ID is invalid.
+    InvalidSession = 9,
+
+    /// Sent immediately after connection - contains heartbeat and server info.
+    Hello = 10,
+
+    /// Sent in response to receiving a heartbeat to acknowledge that it has been received.
+    HeartbeatAck = 11,
 }
