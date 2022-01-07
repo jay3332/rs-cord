@@ -3,7 +3,7 @@ use std::sync::Arc;
 
 use crate::Intents;
 use crate::http::HttpClient;
-use crate::ws::Gateway;
+use crate::gateway::Gateway;
 
 /// An authenticated client which will be able to interact with the Discord API,
 /// through both the REST and Gateway (websocket) APIs.
@@ -28,7 +28,7 @@ pub struct Client {
 impl Client {
     /// Create a client with no configurations.
     /// You must eventually provide a token in order to start the client.
-    /// 
+    ///
     /// # See
     /// - [`Client::new_with_token`]
     /// - [`Client::with_token`]
@@ -45,7 +45,7 @@ impl Client {
     pub fn new_with_token(token: impl Display) -> Self {
         let mut client = Self::new().with_token(token);
         client.init_http();
-        
+
         client
     }
 

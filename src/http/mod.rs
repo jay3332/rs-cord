@@ -1,9 +1,9 @@
 use crate::constants::DISCORD_API_URL;
-use crate::{types, ThreadSafeResult};
 use crate::route;
+use crate::{types, ThreadSafeResult};
 
+use reqwest::header::{HeaderMap, HeaderValue, AUTHORIZATION, CONTENT_TYPE, USER_AGENT};
 use reqwest::Method;
-use reqwest::header::{AUTHORIZATION, CONTENT_TYPE, USER_AGENT, HeaderMap, HeaderValue};
 
 #[derive(Copy, Clone, Debug)]
 pub enum RequestMethod {
@@ -44,10 +44,7 @@ impl<'a> Route<'a> {
 
 impl<'a> From<(RequestMethod, &'a str)> for Route<'a> {
     fn from((method, route): (RequestMethod, &'a str)) -> Self {
-        Route {
-            method,
-            route,
-        }
+        Route { method, route }
     }
 }
 
@@ -85,30 +82,24 @@ impl<'c, 'r> HttpClientRequestBuilder<'c, 'r> {
 
         let mut headers = HeaderMap::new();
 
-        headers.insert(
-            USER_AGENT,
-            HeaderValue::from_str(&Self::USER_AGENT)?,
-        );
+        headers.insert(USER_AGENT, HeaderValue::from_str(&Self::USER_AGENT)?);
 
         if let Some(t) = &self.client.token {
-            headers.insert(
-                AUTHORIZATION,
-                HeaderValue::from_str(&format!("Bot {}", t))?,
-            );
+            headers.insert(AUTHORIZATION, HeaderValue::from_str(&format!("Bot {}", t))?);
         }
 
         if let Some(c) = &self.content_type {
-            headers.insert(
-                CONTENT_TYPE,
-                HeaderValue::from_str(&c)?,
-            );
+            headers.insert(CONTENT_TYPE, HeaderValue::from_str(&c)?);
         }
 
         if let Some(h) = &self.headers {
             headers.extend(h.clone());
         }
-    
-        let mut request = self.reqwest_client.request(self.route.method.into(), url).headers(headers);
+
+        let mut request = self
+            .reqwest_client
+            .request(self.route.method.into(), url)
+            .headers(headers);
 
         if let Some(b) = &self.body {
             request = request.body(b.clone());
@@ -135,9 +126,9 @@ impl<'c, 'r> HttpClientRequestBuilder<'c, 'r> {
 
         self
     }
- 
+
     /// Sends this request, returning the response sanitized into the given struct.
-    /// 
+    ///
     /// # Example
     /// let raw_msg = client.http.request(route!(POST, "/channels/{channel_id}/messages", channel_id = 1234))
     ///     .json(MessageCreatePayload {
@@ -146,8 +137,8 @@ impl<'c, 'r> HttpClientRequestBuilder<'c, 'r> {
     ///     .send_expecting_json::<MessagePayload>()
     ///     .await?;
     pub async fn send_expecting_json<T>(&self) -> ThreadSafeResult<T>
-        where
-            T: serde::de::DeserializeOwned,
+    where
+        T: serde::de::DeserializeOwned,
     {
         let request = self._build_request()?;
         Ok(request.send().await?.json::<T>().await?)
@@ -159,7 +150,7 @@ impl<'c, 'r> HttpClientRequestBuilder<'c, 'r> {
 pub struct HttpClient {
     /// The internal reqwest client being used.
     client: reqwest::Client,
-    
+
     /// The authentication token to be used.
     pub(crate) token: Option<String>,
 }
