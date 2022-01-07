@@ -26,7 +26,7 @@ pub struct User {
 impl User {
     pub(crate) fn from_user_data(data: UserData) -> Self {
         Self {
-            id: data.id,
+            id: data.id.parse().unwrap(),
             name: data.username,
             discriminator: data.discriminator,
             avatar_hash: data.avatar,
