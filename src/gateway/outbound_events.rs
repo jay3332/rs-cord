@@ -6,7 +6,7 @@ use std::env::consts;
 
 impl Gateway {
     async fn identify(&mut self) -> Result<()> {
-        Ok(self.send_json(
+        self.send_json(
             &json!({
                 "op": OpCodes::Identify,
                 "d": {
@@ -23,11 +23,11 @@ impl Gateway {
                     }
                 }
             })
-        ).await?)
+        ).await
     }
 
     async fn resume(&mut self) -> Result<()> {
-        Ok(self.send_json(
+        self.send_json(
                 &json!({
                     "op": OpCodes::Resume,
                     "d": {
@@ -36,22 +36,20 @@ impl Gateway {
                         "seq": &self.seq,
                     }
                 })
-            ).await?
-        )
+            ).await
     }
 
     async fn heartbeat(&mut self) -> Result<()> {
-        Ok(self.send_json(
+        self.send_json(
                 &json!({
                     "op": OpCodes::Heartbeat,
                     "d": &self.seq,
                 })
-            ).await?
-        )
+            ).await
     }
 
     async fn request_guild_members(&mut self, guild_id: u64, query: &str, limit: u64, user_ids: Option<Vec<u64>>, nonce: Option<&str>) -> Result<()> {
-        Ok(self.send_json(
+        self.send_json(
                 &json!({
                     "op": OpCodes::RequestGuildMembers,
                     "d": {
@@ -62,12 +60,11 @@ impl Gateway {
                         "nonce": nonce,
                     }
                 })
-            ).await?
-        )
+            ).await
     }
 
     async fn update_voice_state(&mut self, guild_id: u64, channel_id: Option<u64>, self_mute: bool, self_deaf: bool) -> Result<()> {
-        Ok(self.send_json(
+        self.send_json(
                 &json!({
                     "op": OpCodes::VoiceStateUpdate,
                     "d": {
@@ -77,7 +74,6 @@ impl Gateway {
                         "self_deaf": self_deaf,
                     }
                 })
-            ).await?
-        )
+            ).await
     }
 }

@@ -73,32 +73,11 @@ impl Gateway {
     }
 
     pub async fn send_json(&mut self, payload: &Value) -> Result<()> {
-        Ok(serde_json::to_string(payload)
+        serde_json::to_string(payload)
             .map(Message::Text)
             .map_err(Error::from)
             .map(|m| self.stream.send(m))?
-            .await?)
-    }
-
-    async fn identify(&mut self) -> Result<()> {
-        Ok(self
-            .send_json(&json!({
-                "op": 2_u8,
-                "d": {
-                    "token": self.http.token,
-                    "intents": self.intents.bits(),
-                    "compress": true,
-                    "large_threshold": 250_u8,
-                    // shard: ...
-                    "presence": null,  // self.presence,
-                    "properties": {
-                        "$os": consts::OS,
-                        "$browser": "rs-cord",
-                        "$device": "rs-cord",
-                    }
-                }
-            }))
-            .await?)
+            .await
     }
 }
 
