@@ -32,8 +32,8 @@ impl Gateway {
                 "op": OpCode::Resume,
                 "d": {
                     "token": self.http.token,
-                    "session_id": &self.session_id.ok_or(GatewayError::NoSessionId)?,
-                    "seq": &self.seq,
+                    "session_id": self.session_id.as_ref().ok_or(GatewayError::NoSessionId)?,
+                    "seq": self.seq.as_ref(),
                 }
             })
         ).await

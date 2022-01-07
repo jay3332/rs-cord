@@ -57,8 +57,8 @@ impl Gateway {
     }
 
     pub async fn connect(&mut self, _reconnect: bool) -> Result<()> {
-        let hello: HelloData = self.recv_json().await.map(serde_json::from_value).map_err(Error::from)?;
-        self.heartbeat_interval = hello.heartbeat_interval;
+        let hello: HelloData = serde_json::from_value(self.recv_json().await?)?;
+        self.heartbeat_interval = Some(hello.heartbeat_interval);
 
         // start heartbeat
 
