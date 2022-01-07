@@ -19,7 +19,9 @@ pub struct Gateway {
     pub info: GetGatewayBotData,
     pub(crate) intents: Intents,
     pub stream: WsStream,
-    heartbeat_interval: u16,
+    pub(crate) heartbeat_interval: Option<u16>,
+    pub(crate) session_id: Option<String>,
+    pub(crate) seq: Option<u64>,
 }
 
 impl Gateway {
@@ -48,12 +50,14 @@ impl Gateway {
             info: info.clone(),
             intents,
             stream,
-            heartbeat_interval: None
+            heartbeat_interval: None,
+            session_id: None,
+            seq: None,
         })
     }
 
     pub async fn connect(&mut self, _reconnect: bool) -> Result<()> {
-        let hello: HelloData = self.recv_json().map(serde_json::from_value).map_err(Error::from).await?;
+        let hello: HelloData = self.recv_json().await.map(serde_json::from_value).map_err(Error::from)?;
         self.heartbeat_interval = hello.heartbeat_interval;
 
         // start heartbeat
