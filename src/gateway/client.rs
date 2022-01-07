@@ -49,11 +49,12 @@ impl Gateway {
             info: info.clone(),
             intents,
             stream,
+            heartbeat_interval: None
         })
     }
 
     pub async fn connect(&mut self, _reconnect: bool) -> Result<()> {
-        let hello: HelloData = serde_json::from_value(self.recv_json().await)?;
+        let hello: HelloData = self.recv_json().map(serde_json::from_value).map_err(Error::from).await?;
         self.heartbeat_interval = hello.heartbeat_interval;
 
         // start heartbeat
@@ -73,11 +74,11 @@ impl Gateway {
     }
 
     pub async fn send_json(&mut self, payload: &Value) -> Result<()> {
-        serde_json::to_string(payload)
+        Ok(serde_json::to_string(payload)
             .map(Message::Text)
             .map_err(Error::from)
             .map(|m| self.stream.send(m))?
-            .await
+            .await?)
     }
 }
 
