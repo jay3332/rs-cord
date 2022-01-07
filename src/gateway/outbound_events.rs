@@ -1,21 +1,10 @@
-use async_trait::async_trait;
 use crate::internal::prelude::*;
 use crate::constants::OpCodes;
 use super::{Gateway, GatewayError};
 
 use std::env::consts;
 
-#[async_trait]
-pub trait OutBoundEvents {
-    pub async fn identify(&mut self) -> Result<()>;
-    pub async fn resume(&mut self) -> Result<()>;
-    pub async fn heartbeat(&mut self) -> Result<()>;
-    pub async fn request_guild_members(&mut self, guild_id: u64, query: &str, limit: u64, user_ids: Option<Vec<u64>>, nonce: Option<&str>) -> Result<()>;
-    pub async fn update_voice_state(&mut self, guild_id: u64, channel_id: Option<u64>, self_mute: bool, self_deaf: bool) -> Result<()>;
-    // pub async fn update_presence(&mut self, presence: Presence) -> Result<()>;
-}
-
-impl OutBoundEvents for Gateway {
+impl Gateway {
     async fn identify(&mut self) -> Result<()> {
         Ok(self.send_json(
             &json!({
