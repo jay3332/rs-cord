@@ -1,7 +1,7 @@
 use super::GatewayError;
 use crate::http::HttpClient;
 use crate::internal::prelude::*;
-use crate::types::gateway::{GetGatewayBotData, HelloData};
+use crate::types::gateway::{GetGatewayBotData, WsInboundEvent};
 use crate::Intents;
 
 use super::WsStream;
@@ -14,13 +14,18 @@ use tokio_tungstenite::connect_async_with_config;
 use tokio_tungstenite::tungstenite::protocol::{Message, WebSocketConfig};
 
 use std::sync::Arc;
+use std::time::Instant;
 
 pub struct Gateway {
     pub(crate) http: Arc<HttpClient>,
-    pub info: GetGatewayBotData,
     pub(crate) intents: Intents,
+    pub info: GetGatewayBotData,
     pub stream: WsStream,
+    latency: Option<f64>,
+
+    pub(crate) alive_since: Option<Instant>,
     pub(crate) heartbeat_interval: Option<u16>,
+    pub(crate) last_heartbeat: Option<Instant>,
     pub(crate) session_id: Option<String>,
     pub(crate) seq: Option<u64>,
 }
@@ -51,25 +56,43 @@ impl Gateway {
             info: info.clone(),
             intents,
             stream,
+            latency: None,
+            alive_since: None,
             heartbeat_interval: None,
+            last_heartbeat: None,
             session_id: None,
             seq: None,
         })
     }
 
     #[allow(unreachable_code)]
+    #[allow(unreachable_patterns)]
     pub async fn connect(&mut self, _reconnect: bool) -> Result<()> {
-        let hello: HelloData =
-            serde_json::from_value(self.recv_json().await?.ok_or(GatewayError::NoHello)?)?;
-        self.heartbeat_interval = Some(hello.heartbeat_interval);
+        self.alive_since = Some(Instant::now());
 
-        // start heartbeat
+        match serde_json::from_value::<WsInboundEvent>(self.recv_json().await?.ok_or(GatewayError::NoHello)?)? {
+            WsInboundEvent::Hello(heartbeat_interval) => {
+                self.heartbeat_interval = Some(heartbeat_interval);
+            },
+            _ => return Err(GatewayError::NoHello.into()),
+        }
 
         self.identify().await?;
+        self.start_recv().await?;
 
-        loop {
-            let _ = self.recv_json().await;
-            // handle events
+        Ok(())
+    }
+
+    pub async fn start_recv(&mut self) -> Result<()> {
+        while let Some(msg) = self.recv_json().await? {
+            self.try_heartbeat().await?;
+
+            match serde_json::from_value::<WsInboundEvent>(msg)? {
+                WsInboundEvent::HeartbeatAck => {
+                    self.latency = Some(self.last_heartbeat.unwrap().elapsed().as_secs_f64());
+                },
+                _ => {},
+            }
         }
 
         Ok(())
@@ -85,6 +108,20 @@ impl Gateway {
             .map_err(Error::from)
             .map(|m| self.stream.send(m))?
             .await?)
+    }
+
+    pub async fn try_heartbeat(&mut self) -> Result<()> {
+        if self.heartbeat_interval.is_none() {
+            // Allow 15 seconds to receive the heartbeat interval
+            if self.alive_since.unwrap().elapsed().as_secs() < 15 {
+                return Ok(());
+            }
+
+            return Err(GatewayError::NoHello.into());
+        }
+
+        self.last_heartbeat = Some(Instant::now());
+        self.heartbeat().await
     }
 }
 

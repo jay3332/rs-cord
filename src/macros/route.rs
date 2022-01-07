@@ -1,3 +1,10 @@
+/// Aids in helping constructing HTTP route endpoints.
+/// 
+/// # Usage
+/// 
+/// ```rust
+/// route!(GET, "/users/{user_id}}", user_id = 123456);
+/// ```
 #[macro_export]
 macro_rules! route {
     ($method:ident, $route:literal $(,)* $($k:ident=$v:expr),* $(,)*) => {{
