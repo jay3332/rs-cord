@@ -1,6 +1,7 @@
 use crate::http::HttpClient;
 use crate::internal::prelude::*;
 use crate::types::gateway::GetGatewayBotData;
+use crate::Intents;
 
 use super::WsStream;
 
@@ -11,16 +12,18 @@ use serde_json::{json, Value};
 use tokio_tungstenite::connect_async_with_config;
 use tokio_tungstenite::tungstenite::protocol::{Message, WebSocketConfig};
 
-pub struct Gateway<'h> {
-    http: &'h HttpClient,
+use std::env::consts;
+use std::sync::Arc;
+
+pub struct Gateway {
+    http: Arc<HttpClient>,
     info: GetGatewayBotData,
+    pub(crate) intents: Intents,
     pub stream: WsStream,
-    session_id: Option<String>,
-    seq: Option<u64>,
 }
 
-impl<'h> Gateway<'h> {
-    pub async fn new(http: &'h HttpClient) -> Result<Gateway<'h>> {
+impl Gateway {
+    pub async fn new(http: Arc<HttpClient>, intents: Intents) -> Result<Self> {
         if http.token.is_none() {
             return Err(Error::from(
                 "A token is required in order to initiate the gateway.",
@@ -30,7 +33,7 @@ impl<'h> Gateway<'h> {
         let info = http.get_gateway_bot().await.map_err(Error::from)?;
 
         let (stream, _) = connect_async_with_config(
-            format!("{}?v=9&encoding=json&compress=zlib-stream", (&info).url),
+            (&info).url.clone(),
             Some(WebSocketConfig {
                 max_send_queue: None,
                 max_message_size: None,
@@ -43,9 +46,8 @@ impl<'h> Gateway<'h> {
         Ok(Self {
             http,
             info: info.clone(),
+            intents,
             stream,
-            session_id: None,
-            seq: None,
         })
     }
 
@@ -64,6 +66,27 @@ impl<'h> Gateway<'h> {
             .map(Message::Text)
             .map_err(Error::from)
             .map(|m| self.stream.send(m))?
+            .await?)
+    }
+
+    async fn identify(&mut self) -> Result<()> {
+        Ok(self
+            .send_json(&json!({
+                "op": 2_u8,
+                "d": {
+                    "token": self.http.token,
+                    "intents": self.intents.bits(),
+                    "compress": true,
+                    "large_threshold": 250_u8,
+                    // shard: ...
+                    "presence": null,  // self.presence,
+                    "properties": {
+                        "$os": consts::OS,
+                        "$browser": "rs-cord",
+                        "$device": "rs-cord",
+                    }
+                }
+            }))
             .await?)
     }
 }

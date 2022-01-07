@@ -1,4 +1,5 @@
 mod client;
+mod error;
 
 use tokio::net::TcpStream;
 use tokio_tungstenite::{MaybeTlsStream, WebSocketStream};

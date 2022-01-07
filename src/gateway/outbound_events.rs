@@ -16,7 +16,7 @@ pub trait OutBoundEvents {
 }
 
 impl OutBoundEvents for Gateway {
-    pub async fn identify(&mut self) -> Result<()> {
+    async fn identify(&mut self) -> Result<()> {
         Ok(self.send_json(
             &json!({
                 "op": OpCodes::Identify,
@@ -37,7 +37,7 @@ impl OutBoundEvents for Gateway {
         ).await?)
     }
 
-    pub async fn resume(&mut self) -> Result<()> {
+    async fn resume(&mut self) -> Result<()> {
         Ok(self.send_json(
                 &json!({
                     "op": OpCodes::Resume,
@@ -51,7 +51,7 @@ impl OutBoundEvents for Gateway {
         )
     }
 
-    pub async fn heartbeat(&mut self) -> Result<()> {
+    async fn heartbeat(&mut self) -> Result<()> {
         Ok(self.send_json(
                 &json!({
                     "op": OpCodes::Heartbeat,
@@ -61,7 +61,7 @@ impl OutBoundEvents for Gateway {
         )
     }
 
-    pub async fn request_guild_members(&mut self, guild_id: u64, query: &str, limit: u64, user_ids: Option<Vec<u64>>, nonce: Option<&str>) -> Result<()> {
+    async fn request_guild_members(&mut self, guild_id: u64, query: &str, limit: u64, user_ids: Option<Vec<u64>>, nonce: Option<&str>) -> Result<()> {
         Ok(self.send_json(
                 &json!({
                     "op": OpCodes::RequestGuildMembers,
@@ -77,7 +77,7 @@ impl OutBoundEvents for Gateway {
         )
     }
 
-    pub async fn update_voice_state(&mut self, guild_id: u64, channel_id: Option<u64>, self_mute: bool, self_deaf: bool) -> Result<()> {
+    async fn update_voice_state(&mut self, guild_id: u64, channel_id: Option<u64>, self_mute: bool, self_deaf: bool) -> Result<()> {
         Ok(self.send_json(
                 &json!({
                     "op": OpCodes::VoiceStateUpdate,
