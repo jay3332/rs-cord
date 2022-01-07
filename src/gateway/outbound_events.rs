@@ -7,6 +7,7 @@ use serde_json::json;
 use std::env::consts;
 
 impl Gateway {
+<<<<<<< HEAD
     pub async fn identify(&mut self) -> Result<()> {
         self.send_json(&json!({
             "op": 2_u8,
@@ -27,6 +28,9 @@ impl Gateway {
     }
 
     pub(crate) async fn resume(&mut self) -> Result<()> {
+=======
+    async fn identify(&mut self) -> Result<()> {
+>>>>>>> 47acab6e7dbc588fa8fc7416f7ca766d79003f46
         self.send_json(
             &json!({
                 "op": OpCode::Resume,
@@ -39,6 +43,7 @@ impl Gateway {
         ).await
     }
 
+<<<<<<< HEAD
     pub(crate) async fn heartbeat(&mut self) -> Result<()> {
         self.send_json(
             &json!({
@@ -75,5 +80,56 @@ impl Gateway {
                 }
             })
         ).await
+=======
+    async fn resume(&mut self) -> Result<()> {
+        self.send_json(
+                &json!({
+                    "op": OpCodes::Resume,
+                    "d": {
+                        "token": self.http.token,
+                        "session_id": &self.session_id.ok_or(GatewayError::NoSessionId)?,
+                        "seq": &self.seq,
+                    }
+                })
+            ).await
+    }
+
+    async fn heartbeat(&mut self) -> Result<()> {
+        self.send_json(
+                &json!({
+                    "op": OpCodes::Heartbeat,
+                    "d": &self.seq,
+                })
+            ).await
+    }
+
+    async fn request_guild_members(&mut self, guild_id: u64, query: &str, limit: u64, user_ids: Option<Vec<u64>>, nonce: Option<&str>) -> Result<()> {
+        self.send_json(
+                &json!({
+                    "op": OpCodes::RequestGuildMembers,
+                    "d": {
+                        "guild_id": guild_id,
+                        "query": query,
+                        "limit": limit,
+                        "user_ids": user_ids,
+                        "nonce": nonce,
+                    }
+                })
+            ).await
+    }
+
+    async fn update_voice_state(&mut self, guild_id: u64, channel_id: Option<u64>, self_mute: bool, self_deaf: bool) -> Result<()> {
+        self.send_json(
+                &json!({
+                    "op": OpCodes::VoiceStateUpdate,
+                    "d": {
+                        "guild_id": guild_id,
+                        "channel_id": channel_id,
+                        "self_mute": self_mute,
+                        "self_deaf": self_deaf,
+                    }
+                })
+            ).await
+>>>>>>> 47acab6e7dbc588fa8fc7416f7ca766d79003f46
     }
 }
