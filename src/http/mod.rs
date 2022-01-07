@@ -155,7 +155,7 @@ impl<'c, 'r> HttpClientRequestBuilder<'c, 'r> {
 }
 
 /// Handles authenticated requests to Discord's REST API.
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct HttpClient {
     /// The internal reqwest client being used.
     client: reqwest::Client,

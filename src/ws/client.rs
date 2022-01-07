@@ -1,3 +1,4 @@
+use crate::Intents;
 use crate::http::HttpClient;
 use crate::internal::prelude::*;
 use crate::types::gateway::GetGatewayBotData;
@@ -12,15 +13,17 @@ use tokio_tungstenite::connect_async_with_config;
 use tokio_tungstenite::tungstenite::protocol::{Message, WebSocketConfig};
 
 use std::env::consts;
+use std::sync::Arc;
 
-pub struct Gateway<'h> {
-    http: &'h HttpClient,
+pub struct Gateway {
+    http: Arc<HttpClient>,
     info: GetGatewayBotData,
+    pub(crate) intents: Intents,
     pub stream: WsStream,
 }
 
-impl<'h> Gateway<'h> {
-    pub async fn new(http: &'h HttpClient) -> Result<Gateway<'h>> {
+impl Gateway {
+    pub async fn new(http: Arc<HttpClient>, intents: Intents) -> Result<Self> {
         if http.token.is_none() {
             return Err(Error::from("A token is required in order to initiate the gateway."))
         }
@@ -34,7 +37,7 @@ impl<'h> Gateway<'h> {
             accept_unmasked_frames: false,
         })).await?;
 
-        Ok(Self { http, info: info.clone(), stream })
+        Ok(Self { http, info: info.clone(), intents, stream })
     }
 
     pub async fn connect(&mut self, _reconnect: bool) -> Result<()> {
@@ -61,7 +64,7 @@ impl<'h> Gateway<'h> {
                 "op": 2_u8,
                 "d": {
                     "token": self.http.token,
-                    "intents": 0_u32,  // self.intents.value,
+                    "intents": self.intents.bits(),
                     "compress": true,
                     "large_threshold": 250_u8,
                     // shard: ...
