@@ -64,16 +64,17 @@ rs-cord = "0"
 ```
 
 ## Getting Started
-Example Bot:
-```rs
-use rs_cord::{Client, ClientState, CacheConfiguration, EventListener};
-use rs_cord::events::{ReadyEvent, MessageCreateEvent}
+You may see the [examples folder](https://github.com/jay3332/rs-cord/tree/main/examples) for code examples.
 
-#[macro_use]
-use rs_cord::macros::intents;
+Example Ping-pong Bot:
+```rs
+use rs_cord::{Client, ClientState, EventListener};
+use rs_cord::events::{ReadyEvent, MessageCreateEvent};
+use rs_cord::intents;
 
 struct Listener;
 
+#[rs_cord::async_trait]
 impl EventListener for Listener {
     async fn ready(state: &ClientState, _event: &ReadyEvent) {
         println!("Logged in as {} (ID: {})", state.user.tag(), state.user.id);
@@ -88,10 +89,10 @@ impl EventListener for Listener {
 
 #[tokio::main]
 async fn main() {
-    Client::new_with_token(TOKEN)
-        .with_intents(intents!(messages, reactions))
+    Client::new_with_token("my secret token")
+        .with_intents(intents!(GUILDS, MESSAGES))
         .with_event_listener(Listener)
-        .run()
+        .start()
         .await
         .expect("failed to start client");
 }
