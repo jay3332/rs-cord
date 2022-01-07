@@ -28,6 +28,4 @@ pub enum OpCodes {
     Hello = 10,
     /// Sent in response to receiving a heartbeat to acknowledge that it has been received.
     HeartbeatAck = 11,
-    /// Suspicious opcode.
-    Unknown = !0,
 }
