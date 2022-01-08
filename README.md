@@ -20,6 +20,9 @@
 - [Motive](#motive)
 - [Installation](#installation)
 - [Getting Started](#getting-started)
+- [Need help?](#need-help)
+- [Contributing](#contributing)
+- [Links](#links)
 
 ## Motive
 Currenty, the leading crates that wrap around Discord's API (e.g. [serenity](https://github.com/serenity-rs/serenity)),
@@ -63,6 +66,18 @@ Just like with every other Rust crate, insert it into your `Cargo.toml` file:
 rs-cord = "0"
 ```
 
+### Installing from GitHub
+If you would like to use the most recent update of rs-cord, make sure you have `git` installed and 
+insert the following into your `Cargo.toml`:
+```toml
+[dependencies]
+rs-cord = { git = "https://github.com/jay3332/rs-cord" }
+```
+
+Note that for production usage, it is recommended to stay with a stable version upload on [crates.io](https://crates.io/crates/rs-cord).
+
+Documentation for the GitHub version is available [here](https://jay3332.github.io/rs-cord/).
+
 ## Getting Started
 You may see the [examples folder](https://github.com/jay3332/rs-cord/tree/main/examples) for code examples.
 
@@ -103,3 +118,10 @@ You can [join our Discord server](https://discord.gg/uch68Ujf38) in order to get
 
 ## Contributing
 Make sure to format your code using `cargo fmt`. Additionally, make sure it passes `cargo check` with minimal to zero warnings.
+
+## Links
+- [Documentation (Stable)](https://docs.rs/rs-cord)
+- [Documentation (GitHub)](https://jay3332.github.io/rs-cord)
+- [Crates.io](https://crates.io/crates/rs-cord)
+- [Discord Server](https://discord.gg/uch68Ujf38)
+- [Examples](https://github.com/jay3332/rs-cord/tree/main/examples)
