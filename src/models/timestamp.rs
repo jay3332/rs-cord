@@ -75,7 +75,7 @@ impl Timestamp {
     }
 
     /// The timestamp as a [`chrono::DateTime`].
-    #[cfg(feature = "chrono")]]
+    #[cfg(feature = "chrono")]
     #[must_use]
     pub fn datetime(&self) -> DateTime<Utc> {
         let (secs, nanos) = self.to_secs_nanos();
