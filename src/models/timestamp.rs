@@ -14,7 +14,7 @@ pub struct Timestamp {
 impl Timestamp {
     /// Creates a new timestamp from a Unix timestamp in milliseconds.
     #[must_use]
-    pub const fn from_unix(timestamp: u64) -> Self {
+    pub fn from_unix(timestamp: u64) -> Self {
         Self { timestamp }
     }
 
@@ -54,13 +54,13 @@ impl Timestamp {
 
     /// The amount of milliseconds since the Unix epoch.
     #[must_use]
-    pub const fn timestamp_millis(&self) -> u64 {
+    pub fn timestamp_millis(&self) -> u64 {
         self.timestamp
     }
 
     /// The amount of seconds since the Unix epoch, as a whole number.
     #[must_use]
-    pub const fn timestamp_secs(&self) -> u64 {
+    pub fn timestamp_secs(&self) -> u64 {
         self.timestamp / 1000_u64
     }
 

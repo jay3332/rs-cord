@@ -36,13 +36,13 @@ impl User {
 
     /// The Discord tag of this user, formatted in `username#discriminator` format.
     #[must_use]
-    pub const fn tag(&self) -> String {
+    pub fn tag(&self) -> String {
         format!("{}#{}", self.name, self.discriminator)
     }
 
     /// Whether or not this user is a bot account.
     #[must_use]
-    pub const fn is_bot(&self) -> bool {
+    pub fn is_bot(&self) -> bool {
         self.bot
     }
 }
