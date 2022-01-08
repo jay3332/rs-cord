@@ -107,7 +107,7 @@ impl<'c, 'r> HttpClientRequestBuilder<'c, 'r> {
             request = request.body(b.clone());
         }
 
-        if self.query.len() > 0 {
+        if !self.query.is_empty() {
             request = request.query(&self.query);
         }
 
@@ -136,7 +136,7 @@ impl<'c, 'r> HttpClientRequestBuilder<'c, 'r> {
     ///     .json(MessageCreatePayload {
     ///         content: "Hello, world!".to_string(),
     ///     })
-    ///     .send_expecting_json::<MessagePayload>()
+    ///     .`send_expecting_json::`<MessagePayload>()
     ///     .await?;
     pub async fn send_expecting_json<T>(&self) -> ThreadSafeResult<T>
     where
@@ -165,14 +165,14 @@ pub struct HttpClient {
 
 impl HttpClient {
     pub(crate) fn new() -> Self {
-        HttpClient {
+        Self {
             client: reqwest::Client::new(),
             token: None,
         }
     }
 
     pub(crate) fn new_with_token(token: String) -> Self {
-        HttpClient {
+        Self {
             client: reqwest::Client::new(),
             token: Some(token),
         }

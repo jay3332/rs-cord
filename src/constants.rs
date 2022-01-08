@@ -1,1 +1,1 @@
-pub const DISCORD_API_URL: &'static str = "https://discord.com/api";
+pub const DISCORD_API_URL: &str = "https://discord.com/api";

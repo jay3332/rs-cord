@@ -26,6 +26,7 @@ pub struct GetGatewayBotData {
 }
 
 /// Represents an inbound gateway event.
+#[allow(clippy::large_enum_variant)]
 #[derive(Clone, Debug, Serialize)]
 #[non_exhaustive]
 pub enum WsInboundEvent {

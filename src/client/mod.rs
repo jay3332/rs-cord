@@ -134,3 +134,9 @@ impl Client {
         Ok(())
     }
 }
+
+impl Default for Client {
+    fn default() -> Self {
+        Self::new()
+    }
+}

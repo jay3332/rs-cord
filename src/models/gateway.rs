@@ -134,7 +134,8 @@ impl Intents {
     /// This is subject to change in the future to an empty intent set to encourage more explicit intent declarations.
     ///
     /// # See
-    /// [`intents!`]
+    /// [`intents!`]]
+    #[must_use]
     pub fn non_privileged() -> Self {
         Self::all() & !Self::privileged()
     }
@@ -148,6 +149,7 @@ impl Intents {
 #[derive(Clone, Copy, Debug, Eq, PartialEq, IntEnum, Serialize, Deserialize)]
 #[non_exhaustive]
 #[repr(u8)]
+#[allow(clippy::use_self)]
 pub enum OpCode {
     /// An event was dispatched.
     Dispatch = 0,

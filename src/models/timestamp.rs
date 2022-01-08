@@ -13,11 +13,13 @@ pub struct Timestamp {
 
 impl Timestamp {
     /// Creates a new timestamp from a Unix timestamp in milliseconds.
-    pub fn from_unix(timestamp: u64) -> Self {
+    #[must_use]
+    pub const fn from_unix(timestamp: u64) -> Self {
         Self { timestamp }
     }
 
     /// Creates a new timestamp from a Discord snowflake.
+    #[must_use]
     pub fn from_snowflake(snowflake: u64) -> Self {
         Self::from_unix(snowflake >> 22)
     }
@@ -27,6 +29,7 @@ impl Timestamp {
     /// # Panics
     /// - Timestamp is before the Unix epoch
     #[cfg(feature = "chrono")]
+    #[must_use]
     pub fn from_datetime(dt: DateTime<Utc>) -> Self {
         Self::from_unix(
             dt.timestamp_millis()
@@ -40,6 +43,7 @@ impl Timestamp {
     /// # Panics
     /// - Timestamp is not a valid timestamp.
     #[cfg(feature = "chrono")]
+    #[must_use]
     pub fn from_iso(iso: String) -> Self {
         Self::from_datetime(
             DateTime::parse_from_rfc3339(&iso)
@@ -49,27 +53,33 @@ impl Timestamp {
     }
 
     /// The amount of milliseconds since the Unix epoch.
-    pub fn timestamp_millis(&self) -> u64 {
+    #[must_use]
+    pub const fn timestamp_millis(&self) -> u64 {
         self.timestamp
     }
 
     /// The amount of seconds since the Unix epoch, as a whole number.
-    pub fn timestamp_secs(&self) -> u64 {
+    #[must_use]
+    pub const fn timestamp_secs(&self) -> u64 {
         self.timestamp / 1000_u64
     }
 
     /// Converts this timestamp into a tuple (seconds, nonoseconds).
+    #[must_use]
     pub fn to_secs_nanos(&self) -> (u64, u32) {
         let secs = self.timestamp_secs();
         let nanos = (self.timestamp - secs * 1000_u64) * 1_000_000_u64;
 
+        #[allow(clippy::cast_possible_truncation)]
         (secs, nanos as u32)
     }
 
     /// The timestamp as a [`chrono::DateTime`].
-    #[cfg(feature = "chrono")]
+    #[cfg(feature = "chrono")]]
+    #[must_use]
     pub fn datetime(&self) -> DateTime<Utc> {
         let (secs, nanos) = self.to_secs_nanos();
+        #[allow(clippy::cast_possible_wrap)]
         DateTime::from_utc(NaiveDateTime::from_timestamp(secs as i64, nanos), Utc)
     }
 }
