@@ -1,6 +1,15 @@
 use crate::models::gateway::OpCode;
-use super::guild::UnavailableGuildData;
+
+use super::channel::ChannelData;
+use super::emoji::EmojiData;
+use super::guild::{GuildData, UnavailableGuildData};
+use super::member::MemberData;
+use super::message::MessageData;
+use super::presence::PresenceUpdateData;
+use super::role::RoleData;
+use super::sticker::StickerData;
 use super::user::UserData;
+use super::voice::{VoiceStateData, StageInstanceData};
 
 use int_enum::IntEnum;
 use serde::{de::Error as DeserializeError, Deserialize, Deserializer, Serialize};
@@ -100,12 +109,6 @@ impl<'de> Deserialize<'de> for WsInboundEvent {
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
-#[non_exhaustive]
-pub enum WsDispatchEvent {
-    Ready(ReadyData),
-}
-
-#[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ReadyData {
     pub v: u8,
     pub user: UserData,
@@ -113,4 +116,88 @@ pub struct ReadyData {
     pub session_id: String,
     pub shard: Option<[u32; 2]>,
     pub application: (),  // TODO application object
+}
+
+#[derive(Clone, Debug)]
+pub enum ChannelCreateData {
+    /// The channel that was created.
+    pub channel: Channel,
+}
+
+impl<'de> Deserialize<'de> for ChannelCreateEvent {
+    fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+        Ok(Self {
+            channel: ChannelData::deserialize(deserializer)?,
+        })
+    }
+}
+
+#[derive(Clone, Debug)]
+pub enum ChannelUpdateData {
+    /// The channel that was updated.
+    pub channel: Channel,
+}
+
+impl<'de> Deserialize<'de> for ChannelUpdateEvent {
+    fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+        Ok(Self {
+            channel: ChannelData::deserialize(deserializer)?,
+        })
+    }
+}
+
+#[derive(Clone, Debug)]
+pub enum ChannelDeleteData {
+    /// The channel that was deleted.
+    pub channel: Channel,
+}
+
+impl<'de> Deserialize<'de> for ChannelDeleteEvent {
+    fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+        Ok(Self {
+            channel: ChannelData::deserialize(deserializer)?,
+        })
+    }
+}
+
+#[derive(Clone, Debug)]
+pub enum ThreadCreateData {
+    /// The thread that was created.
+    pub thread: Channel,
+}
+
+impl<'de> Deserialize<'de> for ThreadCreateEvent {
+    fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+        Ok(Self {
+            thread: ChannelData::deserialize(deserializer)?,
+        })
+    }
+}
+
+#[derive(Clone, Debug)]
+pub enum ThreadUpdateData {
+    /// The thread that was updated.
+    pub thread: Channel,
+}
+
+impl<'de> Deserialize<'de> for ThreadUpdateEvent {
+    fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+        Ok(Self {
+            thread: ChannelData::deserialize(deserializer)?,
+        })
+    }
+}
+
+#[derive(Clone, Debug)]
+pub enum ThreadDeleteData {
+    /// The thread that was deleted.
+    pub thread: Channel,
+}
+
+
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[non_exhaustive]
+pub enum WsDispatchEvent {
+    Ready(ReadyData),
 }
