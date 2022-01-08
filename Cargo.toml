@@ -50,5 +50,9 @@ version = "0.16"
 default-features = false
 features = ["connect", "rustls-tls-webpki-roots"]
 
+[dependencies.tracing]
+version = "0.1"
+features = ["log"]
+
 [features]
 default = ["chrono"]

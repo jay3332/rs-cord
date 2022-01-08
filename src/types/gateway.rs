@@ -1,8 +1,8 @@
-use crate::models::gateway::OpCode;
 use super::user::UserData;
+use crate::models::gateway::OpCode;
 
 use int_enum::IntEnum;
-use serde::{Deserialize, Deserializer, Serialize, de::Error as DeserializeError};
+use serde::{de::Error as DeserializeError, Deserialize, Deserializer, Serialize};
 use serde_json::Map;
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -30,20 +30,20 @@ pub struct GetGatewayBotData {
 #[non_exhaustive]
 pub enum WsInboundEvent {
     /// An event was dispatched.
-    Dispatch(u64, WsDispatchEvent),  // (seq, event)
+    Dispatch(u64, WsDispatchEvent), // (seq, event)
 
     /// Fired periodically to keep the connection alive.
-    Heartbeat(u64),  // (seq)
+    Heartbeat(u64), // (seq)
 
     /// Request to reconnect to the gateway.
     Reconnect,
 
     /// The session has been invalidated.
-    InvalidSession(bool),  // (should_resume)
+    InvalidSession(bool), // (should_resume)
 
     /// Sent immediately after connecting.
-    Hello(u16),  // (heartbeat_interval)
-    
+    Hello(u16), // (heartbeat_interval)
+
     /// Sent in response to receiving a heartbeat to acknowledge that it has been received.
     HeartbeatAck,
 }
@@ -53,11 +53,21 @@ impl<'de> Deserialize<'de> for WsInboundEvent {
         let mut json = Map::deserialize(deserializer)?;
 
         Ok(
-            match json.remove("op")
+            match json
+                .remove("op")
                 .map(|o| OpCode::from_int(o.as_u64().unwrap() as u8).unwrap())
                 .ok_or(DeserializeError::custom("Missing opcode"))?
             {
-                // TODO: "dispatch" opcode for events
+                OpCode::Dispatch => Self::Dispatch(
+                    json.remove("s")
+                        .ok_or(DeserializeError::custom("Missing sequence"))
+                        .and_then(u64::deserialize)
+                        .map_err(DeserializeError::custom)?,
+                    json.remove("d")
+                        .ok_or(DeserializeError::custom("Missing data"))
+                        .and_then(WsDispatchEvent::deserialize)
+                        .map_err(DeserializeError::custom)?,
+                ),
                 OpCode::Heartbeat => Self::Heartbeat(
                     json.remove("s")
                         .ok_or(DeserializeError::custom("Missing sequence"))
@@ -66,7 +76,8 @@ impl<'de> Deserialize<'de> for WsInboundEvent {
                 ),
                 OpCode::Reconnect => Self::Reconnect,
                 OpCode::Hello => {
-                    let mut d = json.remove("d")
+                    let mut d = json
+                        .remove("d")
                         .ok_or(DeserializeError::custom("Missing data"))
                         .and_then(Map::deserialize)
                         .map_err(DeserializeError::custom)?;
@@ -77,10 +88,10 @@ impl<'de> Deserialize<'de> for WsInboundEvent {
                             .and_then(u16::deserialize)
                             .map_err(DeserializeError::custom)?,
                     )
-                },
+                }
                 OpCode::HeartbeatAck => Self::HeartbeatAck,
                 _ => return Err(DeserializeError::custom("Invalid opcode")),
-            }
+            },
         )
     }
 }
@@ -91,9 +102,9 @@ pub enum WsDispatchEvent {
     Ready {
         v: u8,
         user: UserData,
-        guilds: Vec<()>,  // TODO guild object
+        // guilds: Vec<()>,  // TODO guild object
         session_id: String,
         shard: Option<[u32; 2]>,
-        application: (),  // TODO application object
+        // application: (),  // TODO application object
     },
 }

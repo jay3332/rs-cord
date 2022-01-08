@@ -2,6 +2,8 @@ use crate::constants::DISCORD_API_URL;
 use crate::route;
 use crate::{types, ThreadSafeResult};
 
+use tracing::debug;
+
 use reqwest::header::{HeaderMap, HeaderValue, AUTHORIZATION, CONTENT_TYPE, USER_AGENT};
 use reqwest::Method;
 
@@ -140,6 +142,12 @@ impl<'c, 'r> HttpClientRequestBuilder<'c, 'r> {
     where
         T: serde::de::DeserializeOwned,
     {
+        debug!(
+            "Sending {:?} request to {:?}",
+            self.route.method,
+            self.route.url()
+        );
+
         let request = self._build_request()?;
         Ok(request.send().await?.json::<T>().await?)
     }

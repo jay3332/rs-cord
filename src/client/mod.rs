@@ -100,7 +100,7 @@ impl Client {
         self.user = Some(User::from_user_data(
             self.http.as_ref().unwrap().get_self().await?,
         ));
-        
+
         self.gateway
             .as_ref()
             .unwrap()

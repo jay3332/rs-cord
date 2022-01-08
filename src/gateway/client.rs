@@ -70,10 +70,12 @@ impl Gateway {
     pub async fn connect(&mut self, _reconnect: bool) -> Result<()> {
         self.alive_since = Some(Instant::now());
 
-        match serde_json::from_value::<WsInboundEvent>(self.recv_json().await?.ok_or(GatewayError::NoHello)?)? {
+        match serde_json::from_value::<WsInboundEvent>(
+            self.recv_json().await?.ok_or(GatewayError::NoHello)?,
+        )? {
             WsInboundEvent::Hello(heartbeat_interval) => {
                 self.heartbeat_interval = Some(heartbeat_interval);
-            },
+            }
             _ => return Err(GatewayError::NoHello.into()),
         }
 
@@ -90,8 +92,8 @@ impl Gateway {
             match serde_json::from_value::<WsInboundEvent>(msg)? {
                 WsInboundEvent::HeartbeatAck => {
                     self.latency = Some(self.last_heartbeat.unwrap().elapsed().as_secs_f64());
-                },
-                _ => {},
+                }
+                _ => {}
             }
         }
 
