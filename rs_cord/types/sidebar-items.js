@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["common",""],["gateway",""],["message",""],["user",""]]});
+initSidebarItems({"mod":[["channel",""],["common",""],["emoji",""],["gateway",""],["guild",""],["member",""],["message",""],["presence",""],["role",""],["sticker",""],["user",""],["voice",""]]});

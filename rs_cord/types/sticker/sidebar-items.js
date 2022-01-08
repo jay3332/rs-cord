@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["StickerData",""],["StickerItemData",""]]});

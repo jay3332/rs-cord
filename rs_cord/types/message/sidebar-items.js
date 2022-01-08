@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["MessageData",""]]});
+initSidebarItems({"struct":[["AttachmentData",""],["ChannelMentionData",""],["EmbedAuthorData",""],["EmbedData",""],["EmbedFieldData",""],["EmbedFooterData",""],["EmbedImageData",""],["EmbedProviderData",""],["EmbedThumbnailData",""],["EmbedVideoData",""],["MessageData",""],["MessageReferenceData",""],["ReactionData",""]]});

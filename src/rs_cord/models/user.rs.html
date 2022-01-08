@@ -82,7 +82,7 @@
             <span class="ident">name</span>: <span class="ident">data</span>.<span class="ident">username</span>,
             <span class="ident">discriminator</span>: <span class="ident">data</span>.<span class="ident">discriminator</span>,
             <span class="ident">avatar_hash</span>: <span class="ident">data</span>.<span class="ident">avatar</span>,
-            <span class="ident">bot</span>: <span class="ident">data</span>.<span class="ident">bot</span>,
+            <span class="ident">bot</span>: <span class="ident">data</span>.<span class="ident">bot</span>.<span class="ident">unwrap_or</span>(<span class="bool-val">false</span>),
         }
     }
 
