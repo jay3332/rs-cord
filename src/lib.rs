@@ -1,8 +1,6 @@
-#![feature(never_type)]
-
-#[allow(dead_code)]
-#[forbid(unsafe_code)]
-#[allow(clippy::module_name_repetitions)]
+#![allow(dead_code)]
+#![allow(clippy::module_name_repetitions)]
+#![forbid(unsafe_code)]
 
 mod client;
 pub mod constants;
