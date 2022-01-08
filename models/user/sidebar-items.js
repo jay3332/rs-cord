@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["User","Represents a Discord user."]]});

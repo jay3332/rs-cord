@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Timestamp","Represents a timestamp which contains date and time."]]});
