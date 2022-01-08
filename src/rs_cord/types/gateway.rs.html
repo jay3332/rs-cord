@@ -112,8 +112,13 @@
 <span id="110">110</span>
 <span id="111">111</span>
 <span id="112">112</span>
-</pre><pre class="rust"><code><span class="kw">use</span> <span class="ident"><span class="kw">super</span>::user::UserData</span>;
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::models::gateway::OpCode</span>;
+<span id="113">113</span>
+<span id="114">114</span>
+<span id="115">115</span>
+<span id="116">116</span>
+</pre><pre class="rust"><code><span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::models::gateway::OpCode</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">super</span>::guild::UnavailableGuildData</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">super</span>::user::UserData</span>;
 
 <span class="kw">use</span> <span class="ident">int_enum::IntEnum</span>;
 <span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">de::Error</span> <span class="kw">as</span> <span class="ident">DeserializeError</span>, <span class="ident">Deserialize</span>, <span class="ident">Deserializer</span>, <span class="ident">Serialize</span>};
@@ -215,14 +220,17 @@
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>, <span class="ident">Deserialize</span>, <span class="ident">Serialize</span>)]</span>
 <span class="attribute">#[<span class="ident">non_exhaustive</span>]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">WsDispatchEvent</span> {
-    <span class="ident">Ready</span> {
-        <span class="ident">v</span>: <span class="ident">u8</span>,
-        <span class="ident">user</span>: <span class="ident">UserData</span>,
-        <span class="comment">// guilds: Vec&lt;()&gt;,  // TODO guild object</span>
-        <span class="ident">session_id</span>: <span class="ident">String</span>,
-        <span class="ident">shard</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span>[<span class="ident">u32</span>; <span class="number">2</span>]<span class="op">&gt;</span>,
-        <span class="comment">// application: (),  // TODO application object</span>
-    },
+    <span class="ident">Ready</span>(<span class="ident">ReadyData</span>),
+}
+
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>, <span class="ident">Deserialize</span>, <span class="ident">Serialize</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ReadyData</span> {
+    <span class="kw">pub</span> <span class="ident">v</span>: <span class="ident">u8</span>,
+    <span class="kw">pub</span> <span class="ident">user</span>: <span class="ident">UserData</span>,
+    <span class="kw">pub</span> <span class="ident">guilds</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">UnavailableGuildData</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">session_id</span>: <span class="ident">String</span>,
+    <span class="kw">pub</span> <span class="ident">shard</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span>[<span class="ident">u32</span>; <span class="number">2</span>]<span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">application</span>: (),  <span class="comment">// TODO application object</span>
 }
 </code></pre></div>
 </section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rs_cord" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.59.0-nightly (e012a191d 2022-01-06)" ></div>

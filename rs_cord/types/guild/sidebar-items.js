@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["GuildData",""],["ScheduledEventData",""],["ScheduledEventMetadata",""],["WelcomeScreenChannelData",""],["WelcomeScreenData",""]]});
+initSidebarItems({"struct":[["GuildData",""],["ScheduledEventData",""],["ScheduledEventMetadata",""],["UnavailableGuildData",""],["WelcomeScreenChannelData",""],["WelcomeScreenData",""]]});

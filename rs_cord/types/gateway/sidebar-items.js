@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["WsDispatchEvent",""],["WsInboundEvent","Represents an inbound gateway event."]],"struct":[["GetGatewayBotData",""],["GetGatewayData",""],["SessionStartLimitData",""]]});
+initSidebarItems({"enum":[["WsDispatchEvent",""],["WsInboundEvent","Represents an inbound gateway event."]],"struct":[["GetGatewayBotData",""],["GetGatewayData",""],["ReadyData",""],["SessionStartLimitData",""]]});
