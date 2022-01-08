@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["ActivityAssetsData",""],["ActivityButtonData",""],["ActivityData",""],["ActivityPartyData",""],["ActivitySecretsData",""],["ActivityTimestampsData",""],["PresenceUpdateData",""]]});
+initSidebarItems({"struct":[["ActivityAssetsData",""],["ActivityButtonData",""],["ActivityData",""],["ActivityPartyData",""],["ActivitySecretsData",""],["ActivityTimestampsData",""],["ClientStatusData",""],["PresenceUpdateData",""]]});

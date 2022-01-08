@@ -65,6 +65,14 @@
 <span id="63">63</span>
 <span id="64">64</span>
 <span id="65">65</span>
+<span id="66">66</span>
+<span id="67">67</span>
+<span id="68">68</span>
+<span id="69">69</span>
+<span id="70">70</span>
+<span id="71">71</span>
+<span id="72">72</span>
+<span id="73">73</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident"><span class="kw">super</span>::Snowflake</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::emoji::ActivityEmojiData</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::user::UserData</span>;
@@ -76,7 +84,8 @@
     <span class="kw">pub</span> <span class="ident">user</span>: <span class="ident">UserData</span>,
     <span class="kw">pub</span> <span class="ident">guild_id</span>: <span class="ident">Snowflake</span>,
     <span class="kw">pub</span> <span class="ident">status</span>: <span class="ident">String</span>,
-
+    <span class="kw">pub</span> <span class="ident">activities</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">ActivityData</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">client_status</span>: <span class="ident">ClientStatusData</span>,
 }
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>, <span class="ident">Deserialize</span>, <span class="ident">Serialize</span>)]</span>
@@ -129,6 +138,13 @@
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ActivityButtonData</span> {
     <span class="kw">pub</span> <span class="ident">label</span>: <span class="ident">String</span>,
     <span class="kw">pub</span> <span class="ident">url</span>: <span class="ident">String</span>,
+}
+
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>, <span class="ident">Deserialize</span>, <span class="ident">Serialize</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ClientStatusData</span> {
+    <span class="kw">pub</span> <span class="ident">desktop</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">mobile</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">web</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
 }
 </code></pre></div>
 </section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rs_cord" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.59.0-nightly (e012a191d 2022-01-06)" ></div>
