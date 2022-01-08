@@ -1,0 +1,3 @@
+(function() {var implementors = {};
+implementors["rs_cord"] = [{"text":"impl <a class=\"trait\" href=\"https://docs.rs/int-enum/*/int_enum/trait.IntEnum.html\" title=\"trait int_enum::IntEnum\">IntEnum</a> for <a class=\"enum\" href=\"rs_cord/models/gateway/enum.OpCode.html\" title=\"enum rs_cord::models::gateway::OpCode\">OpCode</a>","synthetic":false,"types":["rs_cord::models::gateway::OpCode"]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()
