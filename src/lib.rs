@@ -3,7 +3,6 @@
 #[allow(dead_code)]
 #[forbid(unsafe_code)]
 #[allow(clippy::module_name_repetitions)]
-
 mod client;
 pub mod constants;
 pub mod error;
