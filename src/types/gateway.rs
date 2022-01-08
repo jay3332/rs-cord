@@ -1,5 +1,6 @@
-use super::user::UserData;
 use crate::models::gateway::OpCode;
+use super::guild::UnavailableGuildData;
+use super::user::UserData;
 
 use int_enum::IntEnum;
 use serde::{de::Error as DeserializeError, Deserialize, Deserializer, Serialize};
@@ -101,12 +102,15 @@ impl<'de> Deserialize<'de> for WsInboundEvent {
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[non_exhaustive]
 pub enum WsDispatchEvent {
-    Ready {
-        v: u8,
-        user: UserData,
-        // guilds: Vec<()>,  // TODO guild object
-        session_id: String,
-        shard: Option<[u32; 2]>,
-        // application: (),  // TODO application object
-    },
+    Ready(ReadyData),
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct ReadyData {
+    pub v: u8,
+    pub user: UserData,
+    pub guilds: Vec<UnavailableGuildData>,
+    pub session_id: String,
+    pub shard: Option<[u32; 2]>,
+    pub application: (),  // TODO application object
 }

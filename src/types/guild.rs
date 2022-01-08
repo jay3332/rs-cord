@@ -67,6 +67,12 @@ pub struct GuildData {
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct UnavailableGuildData {
+    pub id: Snowflake,
+    pub unavailable: bool,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct WelcomeScreenData {
     pub description: Option<String>,
     pub welcome_channels: Vec<WelcomeScreenChannelData>,
