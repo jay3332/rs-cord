@@ -117,8 +117,7 @@ async fn main() {
 You can [join our Discord server](https://discord.gg/uch68Ujf38) in order to get help on all things rs-cord.
 
 ## Contributing
-Make sure to format your code using `cargo fmt`. Additionally, make sure it passes `cargo check` with minimal to zero warnings.
-
+We appreciate all of your contributions! Please read [CONTRIBUTING.md](https://github.com/jay3332/rs-cord/blob/main/CONTRIBUTING.md) for instructions on how to contribute.
 ## Links
 - [Documentation (Stable)](https://docs.rs/rs-cord)
 - [Documentation (GitHub)](https://jay3332.github.io/rs-cord)
