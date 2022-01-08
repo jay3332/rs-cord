@@ -30,7 +30,7 @@ impl User {
             name: data.username,
             discriminator: data.discriminator,
             avatar_hash: data.avatar,
-            bot: data.bot,
+            bot: data.bot.unwrap_or(false),
         }
     }
 
