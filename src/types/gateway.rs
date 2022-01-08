@@ -53,24 +53,25 @@ impl<'de> Deserialize<'de> for WsInboundEvent {
         let mut json = Map::deserialize(deserializer)?;
 
         Ok(
+            #[allow(clippy::cast_possible_truncation)]
             match json
                 .remove("op")
                 .map(|o| OpCode::from_int(o.as_u64().unwrap() as u8).unwrap())
-                .ok_or(DeserializeError::custom("Missing opcode"))?
+                .ok_or_else(|| DeserializeError::custom("Missing opcode"))?
             {
                 OpCode::Dispatch => Self::Dispatch(
                     json.remove("s")
-                        .ok_or(DeserializeError::custom("Missing sequence"))
+                        .ok_or_else(|| DeserializeError::custom("Missing sequence"))
                         .and_then(u64::deserialize)
                         .map_err(DeserializeError::custom)?,
                     json.remove("d")
-                        .ok_or(DeserializeError::custom("Missing data"))
+                        .ok_or_else(|| DeserializeError::custom("Missing data"))
                         .and_then(WsDispatchEvent::deserialize)
                         .map_err(DeserializeError::custom)?,
                 ),
                 OpCode::Heartbeat => Self::Heartbeat(
                     json.remove("s")
-                        .ok_or(DeserializeError::custom("Missing sequence"))
+                        .ok_or_else(|| DeserializeError::custom("Missing sequence"))
                         .and_then(u64::deserialize)
                         .map_err(DeserializeError::custom)?,
                 ),
@@ -78,13 +79,13 @@ impl<'de> Deserialize<'de> for WsInboundEvent {
                 OpCode::Hello => {
                     let mut d = json
                         .remove("d")
-                        .ok_or(DeserializeError::custom("Missing data"))
+                        .ok_or_else(|| DeserializeError::custom("Missing data"))
                         .and_then(Map::deserialize)
                         .map_err(DeserializeError::custom)?;
 
                     Self::Hello(
                         d.remove("heartbeat_interval")
-                            .ok_or(DeserializeError::custom("Missing heartbeat_interval"))
+                            .ok_or_else(|| DeserializeError::custom("Missing heartbeat_interval"))
                             .and_then(u16::deserialize)
                             .map_err(DeserializeError::custom)?,
                     )
