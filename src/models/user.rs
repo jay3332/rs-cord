@@ -30,14 +30,20 @@ impl User {
             name: data.username,
             discriminator: data.discriminator,
             avatar_hash: data.avatar,
-            bot: data.bot,
+            bot: data.bot.unwrap_or(false),
         }
     }
 
-    /// The Discord tag of this user, formatted in `username#discriminator` format.
+    /// Returns the Discord tag of this user, formatted in `username#discriminator` format.
     #[must_use]
     pub fn tag(&self) -> String {
         format!("{}#{}", self.name, self.discriminator)
+    }
+
+    /// The mention of this user, which if allowed, pings them.
+    #[must_use]
+    pub fn mention(&self) -> String {
+        format!("<@{}>", self.id)
     }
 
     /// Whether or not this user is a bot account.
