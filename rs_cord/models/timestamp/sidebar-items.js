@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["Timestamp","Represents a timestamp which contains date and time."]]});
+initSidebarItems({"enum":[["RelativeTime","An enum to represent relative time."]],"struct":[["Timestamp","Represents a timestamp which contains date and time."]]});
