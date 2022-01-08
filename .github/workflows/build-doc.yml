@@ -19,10 +19,11 @@ jobs:
             override: true
 
       - run: cargo doc --all-features
+      - run: cp -a target/doc/rs-cord/. target/doc/docs/
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         if: ${{ github.ref == 'refs/heads/main' }}
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: target/doc/rs_cord
+          publish_dir: target/doc
