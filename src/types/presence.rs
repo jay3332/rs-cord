@@ -9,7 +9,8 @@ pub struct PresenceUpdateData {
     pub user: UserData,
     pub guild_id: Snowflake,
     pub status: String,
-
+    pub activities: Vec<ActivityData>,
+    pub client_status: ClientStatusData,
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -62,4 +63,11 @@ pub struct ActivitySecretsData {
 pub struct ActivityButtonData {
     pub label: String,
     pub url: String,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct ClientStatusData {
+    pub desktop: Option<String>,
+    pub mobile: Option<String>,
+    pub web: Option<String>,
 }
