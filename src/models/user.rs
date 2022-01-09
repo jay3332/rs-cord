@@ -24,6 +24,12 @@ pub struct User {
     /// - [`User::default_avatar`]
     pub avatar_hash: Option<String>,
 
+    /// The banner hash of this user's banner if this user has a banner.
+    /// 
+    /// # See
+    /// - [`User::banner`]
+    pub banner_hash: Option<String>,
+
     /// Whether or not this user is a bot account.
     pub bot: bool,
 
@@ -42,6 +48,7 @@ impl User {
             name: data.username,
             discriminator: data.discriminator,
             avatar_hash: data.avatar,
+            banner_hash: data.banner,
             bot: data.bot.unwrap_or(false),
             system: data.system.unwrap_or(false),
             flags: UserFlags::from_bits_truncate(
@@ -97,6 +104,12 @@ impl User {
         } else {
             self.default_avatar()
         }
+    }
+
+    /// The banner that this user has. If this user does not have a banner, this will be [`None`].
+    #[must_use]
+    pub fn banner(&self) -> Option<Asset> {
+        self.banner_hash.clone().map(|b| Asset::new(self.state.clone(), format!("banners/{}/{}", self.id, b), false))
     }
 
     /// The hypesquad house of this user.
