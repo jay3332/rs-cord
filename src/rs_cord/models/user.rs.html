@@ -56,11 +56,18 @@
 <span id="54">54</span>
 <span id="55">55</span>
 <span id="56">56</span>
-</pre><pre class="rust"><code><span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::impl_created_at</span>;
+<span id="57">57</span>
+<span id="58">58</span>
+<span id="59">59</span>
+<span id="60">60</span>
+</pre><pre class="rust"><code><span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">ClientState</span>, <span class="ident">impl_created_at</span>};
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::types::user::UserData</span>;
 
 <span class="doccomment">/// Represents a Discord user.</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">User</span> {
+    <span class="ident">state</span>: <span class="ident">ClientState</span>,
+
     <span class="doccomment">/// The snowflake ID of this user.</span>
     <span class="kw">pub</span> <span class="ident">id</span>: <span class="ident">u64</span>,
 
@@ -82,8 +89,9 @@
 }
 
 <span class="kw">impl</span> <span class="ident">User</span> {
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">from_user_data</span>(<span class="ident">data</span>: <span class="ident">UserData</span>) -&gt; <span class="self">Self</span> {
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">from_user_data</span>(<span class="ident">state</span>: <span class="ident">ClientState</span>, <span class="ident">data</span>: <span class="ident">UserData</span>) -&gt; <span class="self">Self</span> {
         <span class="self">Self</span> {
+            <span class="ident">state</span>,
             <span class="ident">id</span>: <span class="ident">data</span>.<span class="ident">id</span>.<span class="ident">parse</span>().<span class="ident">unwrap</span>(),
             <span class="ident">name</span>: <span class="ident">data</span>.<span class="ident">username</span>,
             <span class="ident">discriminator</span>: <span class="ident">data</span>.<span class="ident">discriminator</span>,

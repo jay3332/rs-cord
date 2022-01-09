@@ -28,6 +28,7 @@
 <span id="26">26</span>
 <span id="27">27</span>
 <span id="28">28</span>
+<span id="29">29</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">std::sync::Arc</span>;
 
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::Client</span>;
@@ -35,9 +36,10 @@
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::User</span>;
 
 <span class="doccomment">/// Represents the state of the client.</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ClientState</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span><span class="op">&gt;</span> {
-    <span class="doccomment">/// A reference to the client serving this state.</span>
-    <span class="kw">pub</span> <span class="ident">client</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;c</span> <span class="ident">Client</span>,
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ClientState</span> {
+    <span class="doccomment">/// An [`Arc`][`std::sync::Arc`] reference to the client serving this state.</span>
+    <span class="kw">pub</span> <span class="ident">client</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Client</span><span class="op">&gt;</span>,
 
     <span class="doccomment">/// The HTTP Client being used.</span>
     <span class="kw">pub</span> <span class="ident">http</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">HttpClient</span><span class="op">&gt;</span>,
@@ -47,7 +49,7 @@
     <span class="kw">pub</span> <span class="ident">token</span>: <span class="ident">String</span>,
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span><span class="op">&gt;</span> <span class="ident">ClientState</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span><span class="op">&gt;</span> {
+<span class="kw">impl</span> <span class="ident">ClientState</span> {
     <span class="doccomment">/// The user the client is logged in to.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Panics</span>

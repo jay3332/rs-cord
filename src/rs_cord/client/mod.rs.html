@@ -142,6 +142,8 @@
 <span id="140">140</span>
 <span id="141">141</span>
 <span id="142">142</span>
+<span id="143">143</span>
+<span id="144">144</span>
 </pre><pre class="rust"><code><span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">state</span>;
 
 <span class="kw">use</span> <span class="ident">std::fmt::Display</span>;
@@ -156,6 +158,7 @@
 
 <span class="doccomment">/// An authenticated client which will be able to interact with the Discord API,</span>
 <span class="doccomment">/// through both the REST and Gateway (websocket) APIs.</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Client</span> {
     <span class="doccomment">/// The client for Discord&#39;s RESTful API.  </span>
     <span class="kw">pub</span> <span class="ident">http</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">HttpClient</span><span class="op">&gt;</span><span class="op">&gt;</span>,
@@ -227,7 +230,7 @@
     <span class="doccomment">/// - No token has been provided yet.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">state</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">ClientState</span> {
         <span class="ident">ClientState</span> {
-            <span class="ident">client</span>: <span class="self">self</span>,
+            <span class="ident">client</span>: <span class="ident">Arc::new</span>(<span class="self">self</span>.<span class="ident">clone</span>()),
             <span class="ident">http</span>: <span class="self">self</span>.<span class="ident">http</span>.<span class="ident">clone</span>().<span class="ident">expect</span>(<span class="string">&quot;HTTP client is not initialized.&quot;</span>),
             <span class="ident">token</span>: <span class="self">self</span>.<span class="ident">token</span>.<span class="ident">clone</span>().<span class="ident">expect</span>(<span class="string">&quot;No token has been provided yet.&quot;</span>),
         }
@@ -242,6 +245,7 @@
         <span class="self">self</span>.<span class="ident">init_gateway</span>().<span class="kw">await</span><span class="question-mark">?</span>;
 
         <span class="self">self</span>.<span class="ident">user</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">User::from_user_data</span>(
+            <span class="self">self</span>.<span class="ident">state</span>(),
             <span class="self">self</span>.<span class="ident">http</span>.<span class="ident">as_ref</span>().<span class="ident">unwrap</span>().<span class="ident">get_self</span>().<span class="kw">await</span><span class="question-mark">?</span>,
         ));
 
