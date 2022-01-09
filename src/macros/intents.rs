@@ -1,7 +1,7 @@
 /// Aids in constructing a set of gateway intent bitflags.
 ///
 /// # See
-/// - [`Intents`]
+/// - [`Intents`][`rs_cord::Intents`]
 ///
 /// # Example
 ///

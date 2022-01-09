@@ -18,8 +18,8 @@ pub struct User {
     /// The avatar hash of this user if this user has an avatar.
     ///
     /// # See
-    /// [`User::avatar`]
-    /// [`User::default_avatar`]
+    /// - [`User::avatar`]
+    /// - [`User::default_avatar`]
     pub avatar_hash: Option<String>,
 
     /// Whether or not this user is a bot account.

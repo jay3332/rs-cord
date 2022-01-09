@@ -131,12 +131,15 @@ impl<'c, 'r> HttpClientRequestBuilder<'c, 'r> {
     /// Sends this request, returning the response sanitized into the given struct.
     ///
     /// # Example
+    /// 
+    /// ```rust
     /// let raw_msg = client.http.request(route!(POST, "/channels/{channel_id}/messages", channel_id = 1234))
     ///     .json(MessageCreatePayload {
     ///         content: "Hello, world!".to_string(),
     ///     })
-    ///     .`send_expecting_json::`<MessagePayload>()
+    ///     .send_expecting_json::<MessageData>()
     ///     .await?;
+    /// ```
     pub async fn send_expecting_json<T>(&self) -> ThreadSafeResult<T>
     where
         T: serde::de::DeserializeOwned,
