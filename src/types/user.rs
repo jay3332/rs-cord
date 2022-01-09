@@ -15,7 +15,7 @@ pub struct UserData {
     pub locale: Option<String>,
     pub verified: Option<bool>,
     pub email: Option<String>,
-    pub flags: Option<u64>,
+    pub flags: Option<u32>,
     pub premium_type: Option<u8>,
-    pub public_flags: Option<u64>,
+    pub public_flags: Option<u32>,
 }
