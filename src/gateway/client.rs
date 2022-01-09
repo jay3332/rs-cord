@@ -118,7 +118,7 @@ impl Gateway {
                 WsInboundEvent::Hello(heartbeat_interval) => {
                     self.heartbeat_interval = Some(heartbeat_interval);
                 }
-                _ => return Err(GatewayError::NoHello.into()),
+                _ => return Err(Error::Gateway(GatewayError::NoHello)),
             }
 
             if self.is_resuming {
