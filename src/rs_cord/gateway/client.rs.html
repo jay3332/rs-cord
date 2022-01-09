@@ -380,7 +380,7 @@
             }
 
             <span class="kw">if</span> <span class="self">self</span>.<span class="ident">is_resuming</span> {
-                <span class="self">self</span>.<span class="ident">resume</span>().<span class="kw">await</span>;
+                <span class="self">self</span>.<span class="ident">resume</span>().<span class="kw">await</span><span class="question-mark">?</span>;
             } <span class="kw">else</span> {
                 <span class="self">self</span>.<span class="ident">identify</span>().<span class="kw">await</span><span class="question-mark">?</span>;
             }
@@ -391,11 +391,11 @@
                 <span class="macro">info!</span>(<span class="string">&quot;Gateway disconnected, attempting to reconnect.&quot;</span>);
                 <span class="self">self</span>.<span class="ident">session_id</span> <span class="op">=</span> <span class="prelude-val">None</span>;
                 <span class="self">self</span>.<span class="ident">seq</span> <span class="op">=</span> <span class="prelude-val">None</span>;
-                <span class="self">self</span>.<span class="ident">init</span>().<span class="kw">await</span>;
+                <span class="self">self</span>.<span class="ident">init</span>().<span class="kw">await</span><span class="question-mark">?</span>;
             } <span class="kw">else</span> {
                 <span class="macro">warn!</span>(<span class="string">&quot;Attempting to resume.&quot;</span>);
                 <span class="self">self</span>.<span class="ident">is_resuming</span> <span class="op">=</span> <span class="bool-val">true</span>;
-                <span class="self">self</span>.<span class="ident">init</span>().<span class="kw">await</span>;
+                <span class="self">self</span>.<span class="ident">init</span>().<span class="kw">await</span><span class="question-mark">?</span>;
             }
         }
 
