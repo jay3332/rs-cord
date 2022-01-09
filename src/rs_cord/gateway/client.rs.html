@@ -254,6 +254,7 @@
 <span id="252">252</span>
 <span id="253">253</span>
 <span id="254">254</span>
+<span id="255">255</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident"><span class="kw">super</span>::GatewayError</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::http::HttpClient</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::internal::prelude</span>::<span class="kw-2">*</span>;
@@ -434,6 +435,7 @@
                                 <span class="kw">_</span> =&gt; {}
                             }
                         }
+                        <span class="kw">_</span> =&gt; {},
                     }
                 }
                 <span class="ident">MessageType::Disconnected</span>(<span class="ident">frame</span>) =&gt; {
