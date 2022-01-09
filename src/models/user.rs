@@ -1,4 +1,4 @@
-use crate::{Asset, ClientState, impl_created_at};
+use crate::{Asset, Color, ClientState, impl_created_at};
 use crate::types::user::UserData;
 
 use bitflags::bitflags;
@@ -26,9 +26,18 @@ pub struct User {
 
     /// The banner hash of this user's banner if this user has a banner.
     /// 
+    /// # Note
+    /// This will always be [`None`] unless fetched via [`Client::fetch_user`].
+    /// 
     /// # See
     /// - [`User::banner`]
     pub banner_hash: Option<String>,
+
+    /// The accent color of this user.
+    /// 
+    /// # Note
+    /// This will always be [`None`] unless fetched via [`Client::fetch_user`].
+    pub accent_color: Option<Color>,
 
     /// Whether or not this user is a bot account.
     pub bot: bool,
@@ -49,6 +58,7 @@ impl User {
             discriminator: data.discriminator,
             avatar_hash: data.avatar,
             banner_hash: data.banner,
+            accent_color: data.accent_color.map(Color::new),
             bot: data.bot.unwrap_or(false),
             system: data.system.unwrap_or(false),
             flags: UserFlags::from_bits_truncate(
@@ -107,9 +117,32 @@ impl User {
     }
 
     /// The banner that this user has. If this user does not have a banner, this will be [`None`].
+    /// 
+    /// # Note
+    /// This will always be [`None`] unless fetched via [`Client::fetch_user`].
     #[must_use]
     pub fn banner(&self) -> Option<Asset> {
         self.banner_hash.clone().map(|b| Asset::new(self.state.clone(), format!("banners/{}/{}", self.id, b), false))
+    }
+
+    /// The accent color of this user.
+    /// 
+    /// # Note
+    /// This will always be [`None`] unless fetched via [`Client::fetch_user`].
+    #[must_use]
+    pub fn accent_color(&self) -> Option<Color> {
+        self.accent_color.clone()
+    }
+
+    /// The accent colour of this user.
+    /// 
+    /// This is an alias to [`User::accent_color`].
+    /// 
+    /// # Note
+    /// This will always be [`None`] unless fetched via [`Client::fetch_user`].
+    #[must_use]
+    pub fn accent_colour(&self) -> Option<Color> {
+        self.accent_color.clone()
     }
 
     /// The hypesquad house of this user.
