@@ -112,13 +112,13 @@ impl Gateway {
             match serde_json::from_value::<WsInboundEvent>(
                 match self.recv_json().await?.ok_or(GatewayError::NoHello)? {
                     MessageType::Normal(value) => value,
-                    _ => return Err(GatewayError::NoHello),
+                    _ => return Err(GatewayError::NoHello.into()),
                 },
             )? {
                 WsInboundEvent::Hello(heartbeat_interval) => {
                     self.heartbeat_interval = Some(heartbeat_interval);
                 }
-                _ => return Err(GatewayError::NoHello),
+                _ => return Err(GatewayError::NoHello.into()),
             }
 
             if self.is_resuming {
