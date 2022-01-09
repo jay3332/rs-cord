@@ -19,13 +19,22 @@
 <span id="17">17</span>
 <span id="18">18</span>
 <span id="19">19</span>
+<span id="20">20</span>
+<span id="21">21</span>
+<span id="22">22</span>
+<span id="23">23</span>
+<span id="24">24</span>
+<span id="25">25</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">std::error::Error</span> <span class="kw">as</span> <span class="ident">StdError</span>;
 <span class="kw">use</span> <span class="ident">std::fmt</span>::{<span class="ident">Display</span>, <span class="ident">Formatter</span>, <span class="prelude-ty">Result</span> <span class="kw">as</span> <span class="ident">FmtResult</span>};
+
+<span class="kw">use</span> <span class="ident">tokio_tungstenite::tungstenite::protocol::frame::CloseFrame</span>;
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">GatewayError</span> {
     <span class="ident">NoSessionId</span>,
     <span class="ident">NoHello</span>,
+    <span class="ident">Disconnected</span>(<span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">CloseFrame</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span><span class="op">&gt;</span><span class="op">&gt;</span>),
 }
 
 <span class="kw">impl</span> <span class="ident">Display</span> <span class="kw">for</span> <span class="ident">GatewayError</span> {
@@ -33,6 +42,9 @@
         <span class="kw">match</span> <span class="self">self</span> {
             <span class="ident">GatewayError::NoSessionId</span> =&gt; <span class="ident">f</span>.<span class="ident">write_str</span>(<span class="string">&quot;No session id found when needed&quot;</span>),
             <span class="ident">GatewayError::NoHello</span> =&gt; <span class="ident">f</span>.<span class="ident">write_str</span>(<span class="string">&quot;Didn&#39;t receive hello event&quot;</span>),
+            <span class="ident">GatewayError::Disconnected</span>(<span class="kw">_</span>) =&gt; {
+                <span class="ident">f</span>.<span class="ident">write_str</span>(<span class="string">&quot;Disconnected from gateway, this is usually handled internally.&quot;</span>)
+            }
         }
     }
 }
