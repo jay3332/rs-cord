@@ -112,7 +112,7 @@ impl Gateway {
             match serde_json::from_value::<WsInboundEvent>(
                 match self.recv_json().await?.ok_or(GatewayError::NoHello)? {
                     MessageType::Normal(value) => value,
-                    _ => return Err(GatewayError::NoHello),
+                    _ => return Err(GatewayError::NoHello).into(),
                 },
             )? {
                 WsInboundEvent::Hello(heartbeat_interval) => {
@@ -163,10 +163,10 @@ impl Gateway {
                             }
                         }
                         WsInboundEvent::Dispatch(seq, event) => {
-                            self.seq = seq;
+                            self.seq = Some(seq);
 
                             match event {
-                                WsInboundEvent::Resumed => {
+                                WsDispatchEvent::Resumed => {
                                     self.is_resuming = false;
                                     info!("Successfully resumed gateway session.");
                                 }
