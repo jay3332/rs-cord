@@ -85,7 +85,7 @@ impl Gateway {
             }))
             .await?;
 
-        self.info = self.http.get_gateway_bot().await.map_err(Error::from)?;
+        let info = self.http.get_gateway_bot().await.map_err(Error::from)?;
 
         let (stream, _) = connect_async_with_config(
             (&info).url.clone(),
@@ -98,6 +98,7 @@ impl Gateway {
         )
         .await?;
 
+        self.info = info.clone();
         self.stream = stream;
 
         Ok(())
@@ -155,7 +156,11 @@ impl Gateway {
                             self.latency =
                                 Some(self.last_heartbeat.unwrap().elapsed().as_secs_f64());
                         }
-                        WsInboundEvent::Heartbeat => self.heartbeat().await?,
+                        WsInboundEvent::Heartbeat(seq) => {
+                            self.seq = Some(seq);
+
+                            self.heartbeat().await?
+                        },
                         WsInboundEvent::Reconnect => {
                             info!("Received a request to disconnect and resume gateway session.");
                             if self.session_id.is_some() {
