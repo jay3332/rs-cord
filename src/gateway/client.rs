@@ -178,6 +178,7 @@ impl Gateway {
                                 _ => {}
                             }
                         }
+                        _ => {},
                     }
                 }
                 MessageType::Disconnected(frame) => {
