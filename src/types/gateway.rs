@@ -219,6 +219,33 @@ pub struct ChannelPinsUpdateData {
     pub last_pin_timestamp: Option<String>,
 }
 
+#[derive(Clone, Debug)]
+pub struct GuildCreateData {
+    /// The guild that was created.
+    pub guild: GuildData,
+}
+
+impl<'de> Deserialize<'de> for GuildCreateData {
+    fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+        Ok(Self {
+            guild: GuildData::deserialize(deserializer)?,
+        })
+    }
+}
+
+#[derive(Clone, Debug)]
+pub struct GuildUpdateData {
+    /// The guild that was updated.
+    pub guild: GuildData,
+}
+
+impl<'de> Deserialize<'de> for GuildUpdateData {
+    fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+        Ok(Self {
+            guild: GuildData::deserialize(deserializer)?,
+        })
+    }
+}
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[non_exhaustive]
