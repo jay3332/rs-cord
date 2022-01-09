@@ -119,7 +119,7 @@ pub struct ReadyData {
 }
 
 #[derive(Clone, Debug)]
-pub enum ChannelCreateData {
+pub struct ChannelCreateData {
     /// The channel that was created.
     pub channel: Channel,
 }
@@ -133,7 +133,7 @@ impl<'de> Deserialize<'de> for ChannelCreateEvent {
 }
 
 #[derive(Clone, Debug)]
-pub enum ChannelUpdateData {
+pub struct ChannelUpdateData {
     /// The channel that was updated.
     pub channel: Channel,
 }
@@ -147,7 +147,7 @@ impl<'de> Deserialize<'de> for ChannelUpdateEvent {
 }
 
 #[derive(Clone, Debug)]
-pub enum ChannelDeleteData {
+pub struct ChannelDeleteData {
     /// The channel that was deleted.
     pub channel: Channel,
 }
@@ -161,7 +161,7 @@ impl<'de> Deserialize<'de> for ChannelDeleteEvent {
 }
 
 #[derive(Clone, Debug)]
-pub enum ThreadCreateData {
+pub struct ThreadCreateData {
     /// The thread that was created.
     pub thread: Channel,
 }
@@ -175,7 +175,7 @@ impl<'de> Deserialize<'de> for ThreadCreateEvent {
 }
 
 #[derive(Clone, Debug)]
-pub enum ThreadUpdateData {
+pub struct ThreadUpdateData {
     /// The thread that was updated.
     pub thread: Channel,
 }
@@ -189,7 +189,7 @@ impl<'de> Deserialize<'de> for ThreadUpdateEvent {
 }
 
 #[derive(Clone, Debug)]
-pub enum ThreadDeleteData {
+pub struct ThreadDeleteData {
     /// The thread that was deleted.
     pub thread: Channel,
 }
