@@ -10,8 +10,11 @@ use flate2::read::ZlibDecoder;
 use futures_util::{SinkExt, StreamExt};
 use serde_json::Value;
 
-use tokio_tungstenite::connect_async_with_config;
-use tokio_tungstenite::tungstenite::protocol::{Message, WebSocketConfig};
+use tokio_tungstenite::{
+    connect_async_with_config,
+    tokio_tungstenite::tungstenite::protocol::frame::{coding::CloseCode, CloseFrame},
+    Message, WebSocketConfig,
+};
 
 use std::sync::Arc;
 use std::time::Instant;
@@ -66,39 +69,106 @@ impl Gateway {
         })
     }
 
-    #[allow(unreachable_code)]
-    #[allow(unreachable_patterns)]
-    pub async fn connect(&mut self, _reconnect: bool) -> Result<()> {
-        self.alive_since = Some(Instant::now());
+    async fn init(&mut self) -> Result<()> {
+        self.stream
+            .close(CloseFrame {
+                code: CloseCode::Normal,
+                reason: None,
+            })
+            .await?;
 
-        match serde_json::from_value::<WsInboundEvent>(
-            self.recv_json().await?.ok_or(GatewayError::NoHello)?,
-        )? {
-            WsInboundEvent::Hello(heartbeat_interval) => {
-                self.heartbeat_interval = Some(heartbeat_interval);
-            }
-            _ => return Err(GatewayError::NoHello.into()),
-        }
+        self.info = self.http.get_gateway_bot().await.map_err(Error::from)?;
 
-        self.identify().await?;
-        self.start_recv().await?;
+        let (stream, _) = connect_async_with_config(
+            (&info).url.clone(),
+            Some(WebSocketConfig {
+                max_send_queue: None,
+                max_message_size: None,
+                max_frame_size: None,
+                accept_unmasked_frames: false,
+            }),
+        )
+        .await?;
+
+        self.stream = stream;
 
         Ok(())
     }
 
-    pub async fn start_recv(&mut self) -> Result<()> {
-        while let Some(msg) = self.recv_json().await? {
-            self.try_heartbeat().await?;
+    #[allow(unreachable_code)]
+    #[allow(unreachable_patterns)]
+    pub async fn connect(&mut self) -> Result<()> {
+        loop {
+            self.alive_since = Some(Instant::now());
 
-            match serde_json::from_value::<WsInboundEvent>(msg)? {
-                WsInboundEvent::HeartbeatAck => {
-                    self.latency = Some(self.last_heartbeat.unwrap().elapsed().as_secs_f64());
+            match serde_json::from_value::<WsInboundEvent>(
+                self.recv_json().await?.ok_or(GatewayError::NoHello)?,
+            )? {
+                WsInboundEvent::Hello(heartbeat_interval) => {
+                    self.heartbeat_interval = Some(heartbeat_interval);
                 }
-                _ => {}
+                _ => return Err(GatewayError::NoHello.into()),
+            }
+
+            if self.is_resuming {
+                self.resume().await;
+            } else {
+                self.identify().await?;
+            }
+
+            let start_new_session = self.start_recv().await?;
+
+            if start_new_session {
+                info!("Gateway disconnected, attempting to reconnect.");
+                self.session_id = None;
+                self.seq = None;
+                self.init().await;
+            } else {
+                warn!("Attempting to resume.");
+                self.is_resuming = true;
+                self.init().await;
             }
         }
 
         Ok(())
+    }
+
+    pub async fn start_recv(&mut self) -> Result<bool> {
+        while let Some(msg) = self.recv_json().await? {
+            match msg {
+                Value => {
+                    self.try_heartbeat().await?;
+
+                    match serde_json::from_value::<WsInboundEvent>(msg)? {
+                        WsInboundEvent::HeartbeatAck => {
+                            self.latency =
+                                Some(self.last_heartbeat.unwrap().elapsed().as_secs_f64());
+                        }
+                        WsInboundEvent::Heartbeat => self.heartbeat().await?,
+                        WsInboundEvent::Reconnect => {
+                            info!("Received a request to disconnect and resume gateway session.");
+                            if self.session_id.is_some() {
+                                return false;
+                            }
+                        }
+                        WsInboundEvent::Resumed => {
+                            self.is_resuming = false;
+                            info!("Successfully resumed.")
+                        }
+                    }
+                }
+                GatewayError::Disconnected(frame) => {
+                    let resume = handle_gateway_disconnect(frame);
+                    if resume && self.session_id.is_some() {
+                        return false;
+                    } else {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        Ok(true) // If we somehow get here, start a new session.
     }
 
     pub async fn recv_json(&mut self) -> Result<Option<Value>> {
@@ -142,7 +212,16 @@ pub fn handle_ws_message(message: Option<Message>) -> Result<Option<Value>> {
             .map(Some)
             .map_err(Error::from)?,
         Some(Message::Text(text)) => serde_json::from_str(&text).map(Some).map_err(Error::from)?,
-        Some(Message::Close(Some(_))) => None, // TODO: handle close
+        Some(Message::Close(Some(frame))) => Some(GatewayError::Disconnected(frame)), // TODO: handle close
         _ => None,
     })
+}
+
+#[inline]
+pub fn handle_gateway_disconnect(frame: CloseFrame) -> bool {
+    match frame.code.into() {
+        4013 | 4014 => false,
+        4004 => false,
+        _ => true,
+    }
 }

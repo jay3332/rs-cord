@@ -16,3 +16,6 @@ pub use client::{Client, ClientState};
 pub use error::{Error as RsCordError, ThreadSafeError, ThreadSafeResult};
 pub use internal::prelude;
 pub use models::*;
+
+#[macro_use]
+extern crate tracing;
