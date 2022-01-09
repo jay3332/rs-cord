@@ -1,7 +1,7 @@
 use std::error::Error as StdError;
 use std::fmt::{Display, Formatter, Result as FmtResult};
 
-use tokio_tungstenite::tungstenite::protocol::frame::CloseFrame;
+pub use tokio_tungstenite::tungstenite::protocol::frame::CloseFrame;
 
 #[derive(Clone, Debug)]
 pub enum GatewayError {

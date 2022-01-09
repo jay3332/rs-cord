@@ -123,7 +123,7 @@ impl Gateway {
             }
 
             if self.is_resuming {
-                self.resume().await;
+                self.resume().await?;
             } else {
                 self.identify().await?;
             }
@@ -134,11 +134,11 @@ impl Gateway {
                 info!("Gateway disconnected, attempting to reconnect.");
                 self.session_id = None;
                 self.seq = None;
-                self.init().await;
+                self.init().await?;
             } else {
                 warn!("Attempting to resume.");
                 self.is_resuming = true;
-                self.init().await;
+                self.init().await?;
             }
         }
 
