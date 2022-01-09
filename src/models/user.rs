@@ -1,4 +1,4 @@
-use crate::{ClientState, impl_created_at};
+use crate::{Asset, ClientState, impl_created_at};
 use crate::types::user::UserData;
 
 /// Represents a Discord user.
@@ -54,6 +54,25 @@ impl User {
     #[must_use]
     pub fn is_bot(&self) -> bool {
         self.bot
+    }
+
+    /// The default avatar of this user if this user does not have an avatar. This may not be their actual avatar.
+    /// 
+    /// # See
+    /// [`User::avatar`]
+    #[must_use]
+    pub fn default_avatar(&self) -> Asset {
+        Asset::new(self.state.clone(), format!("embed/avatars/{}", self.discriminator.parse::<u32>().unwrap() % 5), false)
+    }
+
+    /// The avatar of this user. If this user does not have an avatar, this will default to their [`default_avatar`][`User::default_avatar`].
+    #[must_use]
+    pub fn avatar(&self) -> Asset {
+        if let Some(hash) = self.avatar_hash.clone() {
+            Asset::new(self.state.clone(), format!("avatars/{}/{}", self.id, hash), hash.starts_with("a_"))
+        } else {
+            self.default_avatar()
+        }
     }
 }
 

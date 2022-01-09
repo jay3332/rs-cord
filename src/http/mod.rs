@@ -1,6 +1,5 @@
 use crate::constants::DISCORD_API_URL;
-use crate::route;
-use crate::{types, ThreadSafeResult};
+use crate::{route, types, ThreadSafeError, ThreadSafeResult};
 
 use tracing::debug;
 
@@ -182,6 +181,23 @@ impl HttpClient {
     pub(crate) fn set_token(&mut self, token: impl std::fmt::Display) -> &mut Self {
         self.token = Some(token.to_string());
         self
+    }
+
+    /// Makes a request to Discord's CDN. This is unauthorized.
+    pub async fn request_cdn(&self, url: String) -> ThreadSafeResult<Vec<u8>> {
+        debug!("[CDN] Sending request to {:?}", url);
+
+        let response = self
+            .client
+            .request(Method::GET, url)
+            .send()
+            .await?;
+
+        if response.status().is_success() {
+            Ok(response.bytes().await?.to_vec())
+        } else {
+            Err(ThreadSafeError::from("Could not request to CDN."))
+        }
     }
 
     /// Generates a new request builder.

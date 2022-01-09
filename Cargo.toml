@@ -8,6 +8,11 @@ authors = [
 ]
 keywords = [
     "discord",
+    "api",
+    "discord-api",
+    "wrapper",
+    "bot",
+    "discord-bot",
 ]
 license = "MIT"
 readme = "README.md"
@@ -22,6 +27,10 @@ futures-util = "0.3"
 int-enum = "0.4"
 serde_json = "1.0"
 url = "2.2"
+
+[dependencies.async-fs]
+version = "1.5"
+optional = true
 
 [dependencies.chrono]
 version = "0.4"
