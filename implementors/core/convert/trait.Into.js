@@ -1,0 +1,3 @@
+(function() {var implementors = {};
+implementors["rs_cord"] = [{"text":"impl <a class=\"trait\" href=\"https://doc.rust-lang.org/nightly/core/convert/trait.Into.html\" title=\"trait core::convert::Into\">Into</a>&lt;<a class=\"struct\" href=\"https://doc.rust-lang.org/nightly/alloc/string/struct.String.html\" title=\"struct alloc::string::String\">String</a>&gt; for <a class=\"struct\" href=\"rs_cord/models/asset/struct.Asset.html\" title=\"struct rs_cord::models::asset::Asset\">Asset</a>","synthetic":false,"types":["rs_cord::models::asset::Asset"]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

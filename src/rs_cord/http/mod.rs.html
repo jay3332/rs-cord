@@ -220,9 +220,24 @@
 <span id="218">218</span>
 <span id="219">219</span>
 <span id="220">220</span>
+<span id="221">221</span>
+<span id="222">222</span>
+<span id="223">223</span>
+<span id="224">224</span>
+<span id="225">225</span>
+<span id="226">226</span>
+<span id="227">227</span>
+<span id="228">228</span>
+<span id="229">229</span>
+<span id="230">230</span>
+<span id="231">231</span>
+<span id="232">232</span>
+<span id="233">233</span>
+<span id="234">234</span>
+<span id="235">235</span>
+<span id="236">236</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::constants::DISCORD_API_URL</span>;
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::route</span>;
-<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">types</span>, <span class="ident">ThreadSafeResult</span>};
+<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">route</span>, <span class="ident">types</span>, <span class="ident">ThreadSafeError</span>, <span class="ident">ThreadSafeResult</span>};
 
 <span class="kw">use</span> <span class="ident">tracing::debug</span>;
 
@@ -404,6 +419,23 @@
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">set_token</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">token</span>: <span class="kw">impl</span> <span class="ident">std::fmt::Display</span>) -&gt; <span class="kw-2">&amp;mut</span> <span class="self">Self</span> {
         <span class="self">self</span>.<span class="ident">token</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">token</span>.<span class="ident">to_string</span>());
         <span class="self">self</span>
+    }
+
+    <span class="doccomment">/// Makes a request to Discord&#39;s CDN. This is unauthorized.</span>
+    <span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">request_cdn</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">url</span>: <span class="ident">String</span>) -&gt; <span class="ident">ThreadSafeResult</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span><span class="op">&gt;</span> {
+        <span class="macro">debug!</span>(<span class="string">&quot;[CDN] Sending request to {:?}&quot;</span>, <span class="ident">url</span>);
+
+        <span class="kw">let</span> <span class="ident">response</span> <span class="op">=</span> <span class="self">self</span>
+            .<span class="ident">client</span>
+            .<span class="ident">request</span>(<span class="ident">Method::GET</span>, <span class="ident">url</span>)
+            .<span class="ident">send</span>()
+            .<span class="kw">await</span><span class="question-mark">?</span>;
+
+        <span class="kw">if</span> <span class="ident">response</span>.<span class="ident">status</span>().<span class="ident">is_success</span>() {
+            <span class="prelude-val">Ok</span>(<span class="ident">response</span>.<span class="ident">bytes</span>().<span class="kw">await</span><span class="question-mark">?</span>.<span class="ident">to_vec</span>())
+        } <span class="kw">else</span> {
+            <span class="prelude-val">Err</span>(<span class="ident">ThreadSafeError::from</span>(<span class="string">&quot;Could not request to CDN.&quot;</span>))
+        }
     }
 
     <span class="doccomment">/// Generates a new request builder.</span>

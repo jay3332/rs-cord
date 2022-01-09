@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["gateway",""],["timestamp",""],["user",""]]});
+initSidebarItems({"mod":[["asset",""],["gateway",""],["timestamp",""],["user",""]]});
