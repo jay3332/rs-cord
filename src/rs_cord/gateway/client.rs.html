@@ -239,11 +239,21 @@
 <span id="237">237</span>
 <span id="238">238</span>
 <span id="239">239</span>
+<span id="240">240</span>
+<span id="241">241</span>
+<span id="242">242</span>
+<span id="243">243</span>
+<span id="244">244</span>
+<span id="245">245</span>
+<span id="246">246</span>
+<span id="247">247</span>
+<span id="248">248</span>
+<span id="249">249</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident"><span class="kw">super</span>::GatewayError</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::http::HttpClient</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::internal::prelude</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident">std::borrow::Cow</span>;
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::types::gateway</span>::{<span class="ident">GetGatewayBotData</span>, <span class="ident">WsInboundEvent</span>};
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::types::gateway</span>::{<span class="ident">GetGatewayBotData</span>, <span class="ident">WsInboundEvent</span>, <span class="ident">WsDispatchEvent</span>};
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::Intents</span>;
 
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::WsStream</span>;
@@ -351,7 +361,10 @@
             <span class="self">self</span>.<span class="ident">alive_since</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">Instant::now</span>());
 
             <span class="kw">match</span> <span class="ident">serde_json::from_value</span>::<span class="op">&lt;</span><span class="ident">WsInboundEvent</span><span class="op">&gt;</span>(
-                <span class="self">self</span>.<span class="ident">recv_json</span>().<span class="kw">await</span><span class="question-mark">?</span>.<span class="ident">ok_or</span>(<span class="ident">GatewayError::NoHello</span>)<span class="question-mark">?</span>,
+                <span class="kw">match</span> <span class="self">self</span>.<span class="ident">recv_json</span>().<span class="kw">await</span><span class="question-mark">?</span>.<span class="ident">ok_or</span>(<span class="ident">GatewayError::NoHello</span>)<span class="question-mark">?</span> {
+                    <span class="ident">MessageType::Normal</span>(<span class="ident">value</span>) =&gt; <span class="ident">value</span>,
+                    <span class="kw">_</span> =&gt; <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">GatewayError::NoHello</span>),
+                },
             )<span class="question-mark">?</span> {
                 <span class="ident">WsInboundEvent::Hello</span>(<span class="ident">heartbeat_interval</span>) =&gt; {
                     <span class="self">self</span>.<span class="ident">heartbeat_interval</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">heartbeat_interval</span>);
@@ -400,9 +413,16 @@
                                 <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="bool-val">false</span>);
                             }
                         }
-                        <span class="ident">WsInboundEvent::Resumed</span> =&gt; {
-                            <span class="self">self</span>.<span class="ident">is_resuming</span> <span class="op">=</span> <span class="bool-val">false</span>;
-                            <span class="macro">info!</span>(<span class="string">&quot;Successfully resumed.&quot;</span>)
+                        <span class="ident">WsInboundEvent::Dispatch</span>(<span class="ident">seq</span>, <span class="ident">event</span>) =&gt; {
+                            <span class="self">self</span>.<span class="ident">seq</span> <span class="op">=</span> <span class="ident">seq</span>;
+
+                            <span class="kw">match</span> <span class="ident">event</span> {
+                                <span class="ident">WsInboundEvent::Resumed</span> =&gt; {
+                                    <span class="self">self</span>.<span class="ident">is_resuming</span> <span class="op">=</span> <span class="bool-val">false</span>;
+                                    <span class="macro">info!</span>(<span class="string">&quot;Successfully resumed gateway session.&quot;</span>);
+                                }
+                                <span class="kw">_</span> =&gt; {}
+                            }
                         }
                     }
                 }
