@@ -150,13 +150,13 @@
 <span id="148">148</span>
 <span id="149">149</span>
 <span id="150">150</span>
-</pre><pre class="rust"><code><span class="kw">use</span> <span class="ident"><span class="kw">super</span>::Snowflake</span>;
-<span class="kw">use</span> <span class="ident"><span class="kw">super</span>::channel::ChannelData</span>;
+</pre><pre class="rust"><code><span class="kw">use</span> <span class="ident"><span class="kw">super</span>::channel::ChannelData</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::emoji::PartialEmojiData</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::member::MemberData</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::presence::ActivityData</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::sticker</span>::{<span class="ident">StickerData</span>, <span class="ident">StickerItemData</span>};
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::user::UserData</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">super</span>::Snowflake</span>;
 
 <span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};
 
@@ -188,7 +188,7 @@
     <span class="kw">pub</span> <span class="ident">message_reference</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">MessageReferenceData</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">flags</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">referenced_message</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span><span class="ident">MessageData</span><span class="op">&gt;</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">interaction</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span>()<span class="op">&gt;</span>,     <span class="comment">// TODO (message interaction object)</span>
+    <span class="kw">pub</span> <span class="ident">interaction</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span>()<span class="op">&gt;</span>, <span class="comment">// TODO (message interaction object)</span>
     <span class="kw">pub</span> <span class="ident">thread</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">ChannelData</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">components</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span>()<span class="op">&gt;</span><span class="op">&gt;</span>, <span class="comment">// TODO (components)</span>
     <span class="kw">pub</span> <span class="ident">sticker_items</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">StickerItemData</span><span class="op">&gt;</span><span class="op">&gt;</span>,

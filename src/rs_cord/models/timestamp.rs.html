@@ -166,14 +166,14 @@
 <span class="kw">use</span> <span class="ident">chrono</span>::{<span class="ident">DateTime</span>, <span class="ident">NaiveDateTime</span>, <span class="ident">Utc</span>};
 
 <span class="doccomment">/// An enum to represent relative time.</span>
-<span class="doccomment">/// </span>
+<span class="doccomment">///</span>
 <span class="doccomment">/// # See</span>
 <span class="doccomment">/// [`Timestamp::as_relative_time`]</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">RelativeTime</span> {
     <span class="doccomment">/// This timestamp is in the past.</span>
     <span class="ident">Past</span>(<span class="ident">Duration</span>),
-    
+
     <span class="doccomment">/// This timestamp is in the future.</span>
     <span class="ident">Future</span>(<span class="ident">Duration</span>),
 }
@@ -258,10 +258,10 @@
     }
 
     <span class="doccomment">/// Returns a [`Duration`][`std::time::Duration`] that represents how much time has elapsed from this timestamp.</span>
-    <span class="doccomment">/// </span>
-    <span class="doccomment">/// Note that this method will panic if this timestamp is in the future. </span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// Note that this method will panic if this timestamp is in the future.</span>
     <span class="doccomment">/// If you would like to convert this into relative time, use [`as_relative_time()`][`Timestamp::as_relative_time`].</span>
-    <span class="doccomment">/// </span>
+    <span class="doccomment">///</span>
     <span class="doccomment">/// # Panics</span>
     <span class="doccomment">/// - Timestamp is in the future</span>
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;chrono&quot;</span>)]</span>
@@ -270,19 +270,19 @@
         <span class="ident">Duration::from_millis</span>(
             (<span class="ident">chrono::Utc::now</span>().<span class="ident">timestamp_millis</span>() <span class="op">-</span> <span class="self">self</span>.<span class="ident">timestamp_millis</span>() <span class="kw">as</span> <span class="ident">i64</span>)
                 .<span class="ident">try_into</span>()
-                .<span class="ident">expect</span>(<span class="string">&quot;Timestamp is in the future.&quot;</span>)
+                .<span class="ident">expect</span>(<span class="string">&quot;Timestamp is in the future.&quot;</span>),
         )
     }
 
     <span class="doccomment">/// Returns a [`RelativeTime`] that represents how much time has elapsed from this timestamp.</span>
-    <span class="doccomment">/// </span>
+    <span class="doccomment">///</span>
     <span class="doccomment">/// If the timestamp is exactly now, the returned value is [`RelativeTime::Future`].</span>
-    <span class="doccomment">/// </span>
+    <span class="doccomment">///</span>
     <span class="doccomment">/// # Example</span>
     <span class="doccomment">/// ```rust</span>
     <span class="doccomment">/// use rs_cord::{Timestamp, RelativeTime};</span>
     <span class="doccomment">/// use RelativeTime::{Past, Future};</span>
-    <span class="doccomment">/// </span>
+    <span class="doccomment">///</span>
     <span class="doccomment">/// match Timestamp::from_unix(1234).relative_time() {</span>
     <span class="doccomment">///     Past(dur) =&gt; println!(&quot;{} seconds ago&quot;, dur.as_secs()),</span>
     <span class="doccomment">///     Future(dur) =&gt; println!(&quot;{} seconds from now&quot;, dur.as_secs()),</span>

@@ -239,8 +239,22 @@
 <span id="237">237</span>
 <span id="238">238</span>
 <span id="239">239</span>
-</pre><pre class="rust"><code><span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">Asset</span>, <span class="ident">Color</span>, <span class="ident">ClientState</span>, <span class="ident">impl_created_at</span>};
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::types::user::UserData</span>;
+<span id="240">240</span>
+<span id="241">241</span>
+<span id="242">242</span>
+<span id="243">243</span>
+<span id="244">244</span>
+<span id="245">245</span>
+<span id="246">246</span>
+<span id="247">247</span>
+<span id="248">248</span>
+<span id="249">249</span>
+<span id="250">250</span>
+<span id="251">251</span>
+<span id="252">252</span>
+<span id="253">253</span>
+</pre><pre class="rust"><code><span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::types::user::UserData</span>;
+<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">impl_created_at</span>, <span class="ident">Asset</span>, <span class="ident">ClientState</span>, <span class="ident">Color</span>};
 
 <span class="kw">use</span> <span class="ident">bitflags::bitflags</span>;
 
@@ -266,16 +280,16 @@
     <span class="kw">pub</span> <span class="ident">avatar_hash</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
 
     <span class="doccomment">/// The banner hash of this user&#39;s banner if this user has a banner.</span>
-    <span class="doccomment">/// </span>
+    <span class="doccomment">///</span>
     <span class="doccomment">/// # Note</span>
     <span class="doccomment">/// This will always be [`None`] unless fetched via [`Client::fetch_user`].</span>
-    <span class="doccomment">/// </span>
+    <span class="doccomment">///</span>
     <span class="doccomment">/// # See</span>
     <span class="doccomment">/// - [`User::banner`]</span>
     <span class="kw">pub</span> <span class="ident">banner_hash</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
 
     <span class="doccomment">/// The accent color of this user.</span>
-    <span class="doccomment">/// </span>
+    <span class="doccomment">///</span>
     <span class="doccomment">/// # Note</span>
     <span class="doccomment">/// This will always be [`None`] unless fetched via [`Client::fetch_user`].</span>
     <span class="kw">pub</span> <span class="ident">accent_color</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Color</span><span class="op">&gt;</span>,
@@ -303,7 +317,7 @@
             <span class="ident">bot</span>: <span class="ident">data</span>.<span class="ident">bot</span>.<span class="ident">unwrap_or</span>(<span class="bool-val">false</span>),
             <span class="ident">system</span>: <span class="ident">data</span>.<span class="ident">system</span>.<span class="ident">unwrap_or</span>(<span class="bool-val">false</span>),
             <span class="ident">flags</span>: <span class="ident">UserFlags::from_bits_truncate</span>(
-                <span class="ident">data</span>.<span class="ident">flags</span>.<span class="ident">unwrap_or</span>(<span class="ident">data</span>.<span class="ident">public_flags</span>.<span class="ident">unwrap_or</span>(<span class="number">0</span>))
+                <span class="ident">data</span>.<span class="ident">flags</span>.<span class="ident">unwrap_or</span>(<span class="ident">data</span>.<span class="ident">public_flags</span>.<span class="ident">unwrap_or</span>(<span class="number">0</span>)),
             ),
         }
     }
@@ -339,35 +353,52 @@
     }
 
     <span class="doccomment">/// The default avatar of this user if this user does not have an avatar. This may not be their actual avatar.</span>
-    <span class="doccomment">/// </span>
+    <span class="doccomment">///</span>
     <span class="doccomment">/// # See</span>
     <span class="doccomment">/// [`User::avatar`]</span>
     <span class="attribute">#[<span class="ident">must_use</span>]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">default_avatar</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">Asset</span> {
-        <span class="ident">Asset::new</span>(<span class="self">self</span>.<span class="ident">state</span>.<span class="ident">clone</span>(), <span class="macro">format!</span>(<span class="string">&quot;embed/avatars/{}&quot;</span>, <span class="self">self</span>.<span class="ident">discriminator</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span>().<span class="ident">unwrap</span>() <span class="op">%</span> <span class="number">5</span>), <span class="bool-val">false</span>)
+        <span class="ident">Asset::new</span>(
+            <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">clone</span>(),
+            <span class="macro">format!</span>(
+                <span class="string">&quot;embed/avatars/{}&quot;</span>,
+                <span class="self">self</span>.<span class="ident">discriminator</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span>().<span class="ident">unwrap</span>() <span class="op">%</span> <span class="number">5</span>
+            ),
+            <span class="bool-val">false</span>,
+        )
     }
 
     <span class="doccomment">/// The avatar of this user. If this user does not have an avatar, this will default to their [`default_avatar`][`User::default_avatar`].</span>
     <span class="attribute">#[<span class="ident">must_use</span>]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">avatar</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">Asset</span> {
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">hash</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">avatar_hash</span>.<span class="ident">clone</span>() {
-            <span class="ident">Asset::new</span>(<span class="self">self</span>.<span class="ident">state</span>.<span class="ident">clone</span>(), <span class="macro">format!</span>(<span class="string">&quot;avatars/{}/{}&quot;</span>, <span class="self">self</span>.<span class="ident">id</span>, <span class="ident">hash</span>), <span class="ident">hash</span>.<span class="ident">starts_with</span>(<span class="string">&quot;a_&quot;</span>))
+            <span class="ident">Asset::new</span>(
+                <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">clone</span>(),
+                <span class="macro">format!</span>(<span class="string">&quot;avatars/{}/{}&quot;</span>, <span class="self">self</span>.<span class="ident">id</span>, <span class="ident">hash</span>),
+                <span class="ident">hash</span>.<span class="ident">starts_with</span>(<span class="string">&quot;a_&quot;</span>),
+            )
         } <span class="kw">else</span> {
             <span class="self">self</span>.<span class="ident">default_avatar</span>()
         }
     }
 
     <span class="doccomment">/// The banner that this user has. If this user does not have a banner, this will be [`None`].</span>
-    <span class="doccomment">/// </span>
+    <span class="doccomment">///</span>
     <span class="doccomment">/// # Note</span>
     <span class="doccomment">/// This will always be [`None`] unless fetched via [`Client::fetch_user`].</span>
     <span class="attribute">#[<span class="ident">must_use</span>]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">banner</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Asset</span><span class="op">&gt;</span> {
-        <span class="self">self</span>.<span class="ident">banner_hash</span>.<span class="ident">clone</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">b</span><span class="op">|</span> <span class="ident">Asset::new</span>(<span class="self">self</span>.<span class="ident">state</span>.<span class="ident">clone</span>(), <span class="macro">format!</span>(<span class="string">&quot;banners/{}/{}&quot;</span>, <span class="self">self</span>.<span class="ident">id</span>, <span class="ident">b</span>), <span class="bool-val">false</span>))
+        <span class="self">self</span>.<span class="ident">banner_hash</span>.<span class="ident">clone</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">b</span><span class="op">|</span> {
+            <span class="ident">Asset::new</span>(
+                <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">clone</span>(),
+                <span class="macro">format!</span>(<span class="string">&quot;banners/{}/{}&quot;</span>, <span class="self">self</span>.<span class="ident">id</span>, <span class="ident">b</span>),
+                <span class="bool-val">false</span>,
+            )
+        })
     }
 
     <span class="doccomment">/// The accent color of this user.</span>
-    <span class="doccomment">/// </span>
+    <span class="doccomment">///</span>
     <span class="doccomment">/// # Note</span>
     <span class="doccomment">/// This will always be [`None`] unless fetched via [`Client::fetch_user`].</span>
     <span class="attribute">#[<span class="ident">must_use</span>]</span>
@@ -376,9 +407,9 @@
     }
 
     <span class="doccomment">/// The accent colour of this user.</span>
-    <span class="doccomment">/// </span>
+    <span class="doccomment">///</span>
     <span class="doccomment">/// This is an alias to [`User::accent_color`].</span>
-    <span class="doccomment">/// </span>
+    <span class="doccomment">///</span>
     <span class="doccomment">/// # Note</span>
     <span class="doccomment">/// This will always be [`None`] unless fetched via [`Client::fetch_user`].</span>
     <span class="attribute">#[<span class="ident">must_use</span>]</span>
@@ -393,14 +424,11 @@
 
         <span class="kw">if</span> <span class="ident">flags</span>.<span class="ident">contains</span>(<span class="ident">UserFlags::HYPESQUAD_ONLINE_HOUSE_1</span>) {
             <span class="prelude-val">Some</span>(<span class="ident">HypesquadHouse::Bravery</span>)
-        }
-        <span class="kw">else</span> <span class="kw">if</span> <span class="ident">flags</span>.<span class="ident">contains</span>(<span class="ident">UserFlags::HYPESQUAD_ONLINE_HOUSE_2</span>) {
+        } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">flags</span>.<span class="ident">contains</span>(<span class="ident">UserFlags::HYPESQUAD_ONLINE_HOUSE_2</span>) {
             <span class="prelude-val">Some</span>(<span class="ident">HypesquadHouse::Brilliance</span>)
-        }
-        <span class="kw">else</span> <span class="kw">if</span> <span class="ident">flags</span>.<span class="ident">contains</span>(<span class="ident">UserFlags::HYPESQUAD_ONLINE_HOUSE_3</span>) {
+        } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">flags</span>.<span class="ident">contains</span>(<span class="ident">UserFlags::HYPESQUAD_ONLINE_HOUSE_3</span>) {
             <span class="prelude-val">Some</span>(<span class="ident">HypesquadHouse::Balance</span>)
-        }
-        <span class="kw">else</span> {
+        } <span class="kw">else</span> {
             <span class="prelude-val">None</span>
         }
     }
@@ -410,13 +438,13 @@
 
 <span class="macro">bitflags!</span> {
     <span class="doccomment">/// A set of bitflags representing special flags of a user.</span>
-    <span class="doccomment">/// </span>
+    <span class="doccomment">///</span>
     <span class="doccomment">/// There are many utility methods on the [`User`] model that wrap around these flags,</span>
     <span class="doccomment">/// although these are perfectly fine to be used.</span>
     <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">UserFlags</span>: <span class="ident">u32</span> {
         <span class="doccomment">/// This user is a Discord employee.</span>
         <span class="kw">const</span> <span class="ident">STAFF</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">0</span>;
-        
+
         <span class="doccomment">/// This user is a partnered server owner.</span>
         <span class="kw">const</span> <span class="ident">PARTNER</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">1</span>;
 
@@ -427,19 +455,19 @@
         <span class="kw">const</span> <span class="ident">BUGHUNTER_LEVEL_1</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">3</span>;
 
         <span class="doccomment">/// This user is a member of Hypesquad Bravery.</span>
-        <span class="doccomment">/// </span>
+        <span class="doccomment">///</span>
         <span class="doccomment">/// # See</span>
         <span class="doccomment">/// - [`User::hypesquad_house`]</span>
         <span class="kw">const</span> <span class="ident">HYPESQUAD_ONLINE_HOUSE_1</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">6</span>;
 
         <span class="doccomment">/// This user is a member of Hypesquad Brilliance.</span>
-        <span class="doccomment">/// </span>
+        <span class="doccomment">///</span>
         <span class="doccomment">/// # See</span>
         <span class="doccomment">/// - [`User::hypesquad_house`]</span>
         <span class="kw">const</span> <span class="ident">HYPESQUAD_ONLINE_HOUSE_2</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">7</span>;
 
         <span class="doccomment">/// This user is a member of Hypesquad Balance.</span>
-        <span class="doccomment">/// </span>
+        <span class="doccomment">///</span>
         <span class="doccomment">/// # See</span>
         <span class="doccomment">/// - [`User::hypesquad_house`]</span>
         <span class="kw">const</span> <span class="ident">HYPESQUAD_ONLINE_HOUSE_3</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">8</span>;

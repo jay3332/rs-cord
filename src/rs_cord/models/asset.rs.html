@@ -149,39 +149,15 @@
 <span id="147">147</span>
 <span id="148">148</span>
 <span id="149">149</span>
-<span id="150">150</span>
-<span id="151">151</span>
-<span id="152">152</span>
-<span id="153">153</span>
-<span id="154">154</span>
-<span id="155">155</span>
-<span id="156">156</span>
-<span id="157">157</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::constants::DISCORD_CDN_URL</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::ClientState</span>;
 
 <span class="kw">use</span> <span class="ident">std::fmt::Display</span>;
 <span class="kw">use</span> <span class="ident">std::path::Path</span>;
 
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">ALLOWED_FORMATS</span>: [<span class="kw-2">&amp;</span><span class="ident">str</span>; <span class="number">5</span>] <span class="op">=</span> [
-    <span class="string">&quot;png&quot;</span>,
-    <span class="string">&quot;jpg&quot;</span>,
-    <span class="string">&quot;jpeg&quot;</span>,
-    <span class="string">&quot;webp&quot;</span>,
-    <span class="string">&quot;gif&quot;</span>,
-];
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">ALLOWED_FORMATS</span>: [<span class="kw-2">&amp;</span><span class="ident">str</span>; <span class="number">5</span>] <span class="op">=</span> [<span class="string">&quot;png&quot;</span>, <span class="string">&quot;jpg&quot;</span>, <span class="string">&quot;jpeg&quot;</span>, <span class="string">&quot;webp&quot;</span>, <span class="string">&quot;gif&quot;</span>];
 
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">ALLOWED_SIZES</span>: [<span class="ident">u16</span>; <span class="number">9</span>] <span class="op">=</span> [
-    <span class="number">16</span>,
-    <span class="number">32</span>,
-    <span class="number">64</span>,
-    <span class="number">128</span>,
-    <span class="number">256</span>,
-    <span class="number">512</span>,
-    <span class="number">1024</span>,
-    <span class="number">2048</span>,
-    <span class="number">4096</span>,
-];
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">ALLOWED_SIZES</span>: [<span class="ident">u16</span>; <span class="number">9</span>] <span class="op">=</span> [<span class="number">16</span>, <span class="number">32</span>, <span class="number">64</span>, <span class="number">128</span>, <span class="number">256</span>, <span class="number">512</span>, <span class="number">1024</span>, <span class="number">2048</span>, <span class="number">4096</span>];
 
 <span class="doccomment">/// Represents a Discord asset, such as an avatar or guild icon.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>)]</span>
@@ -195,7 +171,7 @@
     <span class="kw">pub</span> <span class="ident">format</span>: <span class="ident">String</span>,
 
     <span class="doccomment">/// The format of this asset if it is not animated.</span>
-    <span class="doccomment">/// </span>
+    <span class="doccomment">///</span>
     <span class="doccomment">/// If this is none, the format will always be [`format`][`Asset::format`].</span>
     <span class="kw">pub</span> <span class="ident">static_format</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
 
@@ -219,7 +195,7 @@
     }
 
     <span class="doccomment">/// Returns the format being used.</span>
-    <span class="doccomment">/// </span>
+    <span class="doccomment">///</span>
     <span class="doccomment">/// If this is an animated asset, [`format`][`Asset::format`] will be used.  </span>
     <span class="doccomment">/// If this is a static asset, [`static_format`][`Asset::static_format`] will be used.</span>
     <span class="attribute">#[<span class="ident">must_use</span>]</span>
@@ -227,7 +203,7 @@
         <span class="kw">if</span> <span class="self">self</span>.<span class="ident">animated</span> <span class="op">|</span><span class="op">|</span> <span class="self">self</span>.<span class="ident">static_format</span>.<span class="ident">is_none</span>() {
             <span class="self">self</span>.<span class="ident">format</span>.<span class="ident">clone</span>()
         } <span class="kw">else</span> {
-            <span class="self">self</span>.<span class="ident">static_format</span>.<span class="ident">clone</span>().<span class="ident">unwrap</span>()  <span class="comment">// we already checked that this is not none, so it is safe to unwrap.</span>
+            <span class="self">self</span>.<span class="ident">static_format</span>.<span class="ident">clone</span>().<span class="ident">unwrap</span>() <span class="comment">// we already checked that this is not none, so it is safe to unwrap.</span>
         }
     }
 
@@ -240,20 +216,26 @@
             <span class="string">&quot;&quot;</span>.<span class="ident">to_string</span>()
         };
 
-        <span class="macro">format!</span>(<span class="string">&quot;{}/{}.{}{}&quot;</span>, <span class="ident">DISCORD_CDN_URL</span>, <span class="self">self</span>.<span class="ident">path</span>, <span class="self">self</span>.<span class="ident">format</span>(), <span class="ident">size</span>)
+        <span class="macro">format!</span>(
+            <span class="string">&quot;{}/{}.{}{}&quot;</span>,
+            <span class="ident">DISCORD_CDN_URL</span>,
+            <span class="self">self</span>.<span class="ident">path</span>,
+            <span class="self">self</span>.<span class="ident">format</span>(),
+            <span class="ident">size</span>
+        )
     }
 
     <span class="doccomment">/// Returns a clone of this asset with the given format.</span>
-    <span class="doccomment">/// </span>
+    <span class="doccomment">///</span>
     <span class="doccomment">/// # Panics</span>
     <span class="doccomment">/// - The format is not one of `png`, `jpg`, `jpeg`, `webp`, or `gif`.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">with_format</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">format</span>: <span class="kw">impl</span> <span class="ident">Display</span>) -&gt; <span class="self">Self</span> {
         <span class="kw">let</span> <span class="ident">entity</span> <span class="op">=</span> <span class="ident">format</span>.<span class="ident">to_string</span>();
-        
+
         <span class="kw">if</span> <span class="op">!</span><span class="ident">ALLOWED_FORMATS</span>.<span class="ident">contains</span>(<span class="kw-2">&amp;</span><span class="ident">entity</span>.<span class="ident">as_str</span>()) {
             <span class="macro">panic!</span>(<span class="string">&quot;The format must be one of `png`, `jpg`, `jpeg`, `webp`, or `gif`.&quot;</span>);
         }
-        
+
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">new</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">clone</span>();
         <span class="ident">new</span>.<span class="ident">format</span> <span class="op">=</span> <span class="ident">entity</span>;
 
@@ -261,16 +243,16 @@
     }
 
     <span class="doccomment">/// Returns a clone of this asset with the given static format.</span>
-    <span class="doccomment">/// </span>
+    <span class="doccomment">///</span>
     <span class="doccomment">/// # Panics</span>
     <span class="doccomment">/// - The format is not one of `png`, `jpg`, `jpeg`, `webp`, or `gif`.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">with_static_format</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">format</span>: <span class="kw">impl</span> <span class="ident">Display</span>) -&gt; <span class="self">Self</span> {
         <span class="kw">let</span> <span class="ident">entity</span> <span class="op">=</span> <span class="ident">format</span>.<span class="ident">to_string</span>();
-        
+
         <span class="kw">if</span> <span class="op">!</span><span class="ident">ALLOWED_FORMATS</span>.<span class="ident">contains</span>(<span class="kw-2">&amp;</span><span class="ident">entity</span>.<span class="ident">as_str</span>()) {
             <span class="macro">panic!</span>(<span class="string">&quot;The static format must be one of `png`, `jpg`, `jpeg`, `webp`, or `gif`.&quot;</span>);
         }
-        
+
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">new</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">clone</span>();
         <span class="ident">new</span>.<span class="ident">static_format</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">entity</span>);
 
@@ -278,14 +260,14 @@
     }
 
     <span class="doccomment">/// Returns a clone of this asset with the given size.</span>
-    <span class="doccomment">/// </span>
+    <span class="doccomment">///</span>
     <span class="doccomment">/// # Panics</span>
     <span class="doccomment">/// - The size is not a power of 2 between 16 and 4096.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">with_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">size</span>: <span class="ident">u16</span>) -&gt; <span class="self">Self</span> {
         <span class="kw">if</span> <span class="op">!</span><span class="ident">ALLOWED_SIZES</span>.<span class="ident">contains</span>(<span class="kw-2">&amp;</span><span class="ident">size</span>) {
             <span class="macro">panic!</span>(<span class="string">&quot;The size must be a power of 2 between 16 and 4096.&quot;</span>);
         }
-        
+
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">new</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">clone</span>();
         <span class="ident">new</span>.<span class="ident">size</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">size</span>);
 
@@ -299,7 +281,9 @@
 
     <span class="doccomment">/// Saves this asset locally to the given file path.</span>
     <span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">save</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">path</span>: <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span>) -&gt; <span class="ident"><span class="kw">crate</span>::ThreadSafeResult</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
-        <span class="ident">tokio::fs::write</span>(<span class="ident">path</span>, <span class="self">self</span>.<span class="ident">read</span>().<span class="kw">await</span><span class="question-mark">?</span>.<span class="ident">as_slice</span>()).<span class="kw">await</span>.<span class="ident">map_err</span>(<span class="ident">Into::into</span>)
+        <span class="ident">tokio::fs::write</span>(<span class="ident">path</span>, <span class="self">self</span>.<span class="ident">read</span>().<span class="kw">await</span><span class="question-mark">?</span>.<span class="ident">as_slice</span>())
+            .<span class="kw">await</span>
+            .<span class="ident">map_err</span>(<span class="ident">Into::into</span>)
     }
 }
 
