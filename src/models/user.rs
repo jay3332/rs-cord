@@ -1,8 +1,11 @@
-use crate::impl_created_at;
+use crate::{ClientState, impl_created_at};
 use crate::types::user::UserData;
 
 /// Represents a Discord user.
+#[derive(Clone, Debug)]
 pub struct User {
+    state: ClientState,
+
     /// The snowflake ID of this user.
     pub id: u64,
 
@@ -24,8 +27,9 @@ pub struct User {
 }
 
 impl User {
-    pub(crate) fn from_user_data(data: UserData) -> Self {
+    pub(crate) fn from_user_data(state: ClientState, data: UserData) -> Self {
         Self {
+            state,
             id: data.id.parse().unwrap(),
             name: data.username,
             discriminator: data.discriminator,

@@ -16,6 +16,7 @@ use tokio_tungstenite::tungstenite::protocol::{Message, WebSocketConfig};
 use std::sync::Arc;
 use std::time::Instant;
 
+#[derive(Debug)]
 pub struct Gateway {
     pub(crate) http: Arc<HttpClient>,
     pub(crate) intents: Intents,

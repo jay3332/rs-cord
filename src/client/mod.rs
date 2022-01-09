@@ -12,6 +12,7 @@ use tokio::sync::Mutex;
 
 /// An authenticated client which will be able to interact with the Discord API,
 /// through both the REST and Gateway (websocket) APIs.
+#[derive(Clone, Debug)]
 pub struct Client {
     /// The client for Discord's RESTful API.  
     pub http: Option<Arc<HttpClient>>,
@@ -83,7 +84,7 @@ impl Client {
     /// - No token has been provided yet.
     pub fn state(&self) -> ClientState {
         ClientState {
-            client: self,
+            client: Arc::new(self.clone()),
             http: self.http.clone().expect("HTTP client is not initialized."),
             token: self.token.clone().expect("No token has been provided yet."),
         }
@@ -98,6 +99,7 @@ impl Client {
         self.init_gateway().await?;
 
         self.user = Some(User::from_user_data(
+            self.state(),
             self.http.as_ref().unwrap().get_self().await?,
         ));
 

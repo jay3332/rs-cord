@@ -5,9 +5,10 @@ use crate::http::HttpClient;
 use crate::User;
 
 /// Represents the state of the client.
-pub struct ClientState<'c> {
-    /// A reference to the client serving this state.
-    pub client: &'c Client,
+#[derive(Clone, Debug)]
+pub struct ClientState {
+    /// An [`Arc`][`std::sync::Arc`] reference to the client serving this state.
+    pub client: Arc<Client>,
 
     /// The HTTP Client being used.
     pub http: Arc<HttpClient>,
@@ -17,7 +18,7 @@ pub struct ClientState<'c> {
     pub token: String,
 }
 
-impl<'c> ClientState<'c> {
+impl ClientState {
     /// The user the client is logged in to.
     ///
     /// # Panics
