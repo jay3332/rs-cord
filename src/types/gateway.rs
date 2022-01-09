@@ -120,6 +120,12 @@ pub struct ReadyData {
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct ResumedData {
+    #[serde(rename = "_trace")]
+    pub trace: Vec<Option<String>>,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(transparent)]
 pub struct ChannelCreateData {
     /// The channel that was created.
@@ -234,6 +240,7 @@ pub struct GuildUnavailableData {
 #[non_exhaustive]
 pub enum WsDispatchEvent {
     Ready(ReadyData),
+    Resumed(ResumedData),
     ChannelCreate(ChannelCreateData),
     ChannelUpdate(ChannelUpdateData),
     ChannelDelete(ChannelDeleteData),

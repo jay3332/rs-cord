@@ -2,7 +2,7 @@ use super::GatewayError;
 use crate::http::HttpClient;
 use crate::internal::prelude::*;
 use std::borrow::Cow;
-use crate::types::gateway::{GetGatewayBotData, WsInboundEvent};
+use crate::types::gateway::{GetGatewayBotData, WsInboundEvent, WsDispatchEvent};
 use crate::Intents;
 
 use super::WsStream;
@@ -110,7 +110,10 @@ impl Gateway {
             self.alive_since = Some(Instant::now());
 
             match serde_json::from_value::<WsInboundEvent>(
-                self.recv_json().await?.ok_or(GatewayError::NoHello)?,
+                match self.recv_json().await?.ok_or(GatewayError::NoHello)? {
+                    MessageType::Normal(value) => value,
+                    _ => return Err(GatewayError::NoHello),
+                },
             )? {
                 WsInboundEvent::Hello(heartbeat_interval) => {
                     self.heartbeat_interval = Some(heartbeat_interval);
@@ -159,9 +162,16 @@ impl Gateway {
                                 return Ok(false);
                             }
                         }
-                        WsInboundEvent::Resumed => {
-                            self.is_resuming = false;
-                            info!("Successfully resumed.")
+                        WsInboundEvent::Dispatch(seq, event) => {
+                            self.seq = seq;
+
+                            match event {
+                                WsInboundEvent::Resumed => {
+                                    self.is_resuming = false;
+                                    info!("Successfully resumed gateway session.");
+                                }
+                                _ => {}
+                            }
                         }
                     }
                 }
