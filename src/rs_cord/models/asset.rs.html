@@ -157,19 +157,10 @@
 <span id="155">155</span>
 <span id="156">156</span>
 <span id="157">157</span>
-<span id="158">158</span>
-<span id="159">159</span>
-<span id="160">160</span>
-<span id="161">161</span>
-<span id="162">162</span>
-</pre><pre class="rust"><code><span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;async-fs&quot;</span>)]</span>
-<span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">async_fs</span>;
-
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::constants::DISCORD_CDN_URL</span>;
+</pre><pre class="rust"><code><span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::constants::DISCORD_CDN_URL</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::ClientState</span>;
 
 <span class="kw">use</span> <span class="ident">std::fmt::Display</span>;
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;async-fs&quot;</span>)]</span>
 <span class="kw">use</span> <span class="ident">std::path::Path</span>;
 
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">ALLOWED_FORMATS</span>: [<span class="kw-2">&amp;</span><span class="ident">str</span>; <span class="number">5</span>] <span class="op">=</span> [
@@ -307,15 +298,14 @@
     }
 
     <span class="doccomment">/// Saves this asset locally to the given file path.</span>
-    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;async-fs&quot;</span>)]</span>
-    <span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">save</span><span class="op">&lt;</span><span class="ident">P</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">path</span>: <span class="ident">P</span>) -&gt; <span class="ident"><span class="kw">crate</span>::ThreadSafeResult</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
-        <span class="ident">async_fs::write</span>(<span class="ident">path</span>, <span class="self">self</span>.<span class="ident">read</span>().<span class="kw">await</span><span class="question-mark">?</span>.<span class="ident">as_slice</span>()).<span class="kw">await</span>
+    <span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">save</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">path</span>: <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span>) -&gt; <span class="ident"><span class="kw">crate</span>::ThreadSafeResult</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+        <span class="ident">tokio::fs::write</span>(<span class="ident">path</span>, <span class="self">self</span>.<span class="ident">read</span>().<span class="kw">await</span><span class="question-mark">?</span>.<span class="ident">as_slice</span>()).<span class="kw">await</span>.<span class="ident">map_err</span>(<span class="ident">Into::into</span>)
     }
 }
 
 <span class="kw">impl</span> <span class="ident">Display</span> <span class="kw">for</span> <span class="ident">Asset</span> {
     <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;mut</span> <span class="ident">std::fmt::Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) -&gt; <span class="ident">std::fmt::Result</span> {
-        <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;{}&quot;</span>, <span class="self">self</span>.<span class="ident">url</span>())
+        <span class="ident">f</span>.<span class="ident">write_str</span>(<span class="self">self</span>.<span class="ident">url</span>().<span class="ident">as_str</span>())
     }
 }
 
