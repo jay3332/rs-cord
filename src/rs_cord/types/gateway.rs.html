@@ -251,19 +251,6 @@
 <span id="249">249</span>
 <span id="250">250</span>
 <span id="251">251</span>
-<span id="252">252</span>
-<span id="253">253</span>
-<span id="254">254</span>
-<span id="255">255</span>
-<span id="256">256</span>
-<span id="257">257</span>
-<span id="258">258</span>
-<span id="259">259</span>
-<span id="260">260</span>
-<span id="261">261</span>
-<span id="262">262</span>
-<span id="263">263</span>
-<span id="264">264</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::models::gateway::OpCode</span>;
 
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::Snowflake</span>;
@@ -375,18 +362,6 @@
     }
 }
 
-<span class="macro">macro_rules!</span> <span class="ident">impl_de</span> {
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span>:<span class="ident">ty</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">d</span>:<span class="ident">ty</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">f</span>:<span class="ident">ident</span>) =&gt; {
-        <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span> <span class="ident">Deserialize</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span> {
-            <span class="kw">fn</span> <span class="ident">deserialize</span><span class="op">&lt;</span><span class="ident">D</span>: <span class="ident">Deserializer</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="ident">deserializer</span>: <span class="ident">D</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">D::Error</span><span class="op">&gt;</span> {
-                <span class="prelude-val">Ok</span>(<span class="self">Self</span> {
-                    <span class="macro-nonterminal">$</span><span class="macro-nonterminal">f</span>: <span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">d</span><span class="op">&gt;</span><span class="ident">::deserialize</span>(<span class="ident">deserializer</span>)<span class="question-mark">?</span>,
-                })
-            }
-        }
-    };
-}
-
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>, <span class="ident">Deserialize</span>, <span class="ident">Serialize</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ReadyData</span> {
     <span class="kw">pub</span> <span class="ident">v</span>: <span class="ident">u8</span>,
@@ -397,45 +372,40 @@
     <span class="kw">pub</span> <span class="ident">application</span>: (),  <span class="comment">// TODO application object</span>
 }
 
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>, <span class="ident">Serialize</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>, <span class="ident">Deserialize</span>, <span class="ident">Serialize</span>)]</span>
+<span class="attribute">#[<span class="ident">serde</span>(<span class="ident">transparent</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ChannelCreateData</span> {
     <span class="doccomment">/// The channel that was created.</span>
     <span class="kw">pub</span> <span class="ident">channel</span>: <span class="ident">ChannelData</span>,
 }
 
-<span class="macro">impl_de!</span>(<span class="ident">ChannelCreateData</span>, <span class="ident">ChannelData</span>, <span class="ident">channel</span>);
-
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>, <span class="ident">Serialize</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>, <span class="ident">Deserialize</span>, <span class="ident">Serialize</span>)]</span>
+<span class="attribute">#[<span class="ident">serde</span>(<span class="ident">transparent</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ChannelUpdateData</span> {
     <span class="doccomment">/// The channel that was updated.</span>
     <span class="kw">pub</span> <span class="ident">channel</span>: <span class="ident">ChannelData</span>,
 }
 
-<span class="macro">impl_de!</span>(<span class="ident">ChannelUpdateData</span>, <span class="ident">ChannelData</span>, <span class="ident">channel</span>);
-
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>, <span class="ident">Serialize</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>, <span class="ident">Deserialize</span>, <span class="ident">Serialize</span>)]</span>
+<span class="attribute">#[<span class="ident">serde</span>(<span class="ident">transparent</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ChannelDeleteData</span> {
     <span class="doccomment">/// The channel that was deleted.</span>
     <span class="kw">pub</span> <span class="ident">channel</span>: <span class="ident">ChannelData</span>,
 }
 
-<span class="macro">impl_de!</span>(<span class="ident">ChannelDeleteData</span>, <span class="ident">ChannelData</span>, <span class="ident">channel</span>);
-
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>, <span class="ident">Serialize</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>, <span class="ident">Deserialize</span>, <span class="ident">Serialize</span>)]</span>
+<span class="attribute">#[<span class="ident">serde</span>(<span class="ident">transparent</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ThreadCreateData</span> {
     <span class="doccomment">/// The thread that was created.</span>
     <span class="kw">pub</span> <span class="ident">thread</span>: <span class="ident">ChannelData</span>,
 }
 
-<span class="macro">impl_de!</span>(<span class="ident">ThreadCreateData</span>, <span class="ident">ChannelData</span>, <span class="ident">thread</span>);
-
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>, <span class="ident">Serialize</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>, <span class="ident">Deserialize</span>, <span class="ident">Serialize</span>)]</span>
+<span class="attribute">#[<span class="ident">serde</span>(<span class="ident">transparent</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ThreadUpdateData</span> {
     <span class="doccomment">/// The thread that was updated.</span>
     <span class="kw">pub</span> <span class="ident">thread</span>: <span class="ident">ChannelData</span>,
 }
-
-<span class="macro">impl_de!</span>(<span class="ident">ThreadUpdateData</span>, <span class="ident">ChannelData</span>, <span class="ident">thread</span>);
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>, <span class="ident">Deserialize</span>, <span class="ident">Serialize</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ThreadDeleteData</span> {
@@ -485,32 +455,32 @@
     <span class="kw">pub</span> <span class="ident">last_pin_timestamp</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
 }
 
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>, <span class="ident">Deserialize</span>, <span class="ident">Serialize</span>)]</span>
+<span class="attribute">#[<span class="ident">serde</span>(<span class="ident">transparent</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">GuildCreateData</span> {
     <span class="doccomment">/// The guild that was created.</span>
     <span class="kw">pub</span> <span class="ident">guild</span>: <span class="ident">GuildData</span>,
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span> <span class="ident">Deserialize</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">GuildCreateData</span> {
-    <span class="kw">fn</span> <span class="ident">deserialize</span><span class="op">&lt;</span><span class="ident">D</span>: <span class="ident">Deserializer</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="ident">deserializer</span>: <span class="ident">D</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">D::Error</span><span class="op">&gt;</span> {
-        <span class="prelude-val">Ok</span>(<span class="self">Self</span> {
-            <span class="ident">guild</span>: <span class="ident">GuildData::deserialize</span>(<span class="ident">deserializer</span>)<span class="question-mark">?</span>,
-        })
-    }
-}
-
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>, <span class="ident">Deserialize</span>, <span class="ident">Serialize</span>)]</span>
+<span class="attribute">#[<span class="ident">serde</span>(<span class="ident">transparent</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">GuildUpdateData</span> {
     <span class="doccomment">/// The guild that was updated.</span>
     <span class="kw">pub</span> <span class="ident">guild</span>: <span class="ident">GuildData</span>,
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span> <span class="ident">Deserialize</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">GuildUpdateData</span> {
-    <span class="kw">fn</span> <span class="ident">deserialize</span><span class="op">&lt;</span><span class="ident">D</span>: <span class="ident">Deserializer</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="ident">deserializer</span>: <span class="ident">D</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">D::Error</span><span class="op">&gt;</span> {
-        <span class="prelude-val">Ok</span>(<span class="self">Self</span> {
-            <span class="ident">guild</span>: <span class="ident">GuildData::deserialize</span>(<span class="ident">deserializer</span>)<span class="question-mark">?</span>,
-        })
-    }
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>, <span class="ident">Deserialize</span>, <span class="ident">Serialize</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">GuildDeleteData</span> {
+    <span class="doccomment">/// The guild that was deleted.</span>
+    <span class="kw">pub</span> <span class="ident">id</span>: <span class="ident">Snowflake</span>,
+}
+
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>, <span class="ident">Deserialize</span>, <span class="ident">Serialize</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">GuildUnavailableData</span> {
+    <span class="doccomment">/// The guild that was unavailable.</span>
+    <span class="kw">pub</span> <span class="ident">id</span>: <span class="ident">Snowflake</span>,
+    <span class="doccomment">/// Whether the guild is unavailable or not.</span>
+    <span class="kw">pub</span> <span class="ident">unavailable</span>: <span class="ident">bool</span>,
 }
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>, <span class="ident">Deserialize</span>, <span class="ident">Serialize</span>)]</span>
@@ -527,6 +497,10 @@
     <span class="ident">ThreadMemberUpdate</span>(<span class="ident">ThreadMemberUpdateData</span>),
     <span class="ident">ThreadMembersUpdate</span>(<span class="ident">ThreadMembersUpdateData</span>),
     <span class="ident">ChannelPinsUpdate</span>(<span class="ident">ChannelPinsUpdateData</span>),
+    <span class="ident">GuildCreate</span>(<span class="ident">GuildCreateData</span>),
+    <span class="ident">GuildUpdate</span>(<span class="ident">GuildUpdateData</span>),
+    <span class="ident">GuildDelete</span>(<span class="ident">GuildDeleteData</span>),
+    <span class="ident">GuildUnavailable</span>(<span class="ident">GuildUnavailableData</span>),
 }
 </code></pre></div>
 </section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rs_cord" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (a7e2e3396 2022-01-08)" ></div>
