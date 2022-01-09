@@ -1,7 +1,7 @@
-use super::Snowflake;
 use super::user::UserData;
+use super::Snowflake;
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct StickerData {
@@ -9,8 +9,8 @@ pub struct StickerData {
     pub pack_id: Option<Snowflake>,
     pub name: String,
     pub description: Option<String>,
-    pub tags: String,  // comma-separated list
-    pub asset: Option<String>,  // deprecated
+    pub tags: String,          // comma-separated list
+    pub asset: Option<String>, // deprecated
     pub r#type: u8,
     pub format_type: u8,
     pub available: Option<bool>,

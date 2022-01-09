@@ -1,5 +1,5 @@
-use super::Snowflake;
 use super::user::UserData;
+use super::Snowflake;
 
 use serde::{Deserialize, Serialize};
 
@@ -36,7 +36,7 @@ pub struct ChannelData {
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct OverwriteData {
     pub id: Snowflake,
-    pub r#type: u8,  // either 0 (role) or 1 (member)
+    pub r#type: u8, // either 0 (role) or 1 (member)
     pub allow: u64,
     pub deny: u64,
 }

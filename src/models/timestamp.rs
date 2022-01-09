@@ -7,14 +7,14 @@ extern crate chrono;
 use chrono::{DateTime, NaiveDateTime, Utc};
 
 /// An enum to represent relative time.
-/// 
+///
 /// # See
 /// [`Timestamp::as_relative_time`]
 #[derive(Clone, Debug)]
 pub enum RelativeTime {
     /// This timestamp is in the past.
     Past(Duration),
-    
+
     /// This timestamp is in the future.
     Future(Duration),
 }
@@ -99,10 +99,10 @@ impl Timestamp {
     }
 
     /// Returns a [`Duration`][`std::time::Duration`] that represents how much time has elapsed from this timestamp.
-    /// 
-    /// Note that this method will panic if this timestamp is in the future. 
+    ///
+    /// Note that this method will panic if this timestamp is in the future.
     /// If you would like to convert this into relative time, use [`as_relative_time()`][`Timestamp::as_relative_time`].
-    /// 
+    ///
     /// # Panics
     /// - Timestamp is in the future
     #[cfg(feature = "chrono")]
@@ -111,19 +111,19 @@ impl Timestamp {
         Duration::from_millis(
             (chrono::Utc::now().timestamp_millis() - self.timestamp_millis() as i64)
                 .try_into()
-                .expect("Timestamp is in the future.")
+                .expect("Timestamp is in the future."),
         )
     }
 
     /// Returns a [`RelativeTime`] that represents how much time has elapsed from this timestamp.
-    /// 
+    ///
     /// If the timestamp is exactly now, the returned value is [`RelativeTime::Future`].
-    /// 
+    ///
     /// # Example
     /// ```rust
     /// use rs_cord::{Timestamp, RelativeTime};
     /// use RelativeTime::{Past, Future};
-    /// 
+    ///
     /// match Timestamp::from_unix(1234).relative_time() {
     ///     Past(dur) => println!("{} seconds ago", dur.as_secs()),
     ///     Future(dur) => println!("{} seconds from now", dur.as_secs()),

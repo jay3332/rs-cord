@@ -1,5 +1,5 @@
-use super::Snowflake;
 use super::user::UserData;
+use super::Snowflake;
 
 use serde::{Deserialize, Serialize};
 

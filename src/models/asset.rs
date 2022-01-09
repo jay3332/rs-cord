@@ -4,25 +4,9 @@ use crate::ClientState;
 use std::fmt::Display;
 use std::path::Path;
 
-pub const ALLOWED_FORMATS: [&str; 5] = [
-    "png",
-    "jpg",
-    "jpeg",
-    "webp",
-    "gif",
-];
+pub const ALLOWED_FORMATS: [&str; 5] = ["png", "jpg", "jpeg", "webp", "gif"];
 
-pub const ALLOWED_SIZES: [u16; 9] = [
-    16,
-    32,
-    64,
-    128,
-    256,
-    512,
-    1024,
-    2048,
-    4096,
-];
+pub const ALLOWED_SIZES: [u16; 9] = [16, 32, 64, 128, 256, 512, 1024, 2048, 4096];
 
 /// Represents a Discord asset, such as an avatar or guild icon.
 #[derive(Clone, Debug)]
@@ -36,7 +20,7 @@ pub struct Asset {
     pub format: String,
 
     /// The format of this asset if it is not animated.
-    /// 
+    ///
     /// If this is none, the format will always be [`format`][`Asset::format`].
     pub static_format: Option<String>,
 
@@ -60,7 +44,7 @@ impl Asset {
     }
 
     /// Returns the format being used.
-    /// 
+    ///
     /// If this is an animated asset, [`format`][`Asset::format`] will be used.  
     /// If this is a static asset, [`static_format`][`Asset::static_format`] will be used.
     #[must_use]
@@ -68,7 +52,7 @@ impl Asset {
         if self.animated || self.static_format.is_none() {
             self.format.clone()
         } else {
-            self.static_format.clone().unwrap()  // we already checked that this is not none, so it is safe to unwrap.
+            self.static_format.clone().unwrap() // we already checked that this is not none, so it is safe to unwrap.
         }
     }
 
@@ -81,20 +65,26 @@ impl Asset {
             "".to_string()
         };
 
-        format!("{}/{}.{}{}", DISCORD_CDN_URL, self.path, self.format(), size)
+        format!(
+            "{}/{}.{}{}",
+            DISCORD_CDN_URL,
+            self.path,
+            self.format(),
+            size
+        )
     }
 
     /// Returns a clone of this asset with the given format.
-    /// 
+    ///
     /// # Panics
     /// - The format is not one of `png`, `jpg`, `jpeg`, `webp`, or `gif`.
     pub fn with_format(&self, format: impl Display) -> Self {
         let entity = format.to_string();
-        
+
         if !ALLOWED_FORMATS.contains(&entity.as_str()) {
             panic!("The format must be one of `png`, `jpg`, `jpeg`, `webp`, or `gif`.");
         }
-        
+
         let mut new = self.clone();
         new.format = entity;
 
@@ -102,16 +92,16 @@ impl Asset {
     }
 
     /// Returns a clone of this asset with the given static format.
-    /// 
+    ///
     /// # Panics
     /// - The format is not one of `png`, `jpg`, `jpeg`, `webp`, or `gif`.
     pub fn with_static_format(&self, format: impl Display) -> Self {
         let entity = format.to_string();
-        
+
         if !ALLOWED_FORMATS.contains(&entity.as_str()) {
             panic!("The static format must be one of `png`, `jpg`, `jpeg`, `webp`, or `gif`.");
         }
-        
+
         let mut new = self.clone();
         new.static_format = Some(entity);
 
@@ -119,14 +109,14 @@ impl Asset {
     }
 
     /// Returns a clone of this asset with the given size.
-    /// 
+    ///
     /// # Panics
     /// - The size is not a power of 2 between 16 and 4096.
     pub fn with_size(&self, size: u16) -> Self {
         if !ALLOWED_SIZES.contains(&size) {
             panic!("The size must be a power of 2 between 16 and 4096.");
         }
-        
+
         let mut new = self.clone();
         new.size = Some(size);
 
@@ -140,7 +130,9 @@ impl Asset {
 
     /// Saves this asset locally to the given file path.
     pub async fn save(&self, path: impl AsRef<Path>) -> crate::ThreadSafeResult<()> {
-        tokio::fs::write(path, self.read().await?.as_slice()).await.map_err(Into::into)
+        tokio::fs::write(path, self.read().await?.as_slice())
+            .await
+            .map_err(Into::into)
     }
 }
 

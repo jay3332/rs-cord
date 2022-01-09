@@ -1,10 +1,10 @@
-use super::Snowflake;
 use super::channel::ChannelData;
 use super::emoji::PartialEmojiData;
 use super::member::MemberData;
 use super::presence::ActivityData;
 use super::sticker::{StickerData, StickerItemData};
 use super::user::UserData;
+use super::Snowflake;
 
 use serde::{Deserialize, Serialize};
 
@@ -36,7 +36,7 @@ pub struct MessageData {
     pub message_reference: Option<MessageReferenceData>,
     pub flags: Option<u64>,
     pub referenced_message: Option<Box<MessageData>>,
-    pub interaction: Option<()>,     // TODO (message interaction object)
+    pub interaction: Option<()>, // TODO (message interaction object)
     pub thread: Option<ChannelData>,
     pub components: Option<Vec<()>>, // TODO (components)
     pub sticker_items: Option<Vec<StickerItemData>>,

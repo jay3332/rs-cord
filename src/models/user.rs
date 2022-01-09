@@ -1,5 +1,5 @@
-use crate::{Asset, Color, ClientState, impl_created_at};
 use crate::types::user::UserData;
+use crate::{impl_created_at, Asset, ClientState, Color};
 
 use bitflags::bitflags;
 
@@ -25,16 +25,16 @@ pub struct User {
     pub avatar_hash: Option<String>,
 
     /// The banner hash of this user's banner if this user has a banner.
-    /// 
+    ///
     /// # Note
     /// This will always be [`None`] unless fetched via [`Client::fetch_user`].
-    /// 
+    ///
     /// # See
     /// - [`User::banner`]
     pub banner_hash: Option<String>,
 
     /// The accent color of this user.
-    /// 
+    ///
     /// # Note
     /// This will always be [`None`] unless fetched via [`Client::fetch_user`].
     pub accent_color: Option<Color>,
@@ -62,7 +62,7 @@ impl User {
             bot: data.bot.unwrap_or(false),
             system: data.system.unwrap_or(false),
             flags: UserFlags::from_bits_truncate(
-                data.flags.unwrap_or(data.public_flags.unwrap_or(0))
+                data.flags.unwrap_or(data.public_flags.unwrap_or(0)),
             ),
         }
     }
@@ -98,35 +98,52 @@ impl User {
     }
 
     /// The default avatar of this user if this user does not have an avatar. This may not be their actual avatar.
-    /// 
+    ///
     /// # See
     /// [`User::avatar`]
     #[must_use]
     pub fn default_avatar(&self) -> Asset {
-        Asset::new(self.state.clone(), format!("embed/avatars/{}", self.discriminator.parse::<u32>().unwrap() % 5), false)
+        Asset::new(
+            self.state.clone(),
+            format!(
+                "embed/avatars/{}",
+                self.discriminator.parse::<u32>().unwrap() % 5
+            ),
+            false,
+        )
     }
 
     /// The avatar of this user. If this user does not have an avatar, this will default to their [`default_avatar`][`User::default_avatar`].
     #[must_use]
     pub fn avatar(&self) -> Asset {
         if let Some(hash) = self.avatar_hash.clone() {
-            Asset::new(self.state.clone(), format!("avatars/{}/{}", self.id, hash), hash.starts_with("a_"))
+            Asset::new(
+                self.state.clone(),
+                format!("avatars/{}/{}", self.id, hash),
+                hash.starts_with("a_"),
+            )
         } else {
             self.default_avatar()
         }
     }
 
     /// The banner that this user has. If this user does not have a banner, this will be [`None`].
-    /// 
+    ///
     /// # Note
     /// This will always be [`None`] unless fetched via [`Client::fetch_user`].
     #[must_use]
     pub fn banner(&self) -> Option<Asset> {
-        self.banner_hash.clone().map(|b| Asset::new(self.state.clone(), format!("banners/{}/{}", self.id, b), false))
+        self.banner_hash.clone().map(|b| {
+            Asset::new(
+                self.state.clone(),
+                format!("banners/{}/{}", self.id, b),
+                false,
+            )
+        })
     }
 
     /// The accent color of this user.
-    /// 
+    ///
     /// # Note
     /// This will always be [`None`] unless fetched via [`Client::fetch_user`].
     #[must_use]
@@ -135,9 +152,9 @@ impl User {
     }
 
     /// The accent colour of this user.
-    /// 
+    ///
     /// This is an alias to [`User::accent_color`].
-    /// 
+    ///
     /// # Note
     /// This will always be [`None`] unless fetched via [`Client::fetch_user`].
     #[must_use]
@@ -152,14 +169,11 @@ impl User {
 
         if flags.contains(UserFlags::HYPESQUAD_ONLINE_HOUSE_1) {
             Some(HypesquadHouse::Bravery)
-        }
-        else if flags.contains(UserFlags::HYPESQUAD_ONLINE_HOUSE_2) {
+        } else if flags.contains(UserFlags::HYPESQUAD_ONLINE_HOUSE_2) {
             Some(HypesquadHouse::Brilliance)
-        }
-        else if flags.contains(UserFlags::HYPESQUAD_ONLINE_HOUSE_3) {
+        } else if flags.contains(UserFlags::HYPESQUAD_ONLINE_HOUSE_3) {
             Some(HypesquadHouse::Balance)
-        }
-        else {
+        } else {
             None
         }
     }
@@ -169,13 +183,13 @@ impl_created_at!(User);
 
 bitflags! {
     /// A set of bitflags representing special flags of a user.
-    /// 
+    ///
     /// There are many utility methods on the [`User`] model that wrap around these flags,
     /// although these are perfectly fine to be used.
     pub struct UserFlags: u32 {
         /// This user is a Discord employee.
         const STAFF = 1 << 0;
-        
+
         /// This user is a partnered server owner.
         const PARTNER = 1 << 1;
 
@@ -186,19 +200,19 @@ bitflags! {
         const BUGHUNTER_LEVEL_1 = 1 << 3;
 
         /// This user is a member of Hypesquad Bravery.
-        /// 
+        ///
         /// # See
         /// - [`User::hypesquad_house`]
         const HYPESQUAD_ONLINE_HOUSE_1 = 1 << 6;
 
         /// This user is a member of Hypesquad Brilliance.
-        /// 
+        ///
         /// # See
         /// - [`User::hypesquad_house`]
         const HYPESQUAD_ONLINE_HOUSE_2 = 1 << 7;
 
         /// This user is a member of Hypesquad Balance.
-        /// 
+        ///
         /// # See
         /// - [`User::hypesquad_house`]
         const HYPESQUAD_ONLINE_HOUSE_3 = 1 << 8;

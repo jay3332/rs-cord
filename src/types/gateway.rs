@@ -1,6 +1,5 @@
 use crate::models::gateway::OpCode;
 
-use super::Snowflake;
 use super::channel::{ChannelData, ThreadMemberData};
 use super::emoji::EmojiData;
 use super::guild::{GuildData, UnavailableGuildData};
@@ -10,7 +9,8 @@ use super::presence::PresenceUpdateData;
 use super::role::RoleData;
 use super::sticker::StickerData;
 use super::user::UserData;
-use super::voice::{VoiceStateData, StageInstanceData};
+use super::voice::{StageInstanceData, VoiceStateData};
+use super::Snowflake;
 
 use int_enum::IntEnum;
 use serde::{de::Error as DeserializeError, Deserialize, Deserializer, Serialize};
@@ -116,7 +116,7 @@ pub struct ReadyData {
     pub guilds: Vec<UnavailableGuildData>,
     pub session_id: String,
     pub shard: Option<[u32; 2]>,
-    pub application: (),  // TODO application object
+    pub application: (), // TODO application object
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -170,7 +170,7 @@ pub struct ThreadDeleteData {
 pub struct ThreadListSyncData {
     /// The guild id that the thread list was synced for.
     pub guild_id: Snowflake,
-    /// The parent channel ids whose threads are being synced. If omitted, then threads were synced for the entire guild. 
+    /// The parent channel ids whose threads are being synced. If omitted, then threads were synced for the entire guild.
     pub channel_ids: Option<Vec<Snowflake>>,
     /// All active threads in the given channels that the current user can access.
     pub threads: Vec<ChannelData>,

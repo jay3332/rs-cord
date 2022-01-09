@@ -1,6 +1,6 @@
 use super::Snowflake;
 
-use serde::{Deserialize, Deserializer, Serialize, de::Error as DeserializeError};
+use serde::{de::Error as DeserializeError, Deserialize, Deserializer, Serialize};
 use serde_json::Map;
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -32,9 +32,9 @@ impl<'de> Deserialize<'de> for RoleTagsData {
         let bot_id = if json.contains_key("bot_id") {
             Some(
                 json.remove("bot_id")
-                    .ok_or_else(|| panic!())  // Impossible to get here
+                    .ok_or_else(|| panic!()) // Impossible to get here
                     .and_then(String::deserialize)
-                    .map_err(DeserializeError::custom)?
+                    .map_err(DeserializeError::custom)?,
             )
         } else {
             None
@@ -43,9 +43,9 @@ impl<'de> Deserialize<'de> for RoleTagsData {
         let integration_id = if json.contains_key("integration_id") {
             Some(
                 json.remove("integration_id")
-                    .ok_or_else(|| panic!())  // Impossible to get here
+                    .ok_or_else(|| panic!()) // Impossible to get here
                     .and_then(String::deserialize)
-                    .map_err(DeserializeError::custom)?
+                    .map_err(DeserializeError::custom)?,
             )
         } else {
             None

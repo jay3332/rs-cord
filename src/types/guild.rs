@@ -1,4 +1,3 @@
-use super::Snowflake;
 use super::channel::ChannelData;
 use super::emoji::EmojiData;
 use super::member::MemberData;
@@ -6,7 +5,8 @@ use super::presence::PresenceUpdateData;
 use super::role::RoleData;
 use super::sticker::StickerData;
 use super::user::UserData;
-use super::voice::{VoiceStateData, StageInstanceData};
+use super::voice::{StageInstanceData, VoiceStateData};
+use super::Snowflake;
 
 use serde::{Deserialize, Serialize};
 

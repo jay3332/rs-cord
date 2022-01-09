@@ -103,13 +103,7 @@ impl Client {
             self.http.as_ref().unwrap().get_self().await?,
         ));
 
-        self.gateway
-            .as_ref()
-            .unwrap()
-            .lock()
-            .await
-            .connect()
-            .await
+        self.gateway.as_ref().unwrap().lock().await.connect().await
     }
 
     fn init_http(&mut self) {

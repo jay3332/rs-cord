@@ -1,5 +1,5 @@
-use super::Snowflake;
 use super::member::MemberData;
+use super::Snowflake;
 
 use serde::{Deserialize, Serialize};
 

@@ -131,7 +131,7 @@ impl<'c, 'r> HttpClientRequestBuilder<'c, 'r> {
     /// Sends this request, returning the response sanitized into the given struct.
     ///
     /// # Example
-    /// 
+    ///
     /// ```rust
     /// let raw_msg = client.http.request(route!(POST, "/channels/{channel_id}/messages", channel_id = 1234))
     ///     .json(MessageCreatePayload {
@@ -190,11 +190,7 @@ impl HttpClient {
     pub async fn request_cdn(&self, url: String) -> ThreadSafeResult<Vec<u8>> {
         debug!("[CDN] Sending request to {:?}", url);
 
-        let response = self
-            .client
-            .request(Method::GET, url)
-            .send()
-            .await?;
+        let response = self.client.request(Method::GET, url).send().await?;
 
         if response.status().is_success() {
             Ok(response.bytes().await?.to_vec())

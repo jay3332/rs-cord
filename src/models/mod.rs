@@ -7,5 +7,5 @@ pub mod user;
 pub use asset::Asset;
 pub use color::{Color, Colour};
 pub use gateway::Intents;
-pub use timestamp::{Timestamp, RelativeTime};
+pub use timestamp::{RelativeTime, Timestamp};
 pub use user::User;

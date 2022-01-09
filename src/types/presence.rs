@@ -1,6 +1,6 @@
-use super::Snowflake;
 use super::emoji::ActivityEmojiData;
 use super::user::UserData;
+use super::Snowflake;
 
 use serde::{Deserialize, Serialize};
 
@@ -18,7 +18,7 @@ pub struct ActivityData {
     pub name: String,
     pub r#type: u8,
     pub url: Option<String>,
-    pub created_at: u64,  // unix timestamp
+    pub created_at: u64, // unix timestamp
     pub timestamps: Option<ActivityTimestampsData>,
     pub application_id: Option<Snowflake>,
     pub details: Option<String>,
@@ -40,7 +40,7 @@ pub struct ActivityTimestampsData {
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ActivityPartyData {
-    pub id: Option<String>,  // NOT a snowflake
+    pub id: Option<String>, // NOT a snowflake
     pub size: Option<[u32; 2]>,
 }
 

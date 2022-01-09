@@ -1,9 +1,9 @@
 use super::GatewayError;
 use crate::http::HttpClient;
 use crate::internal::prelude::*;
-use std::borrow::Cow;
-use crate::types::gateway::{GetGatewayBotData, WsInboundEvent, WsDispatchEvent};
+use crate::types::gateway::{GetGatewayBotData, WsDispatchEvent, WsInboundEvent};
 use crate::Intents;
+use std::borrow::Cow;
 
 use super::WsStream;
 
@@ -13,7 +13,10 @@ use serde_json::Value;
 
 use tokio_tungstenite::{
     connect_async_with_config,
-    tungstenite::protocol::{frame::{coding::CloseCode, CloseFrame}, Message, WebSocketConfig},
+    tungstenite::protocol::{
+        frame::{coding::CloseCode, CloseFrame},
+        Message, WebSocketConfig,
+    },
 };
 
 use std::sync::Arc;
@@ -22,7 +25,7 @@ use std::time::Instant;
 #[derive(Clone, Debug)]
 pub enum MessageType {
     Normal(Value),
-    Disconnected(Option<CloseFrame<'static>>)
+    Disconnected(Option<CloseFrame<'static>>),
 }
 
 #[derive(Debug)]
@@ -160,7 +163,7 @@ impl Gateway {
                             self.seq = Some(seq);
 
                             self.heartbeat().await?
-                        },
+                        }
                         WsInboundEvent::Reconnect => {
                             info!("Received a request to disconnect and resume gateway session.");
                             if self.session_id.is_some() {
@@ -173,12 +176,15 @@ impl Gateway {
                             match event {
                                 WsDispatchEvent::Resumed(data) => {
                                     self.is_resuming = false;
-                                    info!("Successfully resumed gateway session. Under trace: {:?}", data.trace);
+                                    info!(
+                                        "Successfully resumed gateway session. Under trace: {:?}",
+                                        data.trace
+                                    );
                                 }
                                 _ => {}
                             }
                         }
-                        _ => {},
+                        _ => {}
                     }
                 }
                 MessageType::Disconnected(frame) => {
@@ -232,10 +238,16 @@ impl Gateway {
 #[inline]
 pub fn handle_ws_message(message: Option<Message>) -> Result<Option<MessageType>> {
     Ok(match message {
-        Some(Message::Binary(bytes)) => Some(serde_json::from_reader(ZlibDecoder::new(&bytes[..]))
-            .map(MessageType::Normal)
-            .map_err(Error::from)?),
-        Some(Message::Text(text)) => Some(serde_json::from_str(&text).map(MessageType::Normal).map_err(Error::from)?),
+        Some(Message::Binary(bytes)) => Some(
+            serde_json::from_reader(ZlibDecoder::new(&bytes[..]))
+                .map(MessageType::Normal)
+                .map_err(Error::from)?,
+        ),
+        Some(Message::Text(text)) => Some(
+            serde_json::from_str(&text)
+                .map(MessageType::Normal)
+                .map_err(Error::from)?,
+        ),
         Some(Message::Close(Some(frame))) => Some(MessageType::Disconnected(Some(frame))), // TODO: handle close
         _ => None,
     })

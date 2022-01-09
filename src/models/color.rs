@@ -9,12 +9,12 @@ pub struct Color {
 
 impl Color {
     /// Creates a new color with the given decimal value.
-    /// 
+    ///
     /// # Examples
-    /// 
+    ///
     /// ```rust
     /// use rs_cord::Color;
-    /// 
+    ///
     /// const RED = Color::new(0xFF0000);
     /// ```
     pub fn new(value: u32) -> Self {
@@ -23,7 +23,9 @@ impl Color {
 
     /// Creates a new color with the given RGB color.
     pub fn from_rgb(r: u8, g: u8, b: u8) -> Self {
-        Self { value: ((r as u32) << 16) + ((g as u32) << 8) + (b as u32) }
+        Self {
+            value: ((r as u32) << 16) + ((g as u32) << 8) + (b as u32),
+        }
     }
 
     fn _get_rgb_byte(&self, b: u8) -> u8 {
@@ -37,7 +39,11 @@ impl Color {
 
     /// Returns this color as an RGB representation.
     pub fn to_rgb(&self) -> (u8, u8, u8) {
-        (self._get_rgb_byte(2), self._get_rgb_byte(1), self._get_rgb_byte(0))
+        (
+            self._get_rgb_byte(2),
+            self._get_rgb_byte(1),
+            self._get_rgb_byte(0),
+        )
     }
 
     /// Returns this color as a lowercase hex string, which starts with `#`.
