@@ -236,6 +236,9 @@
 <span id="234">234</span>
 <span id="235">235</span>
 <span id="236">236</span>
+<span id="237">237</span>
+<span id="238">238</span>
+<span id="239">239</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::constants::DISCORD_API_URL</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">route</span>, <span class="ident">types</span>, <span class="ident">ThreadSafeError</span>, <span class="ident">ThreadSafeResult</span>};
 
@@ -369,12 +372,15 @@
     <span class="doccomment">/// Sends this request, returning the response sanitized into the given struct.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Example</span>
+    <span class="doccomment">/// </span>
+    <span class="doccomment">/// ```rust</span>
     <span class="doccomment">/// let raw_msg = client.http.request(route!(POST, &quot;/channels/{channel_id}/messages&quot;, channel_id = 1234))</span>
     <span class="doccomment">///     .json(MessageCreatePayload {</span>
     <span class="doccomment">///         content: &quot;Hello, world!&quot;.to_string(),</span>
     <span class="doccomment">///     })</span>
-    <span class="doccomment">///     .`send_expecting_json::`&lt;MessagePayload&gt;()</span>
+    <span class="doccomment">///     .send_expecting_json::&lt;MessageData&gt;()</span>
     <span class="doccomment">///     .await?;</span>
+    <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">send_expecting_json</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">ThreadSafeResult</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>
     <span class="kw">where</span>
         <span class="ident">T</span>: <span class="ident">serde::de::DeserializeOwned</span>,
