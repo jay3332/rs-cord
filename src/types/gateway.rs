@@ -1,5 +1,6 @@
 use crate::models::gateway::OpCode;
 
+use super::Snowflake;
 use super::channel::{ChannelData, ThreadMemberData};
 use super::emoji::EmojiData;
 use super::guild::{GuildData, UnavailableGuildData};
@@ -108,6 +109,18 @@ impl<'de> Deserialize<'de> for WsInboundEvent {
     }
 }
 
+macro_rules! impl_de {
+    ($t:ty, $d:ty, $f:ident) => {
+        impl<'de> Deserialize<'de> for $t {
+            fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+                Ok(Self {
+                    $f: <$d>::deserialize(deserializer)?,
+                })
+            }
+        }
+    };
+}
+
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ReadyData {
     pub v: u8,
@@ -118,83 +131,53 @@ pub struct ReadyData {
     pub application: (),  // TODO application object
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize)]
 pub struct ChannelCreateData {
     /// The channel that was created.
     pub channel: ChannelData,
 }
 
-impl<'de> Deserialize<'de> for ChannelCreateEvent {
-    fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
-        Ok(Self {
-            channel: ChannelData::deserialize(deserializer)?,
-        })
-    }
-}
+impl_de!(ChannelCreateData, ChannelData, channel);
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize)]
 pub struct ChannelUpdateData {
     /// The channel that was updated.
     pub channel: ChannelData,
 }
 
-impl<'de> Deserialize<'de> for ChannelUpdateEvent {
-    fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
-        Ok(Self {
-            channel: ChannelData::deserialize(deserializer)?,
-        })
-    }
-}
+impl_de!(ChannelUpdateData, ChannelData, channel);
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize)]
 pub struct ChannelDeleteData {
     /// The channel that was deleted.
     pub channel: ChannelData,
 }
 
-impl<'de> Deserialize<'de> for ChannelDeleteEvent {
-    fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
-        Ok(Self {
-            channel: ChannelData::deserialize(deserializer)?,
-        })
-    }
-}
+impl_de!(ChannelDeleteData, ChannelData, channel);
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize)]
 pub struct ThreadCreateData {
     /// The thread that was created.
     pub thread: ChannelData,
 }
 
-impl<'de> Deserialize<'de> for ThreadCreateEvent {
-    fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
-        Ok(Self {
-            thread: ChannelData::deserialize(deserializer)?,
-        })
-    }
-}
+impl_de!(ThreadCreateData, ChannelData, thread);
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize)]
 pub struct ThreadUpdateData {
     /// The thread that was updated.
     pub thread: ChannelData,
 }
 
-impl<'de> Deserialize<'de> for ThreadUpdateEvent {
-    fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
-        Ok(Self {
-            thread: ChannelData::deserialize(deserializer)?,
-        })
-    }
-}
+impl_de!(ThreadUpdateData, ChannelData, thread);
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ThreadDeleteData {
     /// The thread that was deleted.
     pub thread: ChannelData,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ThreadListSyncData {
     /// The guild id that the thread list was synced for.
     pub guild_id: Snowflake,
@@ -206,13 +189,13 @@ pub struct ThreadListSyncData {
     pub members: Vec<ThreadMemberData>,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ThreadMemberUpdateData {
     /// The `ThreadMember` that was updated.
-    pub member: ThreadMember,
+    pub member: ThreadMemberData,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ThreadMembersUpdateData {
     /// The thread id that the members were updated for.
     pub id: Snowflake,
@@ -226,7 +209,7 @@ pub struct ThreadMembersUpdateData {
     pub removed_member_ids: Option<Vec<Snowflake>>,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ChannelPinsUpdateData {
     /// The guild id of the channel's guild.
     pub guild_id: Option<Snowflake>,
