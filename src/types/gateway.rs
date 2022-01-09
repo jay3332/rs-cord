@@ -109,18 +109,6 @@ impl<'de> Deserialize<'de> for WsInboundEvent {
     }
 }
 
-macro_rules! impl_de {
-    ($t:ty, $d:ty, $f:ident) => {
-        impl<'de> Deserialize<'de> for $t {
-            fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
-                Ok(Self {
-                    $f: <$d>::deserialize(deserializer)?,
-                })
-            }
-        }
-    };
-}
-
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ReadyData {
     pub v: u8,
@@ -131,45 +119,40 @@ pub struct ReadyData {
     pub application: (),  // TODO application object
 }
 
-#[derive(Clone, Debug, Serialize)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(transparent)]
 pub struct ChannelCreateData {
     /// The channel that was created.
     pub channel: ChannelData,
 }
 
-impl_de!(ChannelCreateData, ChannelData, channel);
-
-#[derive(Clone, Debug, Serialize)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(transparent)]
 pub struct ChannelUpdateData {
     /// The channel that was updated.
     pub channel: ChannelData,
 }
 
-impl_de!(ChannelUpdateData, ChannelData, channel);
-
-#[derive(Clone, Debug, Serialize)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(transparent)]
 pub struct ChannelDeleteData {
     /// The channel that was deleted.
     pub channel: ChannelData,
 }
 
-impl_de!(ChannelDeleteData, ChannelData, channel);
-
-#[derive(Clone, Debug, Serialize)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(transparent)]
 pub struct ThreadCreateData {
     /// The thread that was created.
     pub thread: ChannelData,
 }
 
-impl_de!(ThreadCreateData, ChannelData, thread);
-
-#[derive(Clone, Debug, Serialize)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(transparent)]
 pub struct ThreadUpdateData {
     /// The thread that was updated.
     pub thread: ChannelData,
 }
-
-impl_de!(ThreadUpdateData, ChannelData, thread);
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ThreadDeleteData {
@@ -219,32 +202,32 @@ pub struct ChannelPinsUpdateData {
     pub last_pin_timestamp: Option<String>,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(transparent)]
 pub struct GuildCreateData {
     /// The guild that was created.
     pub guild: GuildData,
 }
 
-impl<'de> Deserialize<'de> for GuildCreateData {
-    fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
-        Ok(Self {
-            guild: GuildData::deserialize(deserializer)?,
-        })
-    }
-}
-
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(transparent)]
 pub struct GuildUpdateData {
     /// The guild that was updated.
     pub guild: GuildData,
 }
 
-impl<'de> Deserialize<'de> for GuildUpdateData {
-    fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
-        Ok(Self {
-            guild: GuildData::deserialize(deserializer)?,
-        })
-    }
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct GuildDeleteData {
+    /// The guild that was deleted.
+    pub id: Snowflake,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct GuildUnavailableData {
+    /// The guild that was unavailable.
+    pub id: Snowflake,
+    /// Whether the guild is unavailable or not.
+    pub unavailable: bool,
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -261,4 +244,8 @@ pub enum WsDispatchEvent {
     ThreadMemberUpdate(ThreadMemberUpdateData),
     ThreadMembersUpdate(ThreadMembersUpdateData),
     ChannelPinsUpdate(ChannelPinsUpdateData),
+    GuildCreate(GuildCreateData),
+    GuildUpdate(GuildUpdateData),
+    GuildDelete(GuildDeleteData),
+    GuildUnavailable(GuildUnavailableData),
 }
