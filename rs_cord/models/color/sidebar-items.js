@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Color","Represents a color, most likely fetched from or to be used for Discord."]],"type":[["Colour",""]]});
