@@ -124,7 +124,7 @@ pub struct ChannelCreateData {
     pub channel: ChannelData,
 }
 
-impl<'de> Deserialize<'de> for ChannelCreateEvent {
+impl<'de> Deserialize<'de> for ChannelCreateData {
     fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
         Ok(Self {
             channel: ChannelData::deserialize(deserializer)?,
@@ -138,7 +138,7 @@ pub struct ChannelUpdateData {
     pub channel: ChannelData,
 }
 
-impl<'de> Deserialize<'de> for ChannelUpdateEvent {
+impl<'de> Deserialize<'de> for ChannelUpdateData {
     fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
         Ok(Self {
             channel: ChannelData::deserialize(deserializer)?,
@@ -152,7 +152,7 @@ pub struct ChannelDeleteData {
     pub channel: ChannelData,
 }
 
-impl<'de> Deserialize<'de> for ChannelDeleteEvent {
+impl<'de> Deserialize<'de> for ChannelDeleteData {
     fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
         Ok(Self {
             channel: ChannelData::deserialize(deserializer)?,
@@ -166,7 +166,7 @@ pub struct ThreadCreateData {
     pub thread: ChannelData,
 }
 
-impl<'de> Deserialize<'de> for ThreadCreateEvent {
+impl<'de> Deserialize<'de> for ThreadCreateData {
     fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
         Ok(Self {
             thread: ChannelData::deserialize(deserializer)?,
@@ -180,7 +180,7 @@ pub struct ThreadUpdateData {
     pub thread: ChannelData,
 }
 
-impl<'de> Deserialize<'de> for ThreadUpdateEvent {
+impl<'de> Deserialize<'de> for ThreadUpdateData {
     fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
         Ok(Self {
             thread: ChannelData::deserialize(deserializer)?,
@@ -236,6 +236,33 @@ pub struct ChannelPinsUpdateData {
     pub last_pin_timestamp: Option<String>,
 }
 
+#[derive(Clone, Debug)]
+pub struct GuildCreateData {
+    /// The guild that was created.
+    pub guild: GuildData,
+}
+
+impl<'de> Deserialize<'de> for GuildCreateData {
+    fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+        Ok(Self {
+            guild: GuildData::deserialize(deserializer)?,
+        })
+    }
+}
+
+#[derive(Clone, Debug)]
+pub struct GuildUpdateData {
+    /// The guild that was updated.
+    pub guild: GuildData,
+}
+
+impl<'de> Deserialize<'de> for GuildUpdateData {
+    fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+        Ok(Self {
+            guild: GuildData::deserialize(deserializer)?,
+        })
+    }
+}
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[non_exhaustive]
