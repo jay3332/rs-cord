@@ -369,7 +369,7 @@
                 <span class="ident">WsInboundEvent::Hello</span>(<span class="ident">heartbeat_interval</span>) =&gt; {
                     <span class="self">self</span>.<span class="ident">heartbeat_interval</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">heartbeat_interval</span>);
                 }
-                <span class="kw">_</span> =&gt; <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">GatewayError::NoHello</span>.<span class="ident">into</span>()),
+                <span class="kw">_</span> =&gt; <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::Gateway</span>(<span class="ident">GatewayError::NoHello</span>)),
             }
 
             <span class="kw">if</span> <span class="self">self</span>.<span class="ident">is_resuming</span> {
