@@ -171,9 +171,9 @@ impl Gateway {
                             self.seq = Some(seq);
 
                             match event {
-                                WsDispatchEvent::Resumed => {
+                                WsDispatchEvent::Resumed(data) => {
                                     self.is_resuming = false;
-                                    info!("Successfully resumed gateway session.");
+                                    info!("Successfully resumed gateway session. Under trace: {:?}", data.trace);
                                 }
                                 _ => {}
                             }
