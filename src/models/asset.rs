@@ -1,11 +1,7 @@
-#[cfg(feature = "async-fs")]
-extern crate async_fs;
-
 use crate::constants::DISCORD_CDN_URL;
 use crate::ClientState;
 
 use std::fmt::Display;
-#[cfg(feature = "async-fs")]
 use std::path::Path;
 
 pub const ALLOWED_FORMATS: [&str; 5] = [
@@ -143,15 +139,14 @@ impl Asset {
     }
 
     /// Saves this asset locally to the given file path.
-    #[cfg(feature = "async-fs")]
-    pub async fn save<P: AsRef<Path>>(&self, path: P) -> crate::ThreadSafeResult<()> {
-        async_fs::write(path, self.read().await?.as_slice()).await
+    pub async fn save(&self, path: impl AsRef<Path>) -> crate::ThreadSafeResult<()> {
+        tokio::fs::write(path, self.read().await?.as_slice()).await.map_err(Into::into)
     }
 }
 
 impl Display for Asset {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self.url())
+        f.write_str(self.url().as_str())
     }
 }
 
