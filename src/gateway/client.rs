@@ -1,6 +1,7 @@
 use super::GatewayError;
 use crate::http::HttpClient;
 use crate::internal::prelude::*;
+use std::borrow::Cow;
 use crate::types::gateway::{GetGatewayBotData, WsInboundEvent};
 use crate::Intents;
 
@@ -18,6 +19,12 @@ use tokio_tungstenite::{
 use std::sync::Arc;
 use std::time::Instant;
 
+#[derive(Clone, Debug)]
+pub enum MessageType {
+    Normal(Value),
+    Disconnected(Option<CloseFrame<'static>>)
+}
+
 #[derive(Debug)]
 pub struct Gateway {
     pub(crate) http: Arc<HttpClient>,
@@ -31,6 +38,7 @@ pub struct Gateway {
     pub(crate) last_heartbeat: Option<Instant>,
     pub(crate) session_id: Option<String>,
     pub(crate) seq: Option<u64>,
+    pub(crate) is_resuming: bool,
 }
 
 impl Gateway {
@@ -65,15 +73,16 @@ impl Gateway {
             last_heartbeat: None,
             session_id: None,
             seq: None,
+            is_resuming: false,
         })
     }
 
     async fn init(&mut self) -> Result<()> {
         self.stream
-            .close(CloseFrame {
+            .close(Some(CloseFrame {
                 code: CloseCode::Normal,
-                reason: None,
-            })
+                reason: Cow::from("Attempting to reconnect."),
+            }))
             .await?;
 
         self.info = self.http.get_gateway_bot().await.map_err(Error::from)?;
@@ -135,7 +144,7 @@ impl Gateway {
     pub async fn start_recv(&mut self) -> Result<bool> {
         while let Some(msg) = self.recv_json().await? {
             match msg {
-                Value => {
+                MessageType::Normal(msg) => {
                     self.try_heartbeat().await?;
 
                     match serde_json::from_value::<WsInboundEvent>(msg)? {
@@ -147,7 +156,7 @@ impl Gateway {
                         WsInboundEvent::Reconnect => {
                             info!("Received a request to disconnect and resume gateway session.");
                             if self.session_id.is_some() {
-                                return false;
+                                return Ok(false);
                             }
                         }
                         WsInboundEvent::Resumed => {
@@ -156,12 +165,12 @@ impl Gateway {
                         }
                     }
                 }
-                GatewayError::Disconnected(frame) => {
+                MessageType::Disconnected(frame) => {
                     let resume = handle_gateway_disconnect(frame);
                     if resume && self.session_id.is_some() {
-                        return false;
+                        return Ok(false);
                     } else {
-                        return true;
+                        return Ok(true);
                     }
                 }
             }
@@ -170,7 +179,7 @@ impl Gateway {
         Ok(true) // If we somehow get here, start a new session.
     }
 
-    pub async fn recv_json(&mut self) -> Result<Option<Value>> {
+    pub async fn recv_json(&mut self) -> Result<Option<MessageType>> {
         handle_ws_message(self.stream.next().await.transpose()?)
     }
 
@@ -205,22 +214,26 @@ impl Gateway {
 }
 
 #[inline]
-pub fn handle_ws_message(message: Option<Message>) -> Result<Option<Value>> {
+pub fn handle_ws_message(message: Option<Message>) -> Result<Option<MessageType>> {
     Ok(match message {
-        Some(Message::Binary(bytes)) => serde_json::from_reader(ZlibDecoder::new(&bytes[..]))
-            .map(Some)
-            .map_err(Error::from)?,
-        Some(Message::Text(text)) => serde_json::from_str(&text).map(Some).map_err(Error::from)?,
-        Some(Message::Close(Some(frame))) => Some(GatewayError::Disconnected(frame)), // TODO: handle close
+        Some(Message::Binary(bytes)) => Some(serde_json::from_reader(ZlibDecoder::new(&bytes[..]))
+            .map(MessageType::Normal)
+            .map_err(Error::from)?),
+        Some(Message::Text(text)) => Some(serde_json::from_str(&text).map(MessageType::Normal).map_err(Error::from)?),
+        Some(Message::Close(Some(frame))) => Some(MessageType::Disconnected(Some(frame))), // TODO: handle close
         _ => None,
     })
 }
 
 #[inline]
-pub fn handle_gateway_disconnect(frame: CloseFrame) -> bool {
-    match frame.code.into() {
-        4013 | 4014 => false,
-        4004 => false,
-        _ => true,
+pub fn handle_gateway_disconnect(frame: Option<CloseFrame>) -> bool {
+    if let Some(frame) = frame {
+        match frame.code.into() {
+            4013 | 4014 => false,
+            4004 => false,
+            _ => true,
+        }
+    } else {
+        true
     }
 }

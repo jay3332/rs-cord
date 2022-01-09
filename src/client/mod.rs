@@ -108,7 +108,7 @@ impl Client {
             .unwrap()
             .lock()
             .await
-            .connect(false)
+            .connect()
             .await
     }
 
