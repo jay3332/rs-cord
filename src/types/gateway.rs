@@ -223,14 +223,6 @@ pub struct GuildDeleteData {
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct GuildUnavailableData {
-    /// The guild that was unavailable.
-    pub id: Snowflake,
-    /// Whether the guild is unavailable or not.
-    pub unavailable: bool,
-}
-
-#[derive(Clone, Debug, Deserialize, Serialize)]
 #[non_exhaustive]
 pub enum WsDispatchEvent {
     Ready(ReadyData),
@@ -247,5 +239,5 @@ pub enum WsDispatchEvent {
     GuildCreate(GuildCreateData),
     GuildUpdate(GuildUpdateData),
     GuildDelete(GuildDeleteData),
-    GuildUnavailable(GuildUnavailableData),
+    GuildUnavailable(UnavailableGuildData),
 }
