@@ -1,6 +1,6 @@
 use crate::models::gateway::OpCode;
 
-use super::channel::ChannelData;
+use super::channel::{ChannelData, ThreadMemberData};
 use super::emoji::EmojiData;
 use super::guild::{GuildData, UnavailableGuildData};
 use super::member::MemberData;
@@ -121,7 +121,7 @@ pub struct ReadyData {
 #[derive(Clone, Debug)]
 pub struct ChannelCreateData {
     /// The channel that was created.
-    pub channel: Channel,
+    pub channel: ChannelData,
 }
 
 impl<'de> Deserialize<'de> for ChannelCreateEvent {
@@ -135,7 +135,7 @@ impl<'de> Deserialize<'de> for ChannelCreateEvent {
 #[derive(Clone, Debug)]
 pub struct ChannelUpdateData {
     /// The channel that was updated.
-    pub channel: Channel,
+    pub channel: ChannelData,
 }
 
 impl<'de> Deserialize<'de> for ChannelUpdateEvent {
@@ -149,7 +149,7 @@ impl<'de> Deserialize<'de> for ChannelUpdateEvent {
 #[derive(Clone, Debug)]
 pub struct ChannelDeleteData {
     /// The channel that was deleted.
-    pub channel: Channel,
+    pub channel: ChannelData,
 }
 
 impl<'de> Deserialize<'de> for ChannelDeleteEvent {
@@ -163,7 +163,7 @@ impl<'de> Deserialize<'de> for ChannelDeleteEvent {
 #[derive(Clone, Debug)]
 pub struct ThreadCreateData {
     /// The thread that was created.
-    pub thread: Channel,
+    pub thread: ChannelData,
 }
 
 impl<'de> Deserialize<'de> for ThreadCreateEvent {
@@ -177,7 +177,7 @@ impl<'de> Deserialize<'de> for ThreadCreateEvent {
 #[derive(Clone, Debug)]
 pub struct ThreadUpdateData {
     /// The thread that was updated.
-    pub thread: Channel,
+    pub thread: ChannelData,
 }
 
 impl<'de> Deserialize<'de> for ThreadUpdateEvent {
@@ -191,13 +191,64 @@ impl<'de> Deserialize<'de> for ThreadUpdateEvent {
 #[derive(Clone, Debug)]
 pub struct ThreadDeleteData {
     /// The thread that was deleted.
-    pub thread: Channel,
+    pub thread: ChannelData,
 }
 
+#[derive(Clone, Debug)]
+pub struct ThreadListSyncData {
+    /// The guild id that the thread list was synced for.
+    pub guild_id: Snowflake,
+    /// The parent channel ids whose threads are being synced. If omitted, then threads were synced for the entire guild. 
+    pub channel_ids: Option<Vec<Snowflake>>,
+    /// All active threads in the given channels that the current user can access.
+    pub threads: Vec<ChannelData>,
+    /// All `ThreadMember` objects from the synced threads for the current user, indicating which threads the current user has been added to.
+    pub members: Vec<ThreadMemberData>,
+}
+
+#[derive(Clone, Debug)]
+pub struct ThreadMemberUpdateData {
+    /// The `ThreadMember` that was updated.
+    pub member: ThreadMember,
+}
+
+#[derive(Clone, Debug)]
+pub struct ThreadMembersUpdateData {
+    /// The thread id that the members were updated for.
+    pub id: Snowflake,
+    /// The guild id of the thread.
+    pub guild_id: Snowflake,
+    /// The approximate number of members in the thread, capped at 50.
+    pub member_count: u8,
+    /// The user who were added to the thread.
+    pub added_members: Option<Vec<ThreadMemberData>>,
+    /// The id of the user who were removed from the thread.
+    pub removed_member_ids: Option<Vec<Snowflake>>,
+}
+
+#[derive(Clone, Debug)]
+pub struct ChannelPinsUpdateData {
+    /// The guild id of the channel's guild.
+    pub guild_id: Option<Snowflake>,
+    /// The channel id that the pins were updated for.
+    pub channel_id: ChannelData,
+    /// The message ids that were pinned.
+    pub last_pin_timestamp: Option<String>,
+}
 
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[non_exhaustive]
 pub enum WsDispatchEvent {
     Ready(ReadyData),
+    ChannelCreate(ChannelCreateData),
+    ChannelUpdate(ChannelUpdateData),
+    ChannelDelete(ChannelDeleteData),
+    ThreadCreate(ThreadCreateData),
+    ThreadUpdate(ThreadUpdateData),
+    ThreadDelete(ThreadDeleteData),
+    ThreadListSync(ThreadListSyncData),
+    ThreadMemberUpdate(ThreadMemberUpdateData),
+    ThreadMembersUpdate(ThreadMembersUpdateData),
+    ChannelPinsUpdate(ChannelPinsUpdateData),
 }

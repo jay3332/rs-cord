@@ -17,3 +17,11 @@ pub struct MemberData {
     pub permissions: Option<String>,
     pub communication_disabled_until: Option<String>,
 }
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct ThreadMemberData {
+    pub id: Option<Snowflake>,
+    pub user_id: Option<Snowflake>,
+    pub join_timestamp: String,
+    pub flags: u64,
+}

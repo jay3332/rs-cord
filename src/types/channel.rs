@@ -49,11 +49,3 @@ pub struct ThreadMetadata {
     pub locked: bool,
     pub invitable: Option<bool>,
 }
-
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct ThreadMemberData {
-    pub id: Option<Snowflake>,
-    pub user_id: Option<Snowflake>,
-    pub join_timestamp: String,
-    pub flags: u64,
-}
