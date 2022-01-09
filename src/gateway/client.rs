@@ -12,8 +12,7 @@ use serde_json::Value;
 
 use tokio_tungstenite::{
     connect_async_with_config,
-    tokio_tungstenite::tungstenite::protocol::frame::{coding::CloseCode, CloseFrame},
-    Message, WebSocketConfig,
+    tungstenite::protocol::{frame::{coding::CloseCode, CloseFrame}, Message, WebSocketConfig},
 };
 
 use std::sync::Arc;
