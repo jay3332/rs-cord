@@ -189,7 +189,7 @@ impl Gateway {
                 }
                 MessageType::Disconnected(frame) => {
                     let resume = handle_gateway_disconnect(frame);
-                    return Ok(!resume || !self.session_id.is_some()));
+                    return Ok(!resume || !self.session_id.is_some());
                 }
             }
         }
