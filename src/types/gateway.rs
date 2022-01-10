@@ -2,7 +2,7 @@ use crate::models::gateway::OpCode;
 
 use super::channel::{ChannelData, ThreadMemberData};
 use super::emoji::EmojiData;
-use super::guild::{GuildData, UnavailableGuildData};
+use super::guild::{GuildData, ScheduledEventData, UnavailableGuildData};
 use super::member::MemberData;
 use super::message::MessageData;
 use super::presence::PresenceUpdateData;
@@ -60,6 +60,12 @@ pub enum WsInboundEvent {
     HeartbeatAck,
 }
 
+macro_rules! dispatch_event_de {
+    ($i:ident, $t:ty, $d:ident) => {{
+        WsDispatchEvent::$i(<$t>::deserialize($d).map_err(DeserializeError::custom)?)
+    }};
+}
+
 impl<'de> Deserialize<'de> for WsInboundEvent {
     fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
         let mut json = Map::deserialize(deserializer)?;
@@ -71,16 +77,128 @@ impl<'de> Deserialize<'de> for WsInboundEvent {
                 .map(|o| OpCode::from_int(o.as_u64().unwrap() as u8).unwrap())
                 .ok_or_else(|| DeserializeError::custom("Missing opcode"))?
             {
-                OpCode::Dispatch => Self::Dispatch(
-                    json.remove("s")
-                        .ok_or_else(|| DeserializeError::custom("Missing sequence"))
-                        .and_then(u64::deserialize)
-                        .map_err(DeserializeError::custom)?,
-                    json.remove("d")
-                        .ok_or_else(|| DeserializeError::custom("Missing data"))
-                        .and_then(WsDispatchEvent::deserialize)
-                        .map_err(DeserializeError::custom)?,
-                ),
+                OpCode::Dispatch => {
+                    let data = json
+                        .remove("d")
+                        .ok_or_else(|| DeserializeError::custom("Missing data"))?;
+
+                    let d = match json
+                        .remove("t")
+                        .ok_or_else(|| DeserializeError::custom("Missing event type"))
+                        .and_then(String::deserialize)
+                        .map_err(DeserializeError::custom)?
+                        .as_str()
+                    {
+                        "READY" => dispatch_event_de!(Ready, ReadyData, data),
+                        "RESUMED" => dispatch_event_de!(Resumed, ResumedData, data),
+                        "CHANNEL_CREATE" => {
+                            dispatch_event_de!(ChannelCreate, ChannelCreateData, data)
+                        }
+                        "CHANNEL_UPDATE" => {
+                            dispatch_event_de!(ChannelUpdate, ChannelUpdateData, data)
+                        }
+                        "CHANNEL_DELETE" => {
+                            dispatch_event_de!(ChannelDelete, ChannelDeleteData, data)
+                        }
+                        "THREAD_CREATE" => dispatch_event_de!(ThreadCreate, ThreadCreateData, data),
+                        "THREAD_UPDATE" => dispatch_event_de!(ThreadUpdate, ThreadUpdateData, data),
+                        "THREAD_DELETE" => dispatch_event_de!(ThreadDelete, ThreadDeleteData, data),
+                        "THREAD_LIST_SYNC" => {
+                            dispatch_event_de!(ThreadListSync, ThreadListSyncData, data)
+                        }
+                        "THREAD_MEMBER_UPDATE" => {
+                            dispatch_event_de!(ThreadMemberUpdate, ThreadMemberUpdateData, data)
+                        }
+                        "THREAD_MEMBERS_UPDATE" => {
+                            dispatch_event_de!(ThreadMembersUpdate, ThreadMembersUpdateData, data)
+                        }
+                        "CHANNEL_PINS_UPDATE" => {
+                            dispatch_event_de!(ChannelPinsUpdate, ChannelPinsUpdateData, data)
+                        }
+                        "GUILD_CREATE" => dispatch_event_de!(GuildCreate, GuildCreateData, data),
+                        "GUILD_UPDATE" => dispatch_event_de!(GuildUpdate, GuildUpdateData, data),
+                        "GUILD_DELETE" => {
+                            if Map::deserialize(&data)
+                                .map_err(DeserializeError::custom)?
+                                .remove("unavailable")
+                                .map(|o| o.as_bool().unwrap())
+                                .unwrap_or(false)
+                            {
+                                dispatch_event_de!(GuildUnavailable, UnavailableGuildData, data)
+                            } else {
+                                dispatch_event_de!(GuildDelete, GuildDeleteData, data)
+                            }
+                        }
+                        "GUILD_BAN_ADD" => dispatch_event_de!(GuildBanAdd, GuildBanAddData, data),
+                        "GUILD_BAN_REMOVE" => {
+                            dispatch_event_de!(GuildBanRemove, GuildBanRemoveData, data)
+                        }
+                        "GUILD_EMOJIS_UPDATE" => {
+                            dispatch_event_de!(GuildEmojisUpdate, GuildEmojisUpdateData, data)
+                        }
+                        "GUILD_STICKERS_UPDATE" => {
+                            dispatch_event_de!(GuildStickersUpdate, GuildStickersUpdateData, data)
+                        }
+                        "GUILD_INTEGRATIONS_UPDATE" => {
+                            dispatch_event_de!(
+                                GuildIntegrationsUpdate,
+                                GuildIntegrationsUpdateData,
+                                data
+                            )
+                        }
+                        "GUILD_MEMBER_ADD" => {
+                            dispatch_event_de!(GuildMemberAdd, GuildMemberAddData, data)
+                        }
+                        "GUILD_MEMBER_UPDATE" => {
+                            dispatch_event_de!(GuildMemberUpdate, GuildMemberUpdateData, data)
+                        }
+                        "GUILD_MEMBER_REMOVE" => {
+                            dispatch_event_de!(GuildMemberRemove, GuildMemberRemoveData, data)
+                        }
+                        "GUILD_MEMBERS_CHUNK" => {
+                            dispatch_event_de!(GuildMembersChunk, GuildMembersChunkData, data)
+                        }
+                        "GUILD_ROLE_CREATE" => {
+                            dispatch_event_de!(GuildRoleCreate, GuildRoleCreateData, data)
+                        }
+                        "GUILD_ROLE_UPDATE" => {
+                            dispatch_event_de!(GuildRoleUpdate, GuildRoleUpdateData, data)
+                        }
+                        "GUILD_ROLE_DELETE" => {
+                            dispatch_event_de!(GuildRoleDelete, GuildRoleDeleteData, data)
+                        }
+                        "GUILD_SCHEDULED_EVENTS_CREATE" => {
+                            dispatch_event_de!(
+                                GuildScheduledEventCreate,
+                                GuildScheduledEventCreateData,
+                                data
+                            )
+                        }
+                        "GUILD_SCHEDULED_EVENTS_UPDATE" => {
+                            dispatch_event_de!(
+                                GuildScheduledEventUpdate,
+                                GuildScheduledEventUpdateData,
+                                data
+                            )
+                        }
+                        "GUILD_SCHEDULED_EVENTS_DELETE" => {
+                            dispatch_event_de!(
+                                GuildScheduledEventDelete,
+                                GuildScheduledEventDeleteData,
+                                data
+                            )
+                        }
+                        _ => return Err(DeserializeError::custom("unsupported event received")),
+                    };
+
+                    Self::Dispatch(
+                        json.remove("s")
+                            .ok_or_else(|| DeserializeError::custom("Missing sequence"))
+                            .and_then(u64::deserialize)
+                            .map_err(DeserializeError::custom)?,
+                        d,
+                    )
+                }
                 OpCode::Heartbeat => Self::Heartbeat(
                     json.remove("s")
                         .ok_or_else(|| DeserializeError::custom("Missing sequence"))
@@ -229,6 +347,132 @@ pub struct GuildDeleteData {
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct GuildBanAddData {
+    /// The ID of the guild that the ban was added to.
+    pub guild_id: Snowflake,
+
+    /// The user that was banned.
+    pub user: UserData,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct GuildBanRemoveData {
+    /// The ID of the guild that the ban was removed from.
+    pub guild_id: Snowflake,
+
+    /// The user that was unbanned.
+    pub user: UserData,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct GuildEmojisUpdateData {
+    /// The ID of the guild that the emojis were updated for.
+    pub guild_id: Snowflake,
+
+    /// The emojis that were updated.
+    pub emojis: Vec<EmojiData>,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct GuildStickersUpdateData {
+    /// The ID of the guild that the stickers were updated for.
+    pub guild_id: Snowflake,
+
+    /// The stickers that were updated.
+    pub stickers: Vec<StickerData>,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct GuildIntegrationsUpdateData {
+    /// The ID of the guild that the integrations were updated for.
+    pub guild_id: Snowflake,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(transparent)]
+pub struct GuildMemberAddData {
+    pub member: MemberData,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct GuildMemberRemoveData {
+    /// The ID of the guild that the member was removed from.
+    pub guild_id: Snowflake,
+
+    /// The user that was removed.
+    pub user: UserData,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct GuildMemberUpdateData {
+    /*
+     * This is documented as a separate object,
+     * however this object is exactly the same as the Member object
+     * with a few fields required instead of optional.
+     *
+     * We can handle this by just `.unwrap()`ing them when we need to.
+     */
+    /// The member that was updated.
+    pub member: MemberData,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct GuildMembersChunkData {
+    pub guild_id: Snowflake,
+    pub members: Vec<MemberData>,
+    pub chunk_index: u32,
+    pub chunk_count: u32,
+    pub not_found: Option<Vec<Snowflake>>,
+    pub presences: Option<Vec<PresenceUpdateData>>,
+    pub nonce: String,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct GuildRoleCreateData {
+    /// The ID of the guild that the role was created in.
+    pub guild_id: Snowflake,
+
+    /// The role that was created.
+    pub role: RoleData,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct GuildRoleUpdateData {
+    /// The ID of the guild that the role was updated in.
+    pub guild_id: Snowflake,
+
+    /// The role that was updated.
+    pub role: RoleData,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct GuildRoleDeleteData {
+    /// The ID of the guild that the role was deleted from.
+    pub guild_id: Snowflake,
+
+    /// The ID of the role that was deleted.
+    pub role_id: Snowflake,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(transparent)]
+pub struct GuildScheduledEventCreateData {
+    pub event: ScheduledEventData,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(transparent)]
+pub struct GuildScheduledEventUpdateData {
+    pub event: ScheduledEventData,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(transparent)]
+pub struct GuildScheduledEventDeleteData {
+    pub event: ScheduledEventData,
+}
+
+#[derive(Clone, Debug, Serialize)]
 #[non_exhaustive]
 pub enum WsDispatchEvent {
     Ready(ReadyData),
@@ -247,4 +491,19 @@ pub enum WsDispatchEvent {
     GuildUpdate(GuildUpdateData),
     GuildDelete(GuildDeleteData),
     GuildUnavailable(UnavailableGuildData),
+    GuildBanAdd(GuildBanAddData),
+    GuildBanRemove(GuildBanRemoveData),
+    GuildEmojisUpdate(GuildEmojisUpdateData),
+    GuildStickersUpdate(GuildStickersUpdateData),
+    GuildIntegrationsUpdate(GuildIntegrationsUpdateData),
+    GuildMemberAdd(GuildMemberAddData),
+    GuildMemberRemove(GuildMemberRemoveData),
+    GuildMemberUpdate(GuildMemberUpdateData),
+    GuildMembersChunk(GuildMembersChunkData),
+    GuildRoleCreate(GuildRoleCreateData),
+    GuildRoleUpdate(GuildRoleUpdateData),
+    GuildRoleDelete(GuildRoleDeleteData),
+    GuildScheduledEventCreate(GuildScheduledEventCreateData),
+    GuildScheduledEventUpdate(GuildScheduledEventUpdateData),
+    GuildScheduledEventDelete(GuildScheduledEventDeleteData),
 }

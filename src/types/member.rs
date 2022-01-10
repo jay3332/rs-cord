@@ -16,4 +16,5 @@ pub struct MemberData {
     pub pending: Option<bool>,
     pub permissions: Option<String>,
     pub communication_disabled_until: Option<String>,
+    pub guild_id: Option<Snowflake>, // this extra field is present in gateway events ONLY
 }
