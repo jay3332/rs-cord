@@ -46,6 +46,8 @@ pub struct User {
     pub system: bool,
 
     /// The special flags of this user which are exposed to the client.
+    ///
+    /// If the client user is a bot account, the flags here may not be completely accurate.
     pub flags: UserFlags,
 }
 
@@ -162,7 +164,7 @@ impl User {
         self.accent_color.clone()
     }
 
-    /// The hypesquad house of this user.
+    /// The hypesquad house of this user. This will always be [`None`] if the client is a bot account.
     #[must_use]
     pub fn hypesquad_house(&self) -> Option<HypesquadHouse> {
         let flags = self.flags;
