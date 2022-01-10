@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["ApplicationData",""],["TeamData",""],["TeamMemberData",""]]});
+initSidebarItems({"struct":[["ApplicationData",""],["PartialApplicationData",""],["TeamData",""],["TeamMemberData",""]]});
