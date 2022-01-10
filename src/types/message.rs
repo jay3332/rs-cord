@@ -1,3 +1,4 @@
+use super::application::ApplicationData;
 use super::channel::ChannelData;
 use super::emoji::PartialEmojiData;
 use super::member::MemberData;
@@ -31,7 +32,7 @@ pub struct MessageData {
     pub webhook_id: Option<Snowflake>,
     pub r#type: u8,
     pub activity: Option<ActivityData>,
-    pub application: Option<()>, // TODO (application object)
+    pub application: Option<ApplicationData>,
     pub application_id: Option<Snowflake>,
     pub message_reference: Option<MessageReferenceData>,
     pub flags: Option<u64>,

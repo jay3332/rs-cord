@@ -1,3 +1,4 @@
+pub mod application;
 pub mod channel;
 pub mod common;
 pub mod emoji;
