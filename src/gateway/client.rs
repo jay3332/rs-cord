@@ -1,10 +1,9 @@
-use super::GatewayError;
 use crate::http::HttpClient;
 use crate::internal::prelude::*;
 use crate::types::gateway::{GetGatewayBotData, WsDispatchEvent, WsInboundEvent};
 use crate::Intents;
-use std::borrow::Cow;
 
+use super::GatewayError;
 use super::WsStream;
 
 use flate2::read::ZlibDecoder;
@@ -19,6 +18,7 @@ use tokio_tungstenite::{
     },
 };
 
+use std::borrow::Cow;
 use std::sync::Arc;
 use std::time::Instant;
 
