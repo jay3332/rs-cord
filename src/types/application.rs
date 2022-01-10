@@ -26,6 +26,12 @@ pub struct ApplicationData {
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct PartialApplicationData {
+    pub id: Snowflake,
+    pub flags: u32,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct TeamData {
     pub icon: Option<String>,
     pub id: Snowflake,

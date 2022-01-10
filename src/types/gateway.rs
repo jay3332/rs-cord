@@ -1,6 +1,6 @@
 use crate::models::gateway::OpCode;
 
-use super::application::ApplicationData;
+use super::application::PartialApplicationData;
 use super::channel::{ChannelData, ThreadMemberData};
 use super::emoji::EmojiData;
 use super::guild::{GuildData, ScheduledEventData, UnavailableGuildData};
@@ -249,7 +249,7 @@ pub struct ReadyData {
     pub guilds: Vec<UnavailableGuildData>,
     pub session_id: String,
     pub shard: Option<[u32; 2]>,
-    pub application: ApplicationData,
+    pub application: PartialApplicationData,
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
