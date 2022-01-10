@@ -124,7 +124,7 @@ impl Timestamp {
     /// use rs_cord::{Timestamp, RelativeTime};
     /// use RelativeTime::{Past, Future};
     ///
-    /// match Timestamp::from_unix(1234).relative_time() {
+    /// match Timestamp::from_unix(1234).as_relative_time() {
     ///     Past(dur) => println!("{} seconds ago", dur.as_secs()),
     ///     Future(dur) => println!("{} seconds from now", dur.as_secs()),
     /// }
