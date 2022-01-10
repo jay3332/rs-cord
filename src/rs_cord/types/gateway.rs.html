@@ -540,8 +540,10 @@
 <span id="537">537</span>
 <span id="538">538</span>
 <span id="539">539</span>
+<span id="540">540</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::models::gateway::OpCode</span>;
 
+<span class="kw">use</span> <span class="ident"><span class="kw">super</span>::application::ApplicationData</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::channel</span>::{<span class="ident">ChannelData</span>, <span class="ident">ThreadMemberData</span>};
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::emoji::EmojiData</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::guild</span>::{<span class="ident">GuildData</span>, <span class="ident">ScheduledEventData</span>, <span class="ident">UnavailableGuildData</span>};
@@ -790,7 +792,7 @@
     <span class="kw">pub</span> <span class="ident">guilds</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">UnavailableGuildData</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">session_id</span>: <span class="ident">String</span>,
     <span class="kw">pub</span> <span class="ident">shard</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span>[<span class="ident">u32</span>; <span class="number">2</span>]<span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">application</span>: (), <span class="comment">// TODO application object</span>
+    <span class="kw">pub</span> <span class="ident">application</span>: <span class="ident">ApplicationData</span>,
 }
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>, <span class="ident">Deserialize</span>, <span class="ident">Serialize</span>)]</span>
