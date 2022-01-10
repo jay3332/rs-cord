@@ -188,6 +188,20 @@ impl<'de> Deserialize<'de> for WsInboundEvent {
                                 data
                             )
                         }
+                        "GUILD_SCHEDULED_EVENT_USER_ADD" => {
+                            dispatch_event_de!(
+                                GuildScheduledEventUserAdd,
+                                GuildScheduledEventUserAddData,
+                                data
+                            )
+                        }
+                        "GUILD_SCHEDULED_EVENT_USER_REMOVE" => {
+                            dispatch_event_de!(
+                                GuildScheduledEventUserRemove,
+                                GuildScheduledEventUserRemoveData,
+                                data
+                            )
+                        }
                         _ => return Err(DeserializeError::custom("unsupported event received")),
                     };
 
@@ -472,6 +486,20 @@ pub struct GuildScheduledEventDeleteData {
     pub event: ScheduledEventData,
 }
 
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct GuildScheduledEventUserAddData {
+    pub guild_scheduled_event_id: Snowflake,
+    pub user_id: Snowflake,
+    pub guild_id: Snowflake,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct GuildScheduledEventUserRemoveData {
+    pub guild_scheduled_event_id: Snowflake,
+    pub user_id: Snowflake,
+    pub guild_id: Snowflake,
+}
+
 #[derive(Clone, Debug, Serialize)]
 #[non_exhaustive]
 pub enum WsDispatchEvent {
@@ -506,4 +534,6 @@ pub enum WsDispatchEvent {
     GuildScheduledEventCreate(GuildScheduledEventCreateData),
     GuildScheduledEventUpdate(GuildScheduledEventUpdateData),
     GuildScheduledEventDelete(GuildScheduledEventDeleteData),
+    GuildScheduledEventUserAdd(GuildScheduledEventUserAddData),
+    GuildScheduledEventUserRemove(GuildScheduledEventUserRemoveData),
 }
