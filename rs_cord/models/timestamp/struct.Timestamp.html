@@ -31,7 +31,7 @@ If you would like to convert this into relative time, use <a href="struct.Timest
 <div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use</span> <span class="ident">rs_cord</span>::{<span class="ident">Timestamp</span>, <span class="ident">RelativeTime</span>};
 <span class="kw">use</span> <span class="ident">RelativeTime</span>::{<span class="ident">Past</span>, <span class="ident">Future</span>};
 
-<span class="kw">match</span> <span class="ident">Timestamp::from_unix</span>(<span class="number">1234</span>).<span class="ident">relative_time</span>() {
+<span class="kw">match</span> <span class="ident">Timestamp::from_unix</span>(<span class="number">1234</span>).<span class="ident">as_relative_time</span>() {
     <span class="ident">Past</span>(<span class="ident">dur</span>) =&gt; <span class="macro">println!</span>(<span class="string">&quot;{} seconds ago&quot;</span>, <span class="ident">dur</span>.<span class="ident">as_secs</span>()),
     <span class="ident">Future</span>(<span class="ident">dur</span>) =&gt; <span class="macro">println!</span>(<span class="string">&quot;{} seconds from now&quot;</span>, <span class="ident">dur</span>.<span class="ident">as_secs</span>()),
 }</code></pre></div>

@@ -264,17 +264,12 @@
 <span id="261">261</span>
 <span id="262">262</span>
 <span id="263">263</span>
-<span id="264">264</span>
-<span id="265">265</span>
-<span id="266">266</span>
-<span id="267">267</span>
-</pre><pre class="rust"><code><span class="kw">use</span> <span class="ident"><span class="kw">super</span>::GatewayError</span>;
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::http::HttpClient</span>;
+</pre><pre class="rust"><code><span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::http::HttpClient</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::internal::prelude</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::types::gateway</span>::{<span class="ident">GetGatewayBotData</span>, <span class="ident">WsDispatchEvent</span>, <span class="ident">WsInboundEvent</span>};
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::Intents</span>;
-<span class="kw">use</span> <span class="ident">std::borrow::Cow</span>;
 
+<span class="kw">use</span> <span class="ident"><span class="kw">super</span>::GatewayError</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::WsStream</span>;
 
 <span class="kw">use</span> <span class="ident">flate2::read::ZlibDecoder</span>;
@@ -289,6 +284,7 @@
     },
 };
 
+<span class="kw">use</span> <span class="ident">std::borrow::Cow</span>;
 <span class="kw">use</span> <span class="ident">std::sync::Arc</span>;
 <span class="kw">use</span> <span class="ident">std::time::Instant</span>;
 
@@ -459,11 +455,7 @@
                 }
                 <span class="ident">MessageType::Disconnected</span>(<span class="ident">frame</span>) =&gt; {
                     <span class="kw">let</span> <span class="ident">resume</span> <span class="op">=</span> <span class="ident">handle_gateway_disconnect</span>(<span class="ident">frame</span>);
-                    <span class="kw">if</span> <span class="ident">resume</span> <span class="op">&amp;&amp;</span> <span class="self">self</span>.<span class="ident">session_id</span>.<span class="ident">is_some</span>() {
-                        <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="bool-val">false</span>);
-                    } <span class="kw">else</span> {
-                        <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="bool-val">true</span>);
-                    }
+                    <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="op">!</span><span class="ident">resume</span> <span class="op">|</span><span class="op">|</span> <span class="op">!</span><span class="self">self</span>.<span class="ident">session_id</span>.<span class="ident">is_some</span>());
                 }
             }
         }
