@@ -510,6 +510,36 @@
 <span id="507">507</span>
 <span id="508">508</span>
 <span id="509">509</span>
+<span id="510">510</span>
+<span id="511">511</span>
+<span id="512">512</span>
+<span id="513">513</span>
+<span id="514">514</span>
+<span id="515">515</span>
+<span id="516">516</span>
+<span id="517">517</span>
+<span id="518">518</span>
+<span id="519">519</span>
+<span id="520">520</span>
+<span id="521">521</span>
+<span id="522">522</span>
+<span id="523">523</span>
+<span id="524">524</span>
+<span id="525">525</span>
+<span id="526">526</span>
+<span id="527">527</span>
+<span id="528">528</span>
+<span id="529">529</span>
+<span id="530">530</span>
+<span id="531">531</span>
+<span id="532">532</span>
+<span id="533">533</span>
+<span id="534">534</span>
+<span id="535">535</span>
+<span id="536">536</span>
+<span id="537">537</span>
+<span id="538">538</span>
+<span id="539">539</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::models::gateway::OpCode</span>;
 
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::channel</span>::{<span class="ident">ChannelData</span>, <span class="ident">ThreadMemberData</span>};
@@ -697,6 +727,20 @@
                             <span class="macro">dispatch_event_de!</span>(
                                 <span class="ident">GuildScheduledEventDelete</span>,
                                 <span class="ident">GuildScheduledEventDeleteData</span>,
+                                <span class="ident">data</span>
+                            )
+                        }
+                        <span class="string">&quot;GUILD_SCHEDULED_EVENT_USER_ADD&quot;</span> =&gt; {
+                            <span class="macro">dispatch_event_de!</span>(
+                                <span class="ident">GuildScheduledEventUserAdd</span>,
+                                <span class="ident">GuildScheduledEventUserAddData</span>,
+                                <span class="ident">data</span>
+                            )
+                        }
+                        <span class="string">&quot;GUILD_SCHEDULED_EVENT_USER_REMOVE&quot;</span> =&gt; {
+                            <span class="macro">dispatch_event_de!</span>(
+                                <span class="ident">GuildScheduledEventUserRemove</span>,
+                                <span class="ident">GuildScheduledEventUserRemoveData</span>,
                                 <span class="ident">data</span>
                             )
                         }
@@ -984,6 +1028,20 @@
     <span class="kw">pub</span> <span class="ident">event</span>: <span class="ident">ScheduledEventData</span>,
 }
 
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>, <span class="ident">Deserialize</span>, <span class="ident">Serialize</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">GuildScheduledEventUserAddData</span> {
+    <span class="kw">pub</span> <span class="ident">guild_scheduled_event_id</span>: <span class="ident">Snowflake</span>,
+    <span class="kw">pub</span> <span class="ident">user_id</span>: <span class="ident">Snowflake</span>,
+    <span class="kw">pub</span> <span class="ident">guild_id</span>: <span class="ident">Snowflake</span>,
+}
+
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>, <span class="ident">Deserialize</span>, <span class="ident">Serialize</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">GuildScheduledEventUserRemoveData</span> {
+    <span class="kw">pub</span> <span class="ident">guild_scheduled_event_id</span>: <span class="ident">Snowflake</span>,
+    <span class="kw">pub</span> <span class="ident">user_id</span>: <span class="ident">Snowflake</span>,
+    <span class="kw">pub</span> <span class="ident">guild_id</span>: <span class="ident">Snowflake</span>,
+}
+
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>, <span class="ident">Serialize</span>)]</span>
 <span class="attribute">#[<span class="ident">non_exhaustive</span>]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">WsDispatchEvent</span> {
@@ -1018,6 +1076,8 @@
     <span class="ident">GuildScheduledEventCreate</span>(<span class="ident">GuildScheduledEventCreateData</span>),
     <span class="ident">GuildScheduledEventUpdate</span>(<span class="ident">GuildScheduledEventUpdateData</span>),
     <span class="ident">GuildScheduledEventDelete</span>(<span class="ident">GuildScheduledEventDeleteData</span>),
+    <span class="ident">GuildScheduledEventUserAdd</span>(<span class="ident">GuildScheduledEventUserAddData</span>),
+    <span class="ident">GuildScheduledEventUserRemove</span>(<span class="ident">GuildScheduledEventUserRemoveData</span>),
 }
 </code></pre></div>
 </section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rs_cord" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (092e1c9d2 2022-01-09)" ></div>
