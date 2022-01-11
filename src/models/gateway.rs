@@ -1,7 +1,7 @@
 use bitflags::__impl_bitflags;
 use int_enum::IntEnum;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
-use serde_repr::{Serialize_repr, Deserialize_repr};
+use serde_repr::{Deserialize_repr, Serialize_repr};
 
 /// A set of bitflags which represent what gateway events the client should receive.
 /// These can be constructed manually, or by using the [`intents!`] macro.

@@ -9,7 +9,10 @@ use super::WsStream;
 
 use flate2::read::ZlibDecoder;
 use futures_util::{SinkExt, StreamExt};
+use leaky_bucket_lite::RateLimiter;
 use serde_json::Value;
+
+use tokio::sync::OnceCell;
 
 use tokio_tungstenite::{
     connect_async_with_config,
@@ -21,7 +24,7 @@ use tokio_tungstenite::{
 
 use std::borrow::Cow;
 use std::sync::Arc;
-use std::time::Instant;
+use std::time::{Duration, Instant};
 
 #[derive(Clone, Debug)]
 pub enum MessageType {
@@ -38,6 +41,8 @@ pub struct Gateway {
     pub stream: WsStream,
     latency: Option<f64>,
 
+    ratelimiter: OnceCell<Arc<RateLimiter>>,
+
     pub(crate) alive_since: Option<Instant>,
     pub(crate) heartbeat_interval: Option<u16>,
     pub(crate) last_heartbeat: Option<Instant>,
@@ -53,6 +58,15 @@ impl Gateway {
                 "A token is required in order to initiate the gateway.",
             ));
         }
+
+        let _ = self.ratelimiter.set(Arc::new(
+            LeakyBucket::builder()
+                .max(110) // Reserve 10 for haertbeat
+                .tokens(110)
+                .refill_interval(Duration::from_secs(60))
+                .refill_amount(110)
+                .build(),
+        ));
 
         let info = http.get_gateway_bot().await.map_err(Error::from)?;
 
@@ -208,12 +222,14 @@ impl Gateway {
             match tokio::time::timeout(RECEIVE_TIMEOUT, self.stream.next()).await {
                 Ok(Some(Ok(m))) => Some(m),
                 Ok(Some(Err(e))) => return Err(e.into()), // Tungstenite error
-                _ => return Ok(Some(MessageType::Timeout)),  // Timeout
+                _ => return Ok(Some(MessageType::Timeout)), // Timeout
             },
         )
     }
 
     pub async fn send_json(&mut self, payload: &Value) -> Result<()> {
+        self.ratelimiter.get().unwrap().acquire_one().await; // Ratelimiter is setted in `new` so is safe to call unwrap
+
         Ok(serde_json::to_string(payload)
             .map(Message::Text)
             .map_err(Error::from)
@@ -256,8 +272,8 @@ pub fn handle_ws_message(message: Option<Message>) -> Result<Option<MessageType>
                 .map(MessageType::Normal)
                 .map_err(Error::from)?,
         ),
-        Some(Message::Close(frame)) => Some(MessageType::Disconnected(frame)), // TODO: handle close
-        _ => None,
+        Some(Message::Close(frame)) => Some(MessageType::Disconnected(frame)),
+        _ => Some(MessageType::Timeout),
     })
 }
 
@@ -265,8 +281,14 @@ pub fn handle_ws_message(message: Option<Message>) -> Result<Option<MessageType>
 pub fn handle_gateway_disconnect(frame: Option<CloseFrame>) -> bool {
     if let Some(frame) = frame {
         match frame.code.into() {
-            4013 | 4014 => false,
-            4004 => false,
+            4013 | 4014 => {
+                warn!("Gateway disconnected for invalid intents.");
+                false
+            }
+            4004 => {
+                warn!("Gateway disconnected for invalid token.");
+                false
+            }
             _ => true,
         }
     } else {
