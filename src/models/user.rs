@@ -1,5 +1,5 @@
 use crate::types::user::UserData;
-use crate::{impl_created_at, Asset, ClientState, Color};
+use crate::{Asset, ClientState, Color};
 
 use bitflags::bitflags;
 
@@ -181,7 +181,7 @@ impl User {
     }
 }
 
-impl_created_at!(User);
+super::impl_created_at!(User); 
 
 bitflags! {
     /// A set of bitflags representing special flags of a user.

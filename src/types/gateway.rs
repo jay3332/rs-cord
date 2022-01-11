@@ -2,7 +2,7 @@ use crate::models::gateway::OpCode;
 
 use super::application::{ApplicationData, PartialApplicationData};
 use super::channel::{ChannelData, ThreadMemberData};
-use super::emoji::EmojiData;
+use super::emoji::{EmojiData, PartialEmojiData};
 use super::guild::{GuildData, IntegrationData, ScheduledEventData, UnavailableGuildData};
 use super::member::MemberData;
 use super::message::{MessageData, MessageUpdateData as ActualMessageUpdateData};
@@ -225,6 +225,30 @@ impl<'de> Deserialize<'de> for WsInboundEvent {
                         }
                         "MESSAGE_DELETE_BULK" => {
                             dispatch_event_de!(MessageDeleteBulk, MessageDeleteBulkData, data)
+                        }
+                        "MESSAGE_REACTION_ADD" => {
+                            dispatch_event_de!(MessageReactionAdd, MessageReactionAddData, data)
+                        }
+                        "MESSAGE_REACTION_REMOVE" => {
+                            dispatch_event_de!(
+                                MessageReactionRemove,
+                                MessageReactionRemoveData,
+                                data
+                            )
+                        }
+                        "MESSAGE_REACTION_REMOVE_ALL" => {
+                            dispatch_event_de!(
+                                MessageReactionRemoveAll,
+                                MessageReactionRemoveAllData,
+                                data
+                            )
+                        }
+                        "MESSAGE_REACTION_REMOVE_EMOJI" => {
+                            dispatch_event_de!(
+                                MessageReactionRemoveEmoji,
+                                MessageReactionRemoveEmojiData,
+                                data
+                            )
                         }
                         _ => return Err(DeserializeError::custom("unsupported event received")),
                     };
@@ -595,6 +619,40 @@ pub struct MessageDeleteBulkData {
     pub guild_id: Option<Snowflake>,
 }
 
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct MessageReactionAddData {
+    pub user_id: Snowflake,
+    pub channel_id: Snowflake,
+    pub message_id: Snowflake,
+    pub guild_id: Option<Snowflake>,
+    pub member: Option<MemberData>,
+    pub emoji: PartialEmojiData,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct MessageReactionRemoveData {
+    pub user_id: Snowflake,
+    pub channel_id: Snowflake,
+    pub message_id: Snowflake,
+    pub guild_id: Option<Snowflake>,
+    pub emoji: PartialEmojiData,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct MessageReactionRemoveAllData {
+    pub channel_id: Snowflake,
+    pub message_id: Snowflake,
+    pub guild_id: Option<Snowflake>,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct MessageReactionRemoveEmojiData {
+    pub channel_id: Snowflake,
+    pub message_id: Snowflake,
+    pub guild_id: Option<Snowflake>,
+    pub emoji: PartialEmojiData,
+}
+
 #[derive(Clone, Debug, Serialize)]
 #[non_exhaustive]
 pub enum WsDispatchEvent {
@@ -640,4 +698,8 @@ pub enum WsDispatchEvent {
     MessageUpdate(MessageUpdateData),
     MessageDelete(MessageDeleteData),
     MessageDeleteBulk(MessageDeleteBulkData),
+    MessageReactionAdd(MessageReactionAddData),
+    MessageReactionRemove(MessageReactionRemoveData),
+    MessageReactionRemoveAll(MessageReactionRemoveAllData),
+    MessageReactionRemoveEmoji(MessageReactionRemoveEmojiData),
 }

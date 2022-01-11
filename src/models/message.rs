@@ -26,3 +26,5 @@ impl Message {
         }
     }
 }
+
+super::impl_created_at!(Message);
