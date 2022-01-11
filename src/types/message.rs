@@ -37,9 +37,44 @@ pub struct MessageData {
     pub message_reference: Option<MessageReferenceData>,
     pub flags: Option<u64>,
     pub referenced_message: Option<Box<MessageData>>,
-    pub interaction: Option<()>, // TODO (message interaction object)
+    pub interaction: Option<MessageInteractionData>,
     pub thread: Option<ChannelData>,
-    pub components: Option<Vec<()>>, // TODO (components)
+    pub components: Option<Vec<ComponentData>>,
+    pub sticker_items: Option<Vec<StickerItemData>>,
+    pub stickers: Option<Vec<StickerData>>,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct MessageUpdateData {
+    pub id: Snowflake,
+    pub channel_id: Snowflake,
+    pub guild_id: Option<Snowflake>,
+    pub author: Option<UserData>,
+    pub member: Option<MemberData>,
+    pub content: Option<String>,
+    pub timestamp: Option<String>,
+    pub edited_timestamp: Option<String>,
+    pub tts: Option<bool>,
+    pub mention_everyone: Option<bool>,
+    pub mentions: Option<Vec<UserData>>,
+    pub mention_roles: Option<Vec<Snowflake>>,
+    pub mention_channels: Option<Vec<ChannelMentionData>>,
+    pub attachments: Option<Vec<AttachmentData>>,
+    pub embeds: Option<Vec<EmbedData>>,
+    pub reactions: Option<Vec<ReactionData>>,
+    pub nonce: Option<Snowflake>,
+    pub pinned: Option<bool>,
+    pub webhook_id: Option<Snowflake>,
+    pub r#type: Option<u8>,
+    pub activity: Option<ActivityData>,
+    pub application: Option<ApplicationData>,
+    pub application_id: Option<Snowflake>,
+    pub message_reference: Option<MessageReferenceData>,
+    pub flags: Option<u64>,
+    pub referenced_message: Option<Box<MessageData>>,
+    pub interaction: Option<MessageInteractionData>,
+    pub thread: Option<ChannelData>,
+    pub components: Option<Vec<ComponentData>>,
     pub sticker_items: Option<Vec<StickerItemData>>,
     pub stickers: Option<Vec<StickerData>>,
 }
@@ -148,4 +183,39 @@ pub struct MessageReferenceData {
     pub channel_id: Option<Snowflake>,
     pub guild_id: Option<Snowflake>,
     pub fail_if_not_exists: Option<bool>,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct MessageInteractionData {
+    pub id: Snowflake,
+    pub r#type: u8,
+    pub name: String,
+    pub user: UserData,
+}
+
+// TODO: Own component file?
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct ComponentData {
+    pub r#type: u8,
+    pub custom_id: Option<String>,
+    pub disabled: Option<bool>,
+    pub style: Option<u8>,
+    pub label: Option<String>,
+    pub emoji: Option<PartialEmojiData>,
+    pub url: Option<String>,
+    pub options: Option<Vec<SelectOptionData>>,
+    pub placeholder: Option<String>,
+    pub min_values: Option<u8>,
+    pub max_values: Option<u8>,
+    pub components: Vec<Box<ComponentData>>,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct SelectOptionData {
+    pub label: String,
+    pub value: String,
+    pub description: Option<String>,
+    pub emoji: Option<PartialEmojiData>,
+    pub default: Option<bool>,
 }
