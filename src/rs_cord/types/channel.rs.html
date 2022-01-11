@@ -60,6 +60,7 @@
 <span id="57">57</span>
 <span id="58">58</span>
 <span id="59">59</span>
+<span id="60">60</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident"><span class="kw">super</span>::user::UserData</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::Snowflake</span>;
 
@@ -116,6 +117,7 @@
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ThreadMemberData</span> {
     <span class="kw">pub</span> <span class="ident">id</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Snowflake</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">user_id</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Snowflake</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">guild_id</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Snowflake</span><span class="op">&gt;</span>, <span class="comment">// Only sent in gateway events</span>
     <span class="kw">pub</span> <span class="ident">join_timestamp</span>: <span class="ident">String</span>,
     <span class="kw">pub</span> <span class="ident">flags</span>: <span class="ident">u64</span>,
 }

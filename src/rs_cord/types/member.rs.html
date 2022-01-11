@@ -21,6 +21,7 @@
 <span id="18">18</span>
 <span id="19">19</span>
 <span id="20">20</span>
+<span id="21">21</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident"><span class="kw">super</span>::user::UserData</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::Snowflake</span>;
 
@@ -32,6 +33,7 @@
     <span class="kw">pub</span> <span class="ident">nick</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">avatar</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">roles</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Snowflake</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">hoisted_role</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Snowflake</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">joined_at</span>: <span class="ident">String</span>,
     <span class="kw">pub</span> <span class="ident">premium_since</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">deaf</span>: <span class="ident">bool</span>,

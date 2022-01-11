@@ -541,6 +541,9 @@
 <span id="538">538</span>
 <span id="539">539</span>
 <span id="540">540</span>
+<span id="541">541</span>
+<span id="542">542</span>
+<span id="543">543</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::models::gateway::OpCode</span>;
 
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::application::PartialApplicationData</span>;
@@ -837,6 +840,7 @@
 }
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>, <span class="ident">Deserialize</span>, <span class="ident">Serialize</span>)]</span>
+<span class="attribute">#[<span class="ident">serde</span>(<span class="ident">transparent</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ThreadDeleteData</span> {
     <span class="doccomment">/// The thread that was deleted.</span>
     <span class="kw">pub</span> <span class="ident">thread</span>: <span class="ident">ChannelData</span>,
@@ -855,6 +859,7 @@
 }
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>, <span class="ident">Deserialize</span>, <span class="ident">Serialize</span>)]</span>
+<span class="attribute">#[<span class="ident">serde</span>(<span class="ident">transparent</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ThreadMemberUpdateData</span> {
     <span class="doccomment">/// The `ThreadMember` that was updated.</span>
     <span class="kw">pub</span> <span class="ident">member</span>: <span class="ident">ThreadMemberData</span>,
@@ -962,6 +967,7 @@
 }
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>, <span class="ident">Deserialize</span>, <span class="ident">Serialize</span>)]</span>
+<span class="attribute">#[<span class="ident">serde</span>(<span class="ident">transparent</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">GuildMemberUpdateData</span> {
     <span class="comment">/*
      * This is documented as a separate object,
