@@ -1,1 +1,1 @@
-initSidebarItems({"constant":[["DISCORD_API_URL",""],["DISCORD_CDN_URL",""]]});
+initSidebarItems({"constant":[["DISCORD_API_URL",""],["DISCORD_CDN_URL",""],["RECEIVE_TIMEOUT",""]]});
