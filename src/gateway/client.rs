@@ -193,7 +193,10 @@ impl Gateway {
                     let resume = handle_gateway_disconnect(frame);
                     return Ok(!resume || !self.session_id.is_some());
                 }
-                _ => continue,
+                MessageType::Timeout => {
+                    self.try_heartbeat().await?;
+                    continue;
+                }
             }
         }
 
@@ -230,7 +233,7 @@ impl Gateway {
 
         if let Some(h) = &self.last_heartbeat {
             // If it isn't time to heartbeat, then... don't heartbeat.
-            if h.elapsed().as_secs() <= self.heartbeat_interval.unwrap() as u64 {
+            if h.elapsed().as_millis() <= self.heartbeat_interval.unwrap() as u128 {
                 return Ok(());
             }
         }
@@ -253,7 +256,7 @@ pub fn handle_ws_message(message: Option<Message>) -> Result<Option<MessageType>
                 .map(MessageType::Normal)
                 .map_err(Error::from)?,
         ),
-        Some(Message::Close(Some(frame))) => Some(MessageType::Disconnected(Some(frame))), // TODO: handle close
+        Some(Message::Close(frame)) => Some(MessageType::Disconnected(frame)), // TODO: handle close
         _ => None,
     })
 }
