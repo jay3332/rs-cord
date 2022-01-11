@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["application",""],["channel",""],["common",""],["emoji",""],["gateway",""],["guild",""],["member",""],["message",""],["presence",""],["role",""],["sticker",""],["user",""],["voice",""]]});
+initSidebarItems({"mod":[["application",""],["channel",""],["common",""],["emoji",""],["gateway",""],["guild",""],["invite",""],["member",""],["message",""],["presence",""],["role",""],["sticker",""],["user",""],["voice",""]]});
