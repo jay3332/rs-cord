@@ -276,6 +276,40 @@
 <span id="273">273</span>
 <span id="274">274</span>
 <span id="275">275</span>
+<span id="276">276</span>
+<span id="277">277</span>
+<span id="278">278</span>
+<span id="279">279</span>
+<span id="280">280</span>
+<span id="281">281</span>
+<span id="282">282</span>
+<span id="283">283</span>
+<span id="284">284</span>
+<span id="285">285</span>
+<span id="286">286</span>
+<span id="287">287</span>
+<span id="288">288</span>
+<span id="289">289</span>
+<span id="290">290</span>
+<span id="291">291</span>
+<span id="292">292</span>
+<span id="293">293</span>
+<span id="294">294</span>
+<span id="295">295</span>
+<span id="296">296</span>
+<span id="297">297</span>
+<span id="298">298</span>
+<span id="299">299</span>
+<span id="300">300</span>
+<span id="301">301</span>
+<span id="302">302</span>
+<span id="303">303</span>
+<span id="304">304</span>
+<span id="305">305</span>
+<span id="306">306</span>
+<span id="307">307</span>
+<span id="308">308</span>
+<span id="309">309</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::constants::RECEIVE_TIMEOUT</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::http::HttpClient</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::internal::prelude</span>::<span class="kw-2">*</span>;
@@ -287,7 +321,10 @@
 
 <span class="kw">use</span> <span class="ident">flate2::read::ZlibDecoder</span>;
 <span class="kw">use</span> <span class="ident">futures_util</span>::{<span class="ident">SinkExt</span>, <span class="ident">StreamExt</span>};
+<span class="kw">use</span> <span class="ident">leaky_bucket_lite::LeakyBucket</span>;
 <span class="kw">use</span> <span class="ident">serde_json::Value</span>;
+
+<span class="kw">use</span> <span class="ident">tokio::sync::OnceCell</span>;
 
 <span class="kw">use</span> <span class="ident">tokio_tungstenite</span>::{
     <span class="ident">connect_async_with_config</span>,
@@ -299,7 +336,7 @@
 
 <span class="kw">use</span> <span class="ident">std::borrow::Cow</span>;
 <span class="kw">use</span> <span class="ident">std::sync::Arc</span>;
-<span class="kw">use</span> <span class="ident">std::time::Instant</span>;
+<span class="kw">use</span> <span class="ident">std::time</span>::{<span class="ident">Duration</span>, <span class="ident">Instant</span>};
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">MessageType</span> {
@@ -315,6 +352,8 @@
     <span class="kw">pub</span> <span class="ident">info</span>: <span class="ident">GetGatewayBotData</span>,
     <span class="kw">pub</span> <span class="ident">stream</span>: <span class="ident">WsStream</span>,
     <span class="ident">latency</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span>,
+
+    <span class="ident">ratelimiter</span>: <span class="ident">OnceCell</span><span class="op">&lt;</span><span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">LeakyBucket</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="ident">alive_since</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Instant</span><span class="op">&gt;</span>,
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="ident">heartbeat_interval</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u16</span><span class="op">&gt;</span>,
@@ -332,6 +371,15 @@
             ));
         }
 
+        <span class="kw">let</span> <span class="ident">_ratelimiter</span> <span class="op">=</span> <span class="ident">Arc::new</span>(
+            <span class="ident">LeakyBucket::builder</span>()
+                .<span class="ident">max</span>(<span class="number">110</span>) <span class="comment">// Reserve 10 for haertbeat</span>
+                .<span class="ident">tokens</span>(<span class="number">110</span>)
+                .<span class="ident">refill_interval</span>(<span class="ident">Duration::from_secs</span>(<span class="number">60</span>))
+                .<span class="ident">refill_amount</span>(<span class="number">110</span>)
+                .<span class="ident">build</span>(),
+        );
+
         <span class="kw">let</span> <span class="ident">info</span> <span class="op">=</span> <span class="ident">http</span>.<span class="ident">get_gateway_bot</span>().<span class="kw">await</span>.<span class="ident">map_err</span>(<span class="ident">Error::from</span>)<span class="question-mark">?</span>;
 
         <span class="kw">let</span> (<span class="ident">stream</span>, <span class="kw">_</span>) <span class="op">=</span> <span class="ident">connect_async_with_config</span>(
@@ -345,6 +393,9 @@
         )
         .<span class="kw">await</span><span class="question-mark">?</span>;
 
+        <span class="kw">let</span> <span class="ident">ratelimiter</span> <span class="op">=</span> <span class="ident">OnceCell::new</span>();
+        <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="ident">ratelimiter</span>.<span class="ident">set</span>(<span class="ident">_ratelimiter</span>);
+
         <span class="prelude-val">Ok</span>(<span class="self">Self</span> {
             <span class="ident">http</span>,
             <span class="ident">info</span>: <span class="ident">info</span>.<span class="ident">clone</span>(),
@@ -357,6 +408,7 @@
             <span class="ident">session_id</span>: <span class="prelude-val">None</span>,
             <span class="ident">seq</span>: <span class="prelude-val">None</span>,
             <span class="ident">is_resuming</span>: <span class="bool-val">false</span>,
+            <span class="ident">ratelimiter</span>,
         })
     }
 
@@ -492,6 +544,16 @@
     }
 
     <span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">send_json</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">payload</span>: <span class="kw-2">&amp;</span><span class="ident">Value</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+        <span class="self">self</span>.<span class="ident">ratelimiter</span>.<span class="ident">get</span>().<span class="ident">unwrap</span>().<span class="ident">acquire_one</span>().<span class="kw">await</span>; <span class="comment">// Ratelimiter is setted in `new` so is safe to call unwrap</span>
+
+        <span class="prelude-val">Ok</span>(<span class="ident">serde_json::to_string</span>(<span class="ident">payload</span>)
+            .<span class="ident">map</span>(<span class="ident">Message::Text</span>)
+            .<span class="ident">map_err</span>(<span class="ident">Error::from</span>)
+            .<span class="ident">map</span>(<span class="op">|</span><span class="ident">m</span><span class="op">|</span> <span class="self">self</span>.<span class="ident">stream</span>.<span class="ident">send</span>(<span class="ident">m</span>))<span class="question-mark">?</span>
+            .<span class="kw">await</span><span class="question-mark">?</span>)
+    }
+
+    <span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">send_json_no_ratelimit</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">payload</span>: <span class="kw-2">&amp;</span><span class="ident">Value</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="prelude-val">Ok</span>(<span class="ident">serde_json::to_string</span>(<span class="ident">payload</span>)
             .<span class="ident">map</span>(<span class="ident">Message::Text</span>)
             .<span class="ident">map_err</span>(<span class="ident">Error::from</span>)
@@ -534,8 +596,8 @@
                 .<span class="ident">map</span>(<span class="ident">MessageType::Normal</span>)
                 .<span class="ident">map_err</span>(<span class="ident">Error::from</span>)<span class="question-mark">?</span>,
         ),
-        <span class="prelude-val">Some</span>(<span class="ident">Message::Close</span>(<span class="ident">frame</span>)) =&gt; <span class="prelude-val">Some</span>(<span class="ident">MessageType::Disconnected</span>(<span class="ident">frame</span>)), <span class="comment">// TODO: handle close</span>
-        <span class="kw">_</span> =&gt; <span class="prelude-val">None</span>,
+        <span class="prelude-val">Some</span>(<span class="ident">Message::Close</span>(<span class="ident">frame</span>)) =&gt; <span class="prelude-val">Some</span>(<span class="ident">MessageType::Disconnected</span>(<span class="ident">frame</span>)),
+        <span class="kw">_</span> =&gt; <span class="prelude-val">Some</span>(<span class="ident">MessageType::Timeout</span>),
     })
 }
 
@@ -543,8 +605,14 @@
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">handle_gateway_disconnect</span>(<span class="ident">frame</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">CloseFrame</span><span class="op">&gt;</span>) -&gt; <span class="ident">bool</span> {
     <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">frame</span>) <span class="op">=</span> <span class="ident">frame</span> {
         <span class="kw">match</span> <span class="ident">frame</span>.<span class="ident">code</span>.<span class="ident">into</span>() {
-            <span class="number">4013</span> <span class="op">|</span> <span class="number">4014</span> =&gt; <span class="bool-val">false</span>,
-            <span class="number">4004</span> =&gt; <span class="bool-val">false</span>,
+            <span class="number">4013</span> <span class="op">|</span> <span class="number">4014</span> =&gt; {
+                <span class="macro">warn!</span>(<span class="string">&quot;Gateway disconnected for invalid intents.&quot;</span>);
+                <span class="bool-val">false</span>
+            }
+            <span class="number">4004</span> =&gt; {
+                <span class="macro">warn!</span>(<span class="string">&quot;Gateway disconnected for invalid token.&quot;</span>);
+                <span class="bool-val">false</span>
+            }
             <span class="kw">_</span> =&gt; <span class="bool-val">true</span>,
         }
     } <span class="kw">else</span> {

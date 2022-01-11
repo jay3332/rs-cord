@@ -132,7 +132,7 @@
     }
 
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">heartbeat</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
-        <span class="self">self</span>.<span class="ident">send_json</span>(<span class="kw-2">&amp;</span><span class="macro">json!</span>({
+        <span class="self">self</span>.<span class="ident">send_json_no_ratelimit</span>(<span class="kw-2">&amp;</span><span class="macro">json!</span>({
             <span class="string">&quot;op&quot;</span>: <span class="ident">OpCode::Heartbeat</span>,
             <span class="string">&quot;d&quot;</span>: <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">seq</span>,
         }))
