@@ -4,7 +4,7 @@ use crate::types::MessageData;
 /// Represents a Discord message sent in a text channel.
 #[derive(Clone, Debug)]
 pub struct Message {
-    state: ClientState;
+    state: ClientState,
     
     /// The snowflake ID of this message.
     pub id: u64,
