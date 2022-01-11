@@ -1,5 +1,5 @@
 use crate::ClientState;
-use crate::types::MessageData;
+use crate::types::message::MessageData;
 
 /// Represents a Discord message sent in a text channel.
 #[derive(Clone, Debug)]
