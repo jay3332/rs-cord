@@ -250,6 +250,24 @@ impl<'de> Deserialize<'de> for WsInboundEvent {
                                 data
                             )
                         }
+                        "PRESENCE_UPDATE" => {
+                            dispatch_event_de!(PresenceUpdate, PresenceUpdateData, data)
+                        }
+                        "TYPING_START" => {
+                            dispatch_event_de!(TypingStart, TypingStartData, data)
+                        }
+                        "USER_UPDATE" => {
+                            dispatch_event_de!(UserUpdate, UserUpdateData, data)
+                        }
+                        "VOICE_STATE_UPDATE" => {
+                            dispatch_event_de!(VoiceStateUpdate, VoiceStateUpdateData, data)
+                        }
+                        "VOICE_SERVER_UPDATE" => {
+                            dispatch_event_de!(VoiceServerUpdate, VoiceServerUpdateData, data)
+                        }
+                        "WEBHOOKS_UPDATE" => {
+                            dispatch_event_de!(WebhooksUpdate, WebhooksUpdateData, data)
+                        }
                         _ => return Err(DeserializeError::custom("unsupported event received")),
                     };
 
@@ -653,6 +671,43 @@ pub struct MessageReactionRemoveEmojiData {
     pub emoji: PartialEmojiData,
 }
 
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct TypingStartData {
+    pub channel_id: Snowflake,
+    pub guild_id: Option<Snowflake>,
+    pub user_id: Snowflake,
+    pub timestamp: u64,
+    pub member: Option<MemberData>,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(transparent)]
+pub struct UserUpdateData {
+    pub user: UserData,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(transparent)]
+pub struct VoiceStateUpdateData {
+    pub voice_state: VoiceStateData,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct VoiceServerUpdateData {
+    pub token: String,
+    pub guild_id: Snowflake,
+
+    // if "None", disconnect from the voice server and 
+    // only attempt to reconnect when a new voice server is allocated.
+    pub endpoint: Option<String>,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct WebhooksUpdateData {
+    pub guild_id: Snowflake,
+    pub channel_id: Snowflake,
+}
+
 #[derive(Clone, Debug, Serialize)]
 #[non_exhaustive]
 pub enum WsDispatchEvent {
@@ -702,4 +757,10 @@ pub enum WsDispatchEvent {
     MessageReactionRemove(MessageReactionRemoveData),
     MessageReactionRemoveAll(MessageReactionRemoveAllData),
     MessageReactionRemoveEmoji(MessageReactionRemoveEmojiData),
+    PresenceUpdate(PresenceUpdateData),
+    TypingStart(TypingStartData),
+    UserUpdate(UserUpdateData),
+    VoiceStateUpdate(VoiceStateUpdateData),
+    VoiceServerUpdate(VoiceServerUpdateData),
+    WebhooksUpdate(WebhooksUpdateData),
 }
