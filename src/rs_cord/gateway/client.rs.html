@@ -273,6 +273,9 @@
 <span id="270">270</span>
 <span id="271">271</span>
 <span id="272">272</span>
+<span id="273">273</span>
+<span id="274">274</span>
+<span id="275">275</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::constants::RECEIVE_TIMEOUT</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::http::HttpClient</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::internal::prelude</span>::<span class="kw-2">*</span>;
@@ -468,7 +471,10 @@
                     <span class="kw">let</span> <span class="ident">resume</span> <span class="op">=</span> <span class="ident">handle_gateway_disconnect</span>(<span class="ident">frame</span>);
                     <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="op">!</span><span class="ident">resume</span> <span class="op">|</span><span class="op">|</span> <span class="op">!</span><span class="self">self</span>.<span class="ident">session_id</span>.<span class="ident">is_some</span>());
                 }
-                <span class="kw">_</span> =&gt; <span class="kw">continue</span>,
+                <span class="ident">MessageType::Timeout</span> =&gt; {
+                    <span class="self">self</span>.<span class="ident">try_heartbeat</span>().<span class="kw">await</span><span class="question-mark">?</span>;
+                    <span class="kw">continue</span>;
+                }
             }
         }
 
@@ -505,7 +511,7 @@
 
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">h</span>) <span class="op">=</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">last_heartbeat</span> {
             <span class="comment">// If it isn&#39;t time to heartbeat, then... don&#39;t heartbeat.</span>
-            <span class="kw">if</span> <span class="ident">h</span>.<span class="ident">elapsed</span>().<span class="ident">as_secs</span>() <span class="op">&lt;</span><span class="op">=</span> <span class="self">self</span>.<span class="ident">heartbeat_interval</span>.<span class="ident">unwrap</span>() <span class="kw">as</span> <span class="ident">u64</span> {
+            <span class="kw">if</span> <span class="ident">h</span>.<span class="ident">elapsed</span>().<span class="ident">as_millis</span>() <span class="op">&lt;</span><span class="op">=</span> <span class="self">self</span>.<span class="ident">heartbeat_interval</span>.<span class="ident">unwrap</span>() <span class="kw">as</span> <span class="ident">u128</span> {
                 <span class="kw">return</span> <span class="prelude-val">Ok</span>(());
             }
         }
@@ -528,7 +534,7 @@
                 .<span class="ident">map</span>(<span class="ident">MessageType::Normal</span>)
                 .<span class="ident">map_err</span>(<span class="ident">Error::from</span>)<span class="question-mark">?</span>,
         ),
-        <span class="prelude-val">Some</span>(<span class="ident">Message::Close</span>(<span class="prelude-val">Some</span>(<span class="ident">frame</span>))) =&gt; <span class="prelude-val">Some</span>(<span class="ident">MessageType::Disconnected</span>(<span class="prelude-val">Some</span>(<span class="ident">frame</span>))), <span class="comment">// TODO: handle close</span>
+        <span class="prelude-val">Some</span>(<span class="ident">Message::Close</span>(<span class="ident">frame</span>)) =&gt; <span class="prelude-val">Some</span>(<span class="ident">MessageType::Disconnected</span>(<span class="ident">frame</span>)), <span class="comment">// TODO: handle close</span>
         <span class="kw">_</span> =&gt; <span class="prelude-val">None</span>,
     })
 }
