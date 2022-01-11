@@ -306,6 +306,8 @@
 <span id="303">303</span>
 <span id="304">304</span>
 <span id="305">305</span>
+<span id="306">306</span>
+<span id="307">307</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::constants::RECEIVE_TIMEOUT</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::http::HttpClient</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::internal::prelude</span>::<span class="kw-2">*</span>;
@@ -542,15 +544,17 @@
     <span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">send_json</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">payload</span>: <span class="kw-2">&amp;</span><span class="ident">Value</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">ratelimiter</span>.<span class="ident">get</span>().<span class="ident">unwrap</span>().<span class="ident">acquire_one</span>().<span class="kw">await</span>; <span class="comment">// Ratelimiter is set in `new`, so it is safe to call unwrap</span>
 
-        <span class="self">self</span>.<span class="ident">send_json_no_ratelimit</span>(<span class="ident">payload</span>)
+        <span class="self">self</span>.<span class="ident">send_json_no_ratelimit</span>(<span class="ident">payload</span>).<span class="kw">await</span>
     }
 
     <span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">send_json_no_ratelimit</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">payload</span>: <span class="kw-2">&amp;</span><span class="ident">Value</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
-        <span class="ident">serde_json::to_string</span>(<span class="ident">payload</span>)
-            .<span class="ident">map</span>(<span class="ident">Message::Text</span>)
-            .<span class="ident">map_err</span>(<span class="ident">Error::from</span>)
-            .<span class="ident">map</span>(<span class="op">|</span><span class="ident">m</span><span class="op">|</span> <span class="self">self</span>.<span class="ident">stream</span>.<span class="ident">send</span>(<span class="ident">m</span>))<span class="question-mark">?</span>
-            .<span class="kw">await</span>
+        <span class="self">self</span>.<span class="ident">stream</span>.<span class="ident">send</span>(
+            <span class="ident">serde_json::to_string</span>(<span class="ident">payload</span>)
+                .<span class="ident">map</span>(<span class="ident">Message::Text</span>)
+                .<span class="ident">map_err</span>(<span class="ident">Error::from</span>)<span class="question-mark">?</span>
+        )
+        .<span class="kw">await</span>
+        .<span class="ident">map_err</span>(<span class="ident">Error::from</span>)
     }
 
     <span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">try_heartbeat</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {

@@ -22,6 +22,9 @@
 <span id="19">19</span>
 <span id="20">20</span>
 <span id="21">21</span>
+<span id="22">22</span>
+<span id="23">23</span>
+<span id="24">24</span>
 </pre><pre class="rust"><code><span class="attribute">#![<span class="ident">allow</span>(<span class="ident">dead_code</span>)]</span>
 <span class="attribute">#![<span class="ident">allow</span>(<span class="ident">clippy::module_name_repetitions</span>)]</span>
 <span class="attribute">#![<span class="ident">forbid</span>(<span class="ident">unsafe_code</span>)]</span>
@@ -36,6 +39,9 @@
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">models</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">types</span>;
 
+<span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">async_trait</span>;
+
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">async_trait::async_trait</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">client</span>::{<span class="ident">Client</span>, <span class="ident">ClientState</span>};
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">error</span>::{<span class="ident">Error</span> <span class="kw">as</span> <span class="ident">RsCordError</span>, <span class="ident">ThreadSafeError</span>, <span class="ident">ThreadSafeResult</span>};
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">internal::prelude</span>;
