@@ -61,7 +61,7 @@ impl Gateway {
 
         let _ratelimiter = Arc::new(
             LeakyBucket::builder()
-                .max(110) // Reserve 10 for haertbeat
+                .max(110) // Reserve 10 for heartbeat
                 .tokens(110)
                 .refill_interval(Duration::from_secs(60))
                 .refill_amount(110)
