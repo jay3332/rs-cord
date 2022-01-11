@@ -232,21 +232,17 @@ impl Gateway {
     }
 
     pub async fn send_json(&mut self, payload: &Value) -> Result<()> {
-        self.ratelimiter.get().unwrap().acquire_one().await; // Ratelimiter is setted in `new` so is safe to call unwrap
+        self.ratelimiter.get().unwrap().acquire_one().await; // Ratelimiter is set in `new`, so it is safe to call unwrap
 
-        Ok(serde_json::to_string(payload)
-            .map(Message::Text)
-            .map_err(Error::from)
-            .map(|m| self.stream.send(m))?
-            .await?)
+        self.send_json_no_ratelimit(payload)
     }
 
     pub async fn send_json_no_ratelimit(&mut self, payload: &Value) -> Result<()> {
-        Ok(serde_json::to_string(payload)
+        serde_json::to_string(payload)
             .map(Message::Text)
             .map_err(Error::from)
             .map(|m| self.stream.send(m))?
-            .await?)
+            .await
     }
 
     pub async fn try_heartbeat(&mut self) -> Result<()> {
