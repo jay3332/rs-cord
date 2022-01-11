@@ -257,7 +257,7 @@
 <span id="254">254</span>
 <span id="255">255</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::types::user::UserData</span>;
-<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">impl_created_at</span>, <span class="ident">Asset</span>, <span class="ident">ClientState</span>, <span class="ident">Color</span>};
+<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">Asset</span>, <span class="ident">ClientState</span>, <span class="ident">Color</span>};
 
 <span class="kw">use</span> <span class="ident">bitflags::bitflags</span>;
 
@@ -439,7 +439,7 @@
     }
 }
 
-<span class="macro">impl_created_at!</span>(<span class="ident">User</span>);
+<span class="macro">super::impl_created_at!</span>(<span class="ident">User</span>); 
 
 <span class="macro">bitflags!</span> {
     <span class="doccomment">/// A set of bitflags representing special flags of a user.</span>
