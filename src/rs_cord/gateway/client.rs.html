@@ -302,7 +302,7 @@
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">MessageType</span> {
     <span class="ident">Normal</span>(<span class="ident">Value</span>),
     <span class="ident">Disconnected</span>(<span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">CloseFrame</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span><span class="op">&gt;</span><span class="op">&gt;</span>),
-    <span class="prelude-val">None</span>,
+    <span class="ident">Timeout</span>,
 }
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
@@ -480,7 +480,7 @@
             <span class="kw">match</span> <span class="ident">tokio::time::timeout</span>(<span class="ident">RECEIVE_TIMEOUT</span>, <span class="self">self</span>.<span class="ident">stream</span>.<span class="ident">next</span>()).<span class="kw">await</span> {
                 <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(<span class="prelude-val">Ok</span>(<span class="ident">m</span>))) =&gt; <span class="prelude-val">Some</span>(<span class="ident">m</span>),
                 <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(<span class="prelude-val">Err</span>(<span class="ident">e</span>))) =&gt; <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">e</span>.<span class="ident">into</span>()), <span class="comment">// Tungstenite error</span>
-                <span class="kw">_</span> =&gt; <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(<span class="ident">MessageType::None</span>)),  <span class="comment">// Timeout</span>
+                <span class="kw">_</span> =&gt; <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(<span class="ident">MessageType::Timeout</span>)),  <span class="comment">// Timeout</span>
             },
         )
     }
