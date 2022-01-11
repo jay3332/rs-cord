@@ -54,6 +54,7 @@ pub struct ThreadMetadata {
 pub struct ThreadMemberData {
     pub id: Option<Snowflake>,
     pub user_id: Option<Snowflake>,
+    pub guild_id: Option<Snowflake>, // Only sent in gateway events
     pub join_timestamp: String,
     pub flags: u64,
 }

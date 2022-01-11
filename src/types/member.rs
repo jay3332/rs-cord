@@ -9,6 +9,7 @@ pub struct MemberData {
     pub nick: Option<String>,
     pub avatar: Option<String>,
     pub roles: Vec<Snowflake>,
+    pub hoisted_role: Option<Snowflake>,
     pub joined_at: String,
     pub premium_since: Option<String>,
     pub deaf: bool,

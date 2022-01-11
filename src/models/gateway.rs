@@ -1,6 +1,7 @@
 use bitflags::__impl_bitflags;
 use int_enum::IntEnum;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
+use serde_repr::{Serialize_repr, Deserialize_repr};
 
 /// A set of bitflags which represent what gateway events the client should receive.
 /// These can be constructed manually, or by using the [`intents!`] macro.
@@ -146,7 +147,7 @@ impl Intents {
     }
 }
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq, IntEnum, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, IntEnum, Serialize_repr, Deserialize_repr)]
 #[non_exhaustive]
 #[repr(u8)]
 #[allow(clippy::use_self)]

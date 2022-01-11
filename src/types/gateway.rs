@@ -294,6 +294,7 @@ pub struct ThreadUpdateData {
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(transparent)]
 pub struct ThreadDeleteData {
     /// The thread that was deleted.
     pub thread: ChannelData,
@@ -312,6 +313,7 @@ pub struct ThreadListSyncData {
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(transparent)]
 pub struct ThreadMemberUpdateData {
     /// The `ThreadMember` that was updated.
     pub member: ThreadMemberData,
@@ -419,6 +421,7 @@ pub struct GuildMemberRemoveData {
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(transparent)]
 pub struct GuildMemberUpdateData {
     /*
      * This is documented as a separate object,
