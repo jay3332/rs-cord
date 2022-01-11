@@ -43,7 +43,7 @@ pub struct TeamData {
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct TeamMemberData {
     pub membership_state: u8,
-    pub permissions: Vec<String>,  // always ["*"]
+    pub permissions: Vec<String>, // always ["*"]
     pub team_id: Snowflake,
     pub user: UserData,
 }

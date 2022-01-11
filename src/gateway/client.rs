@@ -1,3 +1,4 @@
+use crate::constants::RECEIVE_TIMEOUT;
 use crate::http::HttpClient;
 use crate::internal::prelude::*;
 use crate::types::gateway::{GetGatewayBotData, WsDispatchEvent, WsInboundEvent};
@@ -26,6 +27,7 @@ use std::time::Instant;
 pub enum MessageType {
     Normal(Value),
     Disconnected(Option<CloseFrame<'static>>),
+    None,
 }
 
 #[derive(Debug)]
@@ -191,6 +193,7 @@ impl Gateway {
                     let resume = handle_gateway_disconnect(frame);
                     return Ok(!resume || !self.session_id.is_some());
                 }
+                _ => continue,
             }
         }
 
@@ -198,7 +201,13 @@ impl Gateway {
     }
 
     pub async fn recv_json(&mut self) -> Result<Option<MessageType>> {
-        handle_ws_message(self.stream.next().await.transpose()?)
+        handle_ws_message(
+            match tokio::time::timeout(RECEIVE_TIMEOUT, self.stream.next()).await {
+                Ok(Some(Ok(m))) => Some(m),
+                Ok(Some(Err(e))) => return Err(e.into()), // Tungstenite error
+                _ => return Ok(Some(MessageType::None)),  // Timeout
+            },
+        )
     }
 
     pub async fn send_json(&mut self, payload: &Value) -> Result<()> {
