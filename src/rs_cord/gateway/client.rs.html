@@ -369,7 +369,7 @@
 
         <span class="kw">let</span> <span class="ident">_ratelimiter</span> <span class="op">=</span> <span class="ident">Arc::new</span>(
             <span class="ident">LeakyBucket::builder</span>()
-                .<span class="ident">max</span>(<span class="number">110</span>) <span class="comment">// Reserve 10 for haertbeat</span>
+                .<span class="ident">max</span>(<span class="number">110</span>) <span class="comment">// Reserve 10 for heartbeat</span>
                 .<span class="ident">tokens</span>(<span class="number">110</span>)
                 .<span class="ident">refill_interval</span>(<span class="ident">Duration::from_secs</span>(<span class="number">60</span>))
                 .<span class="ident">refill_amount</span>(<span class="number">110</span>)
