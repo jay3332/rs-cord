@@ -27,7 +27,7 @@ use std::time::Instant;
 pub enum MessageType {
     Normal(Value),
     Disconnected(Option<CloseFrame<'static>>),
-    None,
+    Timeout,
 }
 
 #[derive(Debug)]
@@ -205,7 +205,7 @@ impl Gateway {
             match tokio::time::timeout(RECEIVE_TIMEOUT, self.stream.next()).await {
                 Ok(Some(Ok(m))) => Some(m),
                 Ok(Some(Err(e))) => return Err(e.into()), // Tungstenite error
-                _ => return Ok(Some(MessageType::None)),  // Timeout
+                _ => return Ok(Some(MessageType::Timeout)),  // Timeout
             },
         )
     }
