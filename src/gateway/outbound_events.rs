@@ -40,14 +40,11 @@ impl Gateway {
     }
 
     pub(crate) async fn heartbeat(&mut self) -> Result<()> {
-        Ok(serde_json::to_string(&json!({ // By pass ratelimit
+        self.send_json_no_ratelimit(&json!({
             "op": OpCode::Heartbeat,
             "d": &self.seq,
         }))
-        .map(Message::Text)
-        .map_err(Error::from)
-        .map(|m| self.stream.send(m))?
-        .await?)
+        .await
     }
 
     pub(crate) async fn request_guild_members(

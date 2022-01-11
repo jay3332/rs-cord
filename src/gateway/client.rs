@@ -9,7 +9,7 @@ use super::WsStream;
 
 use flate2::read::ZlibDecoder;
 use futures_util::{SinkExt, StreamExt};
-use leaky_bucket_lite::RateLimiter;
+use leaky_bucket_lite::LeakyBucket;
 use serde_json::Value;
 
 use tokio::sync::OnceCell;
@@ -41,7 +41,7 @@ pub struct Gateway {
     pub stream: WsStream,
     latency: Option<f64>,
 
-    ratelimiter: OnceCell<Arc<RateLimiter>>,
+    ratelimiter: OnceCell<Arc<LeakyBucket>>,
 
     pub(crate) alive_since: Option<Instant>,
     pub(crate) heartbeat_interval: Option<u16>,
@@ -59,14 +59,14 @@ impl Gateway {
             ));
         }
 
-        let _ = self.ratelimiter.set(Arc::new(
+        let _ratelimiter = Arc::new(
             LeakyBucket::builder()
                 .max(110) // Reserve 10 for haertbeat
                 .tokens(110)
                 .refill_interval(Duration::from_secs(60))
                 .refill_amount(110)
                 .build(),
-        ));
+        );
 
         let info = http.get_gateway_bot().await.map_err(Error::from)?;
 
@@ -81,6 +81,9 @@ impl Gateway {
         )
         .await?;
 
+        let ratelimiter = OnceCell::new();
+        let _ = ratelimiter.set(_ratelimiter);
+
         Ok(Self {
             http,
             info: info.clone(),
@@ -93,6 +96,7 @@ impl Gateway {
             session_id: None,
             seq: None,
             is_resuming: false,
+            ratelimiter,
         })
     }
 
@@ -230,6 +234,14 @@ impl Gateway {
     pub async fn send_json(&mut self, payload: &Value) -> Result<()> {
         self.ratelimiter.get().unwrap().acquire_one().await; // Ratelimiter is setted in `new` so is safe to call unwrap
 
+        Ok(serde_json::to_string(payload)
+            .map(Message::Text)
+            .map_err(Error::from)
+            .map(|m| self.stream.send(m))?
+            .await?)
+    }
+
+    pub async fn send_json_no_ratelimit(&mut self, payload: &Value) -> Result<()> {
         Ok(serde_json::to_string(payload)
             .map(Message::Text)
             .map_err(Error::from)
