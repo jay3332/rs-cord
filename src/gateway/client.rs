@@ -208,7 +208,7 @@ impl Gateway {
             match tokio::time::timeout(RECEIVE_TIMEOUT, self.stream.next()).await {
                 Ok(Some(Ok(m))) => Some(m),
                 Ok(Some(Err(e))) => return Err(e.into()), // Tungstenite error
-                _ => return Ok(Some(MessageType::Timeout)),  // Timeout
+                _ => return Ok(Some(MessageType::Timeout)), // Timeout
             },
         )
     }

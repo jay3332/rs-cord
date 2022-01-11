@@ -4,6 +4,7 @@ pub mod common;
 pub mod emoji;
 pub mod gateway;
 pub mod guild;
+pub mod invite;
 pub mod member;
 pub mod message;
 pub mod presence;

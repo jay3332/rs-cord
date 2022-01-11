@@ -1,3 +1,4 @@
+use super::application::ApplicationData;
 use super::channel::ChannelData;
 use super::emoji::EmojiData;
 use super::member::MemberData;
@@ -108,4 +109,30 @@ pub struct ScheduledEventData {
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ScheduledEventMetadata {
     pub location: Option<String>,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct IntegrationData {
+    pub id: Snowflake,
+    pub guild_id: Option<Snowflake>, // Only present in gateway events
+    pub name: String,
+    pub r#type: String, // "twitch", "youtube", or "discord"
+    pub enabled: bool,
+    pub syncing: Option<bool>,
+    pub role_id: Option<Snowflake>,
+    pub enable_emoticons: Option<bool>,
+    pub expire_behavior: Option<u8>,
+    pub expire_grace_period: Option<u64>,
+    pub user: Option<UserData>,
+    pub account: IntegrationAccountData,
+    pub synced_at: Option<String>,
+    pub subscriber_count: Option<u64>,
+    pub revoked: Option<bool>,
+    pub application: Option<ApplicationData>,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct IntegrationAccountData {
+    pub id: Snowflake,
+    pub name: String,
 }

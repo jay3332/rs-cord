@@ -1,11 +1,11 @@
 use crate::models::gateway::OpCode;
 
-use super::application::PartialApplicationData;
+use super::application::{ApplicationData, PartialApplicationData};
 use super::channel::{ChannelData, ThreadMemberData};
 use super::emoji::EmojiData;
-use super::guild::{GuildData, ScheduledEventData, UnavailableGuildData};
+use super::guild::{GuildData, IntegrationData, ScheduledEventData, UnavailableGuildData};
 use super::member::MemberData;
-use super::message::MessageData;
+use super::message::{MessageData, MessageUpdateData as ActualMessageUpdateData};
 use super::presence::PresenceUpdateData;
 use super::role::RoleData;
 use super::sticker::StickerData;
@@ -202,6 +202,29 @@ impl<'de> Deserialize<'de> for WsInboundEvent {
                                 GuildScheduledEventUserRemoveData,
                                 data
                             )
+                        }
+                        "INTEGRATION_CREATE" => {
+                            dispatch_event_de!(IntegrationCreate, IntegrationCreateData, data)
+                        }
+                        "INTEGRATION_UPDATE" => {
+                            dispatch_event_de!(IntegrationUpdate, IntegrationUpdateData, data)
+                        }
+                        "INTEGRATION_DELETE" => {
+                            dispatch_event_de!(IntegrationDelete, IntegrationDeleteData, data)
+                        }
+                        "INVITE_CREATE" => dispatch_event_de!(InviteCreate, InviteCreateData, data),
+                        "INVITE_DELETE" => dispatch_event_de!(InviteDelete, InviteDeleteData, data),
+                        "MESSAGE_CREATE" => {
+                            dispatch_event_de!(MessageCreate, MessageCreateData, data)
+                        }
+                        "MESSAGE_UPDATE" => {
+                            dispatch_event_de!(MessageUpdate, MessageUpdateData, data)
+                        }
+                        "MESSAGE_DELETE" => {
+                            dispatch_event_de!(MessageDelete, MessageDeleteData, data)
+                        }
+                        "MESSAGE_DELETE_BULK" => {
+                            dispatch_event_de!(MessageDeleteBulk, MessageDeleteBulkData, data)
                         }
                         _ => return Err(DeserializeError::custom("unsupported event received")),
                     };
@@ -504,6 +527,74 @@ pub struct GuildScheduledEventUserRemoveData {
     pub guild_id: Snowflake,
 }
 
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(transparent)]
+pub struct IntegrationCreateData {
+    pub integration: IntegrationData,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(transparent)]
+pub struct IntegrationUpdateData {
+    pub integration: IntegrationData,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct IntegrationDeleteData {
+    pub id: Snowflake,
+    pub guild_id: Snowflake,
+    pub application_id: Option<Snowflake>,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct InviteCreateData {
+    pub channel_id: Option<Snowflake>,
+    pub code: String,
+    pub created_at: String,
+    pub guild_id: Option<Snowflake>,
+    pub inviter: Option<UserData>,
+    pub max_age: u64,
+    pub max_uses: u64,
+    pub target_type: Option<u8>,
+    pub target_user: Option<UserData>,
+    pub target_application: Option<ApplicationData>,
+    pub temporary: bool,
+    pub uses: Option<u64>, // always 0
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct InviteDeleteData {
+    pub channel_id: Snowflake,
+    pub guild_id: Option<Snowflake>,
+    pub code: String,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(transparent)]
+pub struct MessageCreateData {
+    pub message: MessageData,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(transparent)]
+pub struct MessageUpdateData {
+    pub message: ActualMessageUpdateData,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct MessageDeleteData {
+    pub id: Snowflake,
+    pub channel_id: Snowflake,
+    pub guild_id: Option<Snowflake>,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct MessageDeleteBulkData {
+    pub ids: Vec<Snowflake>,
+    pub channel_id: Snowflake,
+    pub guild_id: Option<Snowflake>,
+}
+
 #[derive(Clone, Debug, Serialize)]
 #[non_exhaustive]
 pub enum WsDispatchEvent {
@@ -540,4 +631,13 @@ pub enum WsDispatchEvent {
     GuildScheduledEventDelete(GuildScheduledEventDeleteData),
     GuildScheduledEventUserAdd(GuildScheduledEventUserAddData),
     GuildScheduledEventUserRemove(GuildScheduledEventUserRemoveData),
+    IntegrationCreate(IntegrationCreateData),
+    IntegrationUpdate(IntegrationUpdateData),
+    IntegrationDelete(IntegrationDeleteData),
+    InviteCreate(InviteCreateData),
+    InviteDelete(InviteDeleteData),
+    MessageCreate(MessageCreateData),
+    MessageUpdate(MessageUpdateData),
+    MessageDelete(MessageDeleteData),
+    MessageDeleteBulk(MessageDeleteBulkData),
 }
