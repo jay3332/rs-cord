@@ -135,7 +135,7 @@ impl Intents {
     /// This is subject to change in the future to an empty intent set to encourage more explicit intent declarations.
     ///
     /// # See
-    /// [`intents!`]]
+    /// [`intents!`]
     #[must_use]
     pub fn non_privileged() -> Self {
         Self::all() & !Self::privileged()
@@ -147,6 +147,9 @@ impl Intents {
     }
 }
 
+/// Represents an op-code which can tell the gateway what operation a sent payload is for.
+///
+/// This should rarely be used as all gateway-related concepts are handled under the hood.
 #[derive(Clone, Copy, Debug, Eq, PartialEq, IntEnum, Serialize_repr, Deserialize_repr)]
 #[non_exhaustive]
 #[repr(u8)]
