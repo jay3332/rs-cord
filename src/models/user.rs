@@ -188,20 +188,6 @@ impl User {
     }
 }
 
-impl std::ops::Deref for User {
-    type Target = Self;
-
-    fn deref(&self) -> &Self {
-        &self
-    }
-}
-
-impl std::ops::DerefMut for User {
-    fn deref_mut(&mut self) -> &mut Self {
-        &mut self
-    }
-}
-
 super::impl_created_at!(User); 
 
 bitflags! {

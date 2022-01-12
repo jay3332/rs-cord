@@ -234,9 +234,9 @@ impl HttpClient {
     }
 
     /// GET /users/:user_id
-    pub async fn get_user(&self, user_id: u64) -> ThreadSafeResult<types::gateway::UserData> {
+    pub async fn get_user(&self, user_id: u64) -> ThreadSafeResult<types::user::UserData> {
         self.request(route!(GET, "/users/{user_id}", user_id = user_id))
-            .send_expecting_json::<types::gateway::UserData>()
+            .send_expecting_json::<types::user::UserData>()
             .await
     }
 }

@@ -32,7 +32,7 @@ impl UserManager {
     pub fn add_from_data(&mut self, data: UserData) {
         let id: u64 = data.id.parse().unwrap();
 
-        match self.get(id).as_deref_mut() {
+        match self.cache.get_mut(&id) {
             Some(user) => {
                 user.patch_from_user_data(data);
             },
@@ -60,7 +60,7 @@ impl UserManager {
     /// ```rs
     /// client.users.overwrite_user(client.users.fetch(123456).await?)
     /// ```
-    pub async fn fetch(&self, id: u64) -> crate::ThreadSafeResult<&User> {
-        User::from_user_data(self.state.clone(), self.state.http.get_user(id).await?)
+    pub async fn fetch(&self, id: u64) -> crate::ThreadSafeResult<User> {
+        Ok(User::from_user_data(self.state.clone(), self.state.http.get_user(id).await?))
     }
 }
