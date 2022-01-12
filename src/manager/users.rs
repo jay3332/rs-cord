@@ -50,7 +50,17 @@ impl UserManager {
         self.cache.insert(user.id, user);
     }
 
+    /// Fetches a user by their ID via HTTP.
+    ///
+    /// This does not get users from the cache and should not be called every time.
+    ///
+    /// Additionally, this method does not automatically cache the result;
+    /// You must cache it manually:
+    ///
+    /// ```rs
+    /// client.users.overwrite_user(client.users.fetch(123456).await?)
+    /// ```
     pub async fn fetch(&self, id: u64) -> crate::ThreadSafeResult<&User> {
-        unimplemented!(); // TODO
+        User::from_user_data(self.state.clone(), self.state.http.get_user(id).await?)
     }
 }
