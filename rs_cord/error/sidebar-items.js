@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["Error",""]],"type":[["Result",""],["ThreadSafeError",""],["ThreadSafeResult",""]]});
+initSidebarItems({"enum":[["Error","Represents an error that occurs in rs-cord."]],"type":[["Result",""],["ThreadSafeError",""],["ThreadSafeResult",""]]});

@@ -1,0 +1,3 @@
+(function() {var implementors = {};
+implementors["rs_cord"] = [{"text":"impl <a class=\"trait\" href=\"https://doc.rust-lang.org/nightly/std/error/trait.Error.html\" title=\"trait std::error::Error\">Error</a> for <a class=\"enum\" href=\"rs_cord/manager/enum.NotFoundError.html\" title=\"enum rs_cord::manager::NotFoundError\">NotFoundError</a>","synthetic":false,"types":["rs_cord::manager::error::NotFoundError"]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

@@ -48,6 +48,20 @@
 <span id="45">45</span>
 <span id="46">46</span>
 <span id="47">47</span>
+<span id="48">48</span>
+<span id="49">49</span>
+<span id="50">50</span>
+<span id="51">51</span>
+<span id="52">52</span>
+<span id="53">53</span>
+<span id="54">54</span>
+<span id="55">55</span>
+<span id="56">56</span>
+<span id="57">57</span>
+<span id="58">58</span>
+<span id="59">59</span>
+<span id="60">60</span>
+<span id="61">61</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">std</span>::{<span class="ident">error::Error</span> <span class="kw">as</span> <span class="ident">StdError</span>, <span class="ident">result::Result</span> <span class="kw">as</span> <span class="ident">StdResult</span>};
 
 <span class="kw">pub</span> <span class="kw">type</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">StdResult</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Error</span><span class="op">&gt;</span>;
@@ -55,15 +69,29 @@
 <span class="kw">pub</span> <span class="kw">type</span> <span class="ident">ThreadSafeResult</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">StdResult</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">ThreadSafeError</span><span class="op">&gt;</span>;
 
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::gateway::GatewayError</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::manager::NotFoundError</span>;
 
 <span class="kw">use</span> <span class="ident">tokio_tungstenite::tungstenite::error::Error</span> <span class="kw">as</span> <span class="ident">TungsteniteError</span>;
 
+<span class="doccomment">/// Represents an error that occurs in rs-cord.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">Error</span> {
-    <span class="ident">Generic</span>(<span class="ident">ThreadSafeError</span>),
-    <span class="ident">Serde</span>(<span class="ident">serde_json::Error</span>),
-    <span class="ident">Tungstenite</span>(<span class="ident">TungsteniteError</span>),
+    <span class="doccomment">/// A gateway-related error.</span>
     <span class="ident">Gateway</span>(<span class="ident">GatewayError</span>),
+
+    <span class="doccomment">/// A generic, uncategorized error that does not fit in any other category.</span>
+    <span class="ident">Generic</span>(<span class="ident">ThreadSafeError</span>),
+
+    <span class="doccomment">/// Some item was not found in the cache.</span>
+    <span class="doccomment">/// </span>
+    <span class="doccomment">/// This is NOT to be confused with the `NotFound` HTTP error. This is for the internal cache, stored in memory.</span>
+    <span class="ident">NotFound</span>(<span class="ident">NotFoundError</span>),
+
+    <span class="doccomment">/// An error related to serializing/deserializing JSON data occured.</span>
+    <span class="ident">Serde</span>(<span class="ident">serde_json::Error</span>),
+
+    <span class="doccomment">/// An error related to [`tungstenite`] occured.</span>
+    <span class="ident">Tungstenite</span>(<span class="ident">TungsteniteError</span>),
 }
 
 <span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Error</span> {
@@ -96,5 +124,5 @@
     }
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="rs_cord" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (89b9f7b28 2022-01-10)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="rs_cord" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (1409c015b 2022-01-11)" ></div>
 </body></html>

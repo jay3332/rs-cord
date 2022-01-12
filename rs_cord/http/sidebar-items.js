@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["RequestMethod",""]],"struct":[["HttpClient","Handles authenticated requests to Discord’s REST API."],["HttpClientRequestBuilder","A helper for elegantly building an authenticated HTTP request."],["Route",""]]});
