@@ -69,6 +69,13 @@ impl User {
         }
     }
 
+    pub(crate) fn patch_from_user_data(&mut self, data: UserData) {
+        self.name = data.username;
+        self.discriminator = data.discriminator;
+
+        data.avatar.map(|hash| self.avatar_hash = Some(hash));
+    }
+
     /// Returns the Discord tag of this user, formatted in `username#discriminator` format.
     #[must_use]
     pub fn tag(&self) -> String {
@@ -178,6 +185,20 @@ impl User {
         } else {
             None
         }
+    }
+}
+
+impl std::ops::Deref for User {
+    type Target = Self;
+
+    fn deref(&self) -> &Self {
+        &self
+    }
+}
+
+impl std::ops::DerefMut for User {
+    fn deref_mut(&mut self) -> &mut Self {
+        &mut self
     }
 }
 

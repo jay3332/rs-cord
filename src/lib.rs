@@ -6,9 +6,10 @@ mod client;
 pub mod constants;
 pub mod error;
 pub(crate) mod gateway;
-pub(crate) mod http;
+pub mod http;
 pub(crate) mod internal;
 pub mod macros;
+pub mod manager;
 pub mod models;
 pub mod types;
 
