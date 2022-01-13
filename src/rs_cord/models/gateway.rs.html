@@ -188,6 +188,9 @@
 <span id="185">185</span>
 <span id="186">186</span>
 <span id="187">187</span>
+<span id="188">188</span>
+<span id="189">189</span>
+<span id="190">190</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">bitflags::__impl_bitflags</span>;
 <span class="kw">use</span> <span class="ident">int_enum::IntEnum</span>;
 <span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Deserialize</span>, <span class="ident">Deserializer</span>, <span class="ident">Serialize</span>, <span class="ident">Serializer</span>};
@@ -325,7 +328,7 @@
     <span class="doccomment">/// This is subject to change in the future to an empty intent set to encourage more explicit intent declarations.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// # See</span>
-    <span class="doccomment">/// [`intents!`]]</span>
+    <span class="doccomment">/// [`intents!`]</span>
     <span class="attribute">#[<span class="ident">must_use</span>]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">non_privileged</span>() -&gt; <span class="self">Self</span> {
         <span class="ident"><span class="self">Self</span>::all</span>() <span class="op">&amp;</span> <span class="op">!</span><span class="ident"><span class="self">Self</span>::privileged</span>()
@@ -337,6 +340,9 @@
     }
 }
 
+<span class="doccomment">/// Represents an op-code which can tell the gateway what operation a sent payload is for.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// This should rarely be used as all gateway-related concepts are handled under the hood.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Copy</span>, <span class="ident">Debug</span>, <span class="ident">Eq</span>, <span class="ident">PartialEq</span>, <span class="ident">IntEnum</span>, <span class="ident">Serialize_repr</span>, <span class="ident">Deserialize_repr</span>)]</span>
 <span class="attribute">#[<span class="ident">non_exhaustive</span>]</span>
 <span class="attribute">#[<span class="ident">repr</span>(<span class="ident">u8</span>)]</span>
@@ -376,5 +382,5 @@
     <span class="ident">HeartbeatAck</span> <span class="op">=</span> <span class="number">11</span>,
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rs_cord" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (1409c015b 2022-01-11)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rs_cord" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (1bd4fdc94 2022-01-12)" ></div>
 </body></html>

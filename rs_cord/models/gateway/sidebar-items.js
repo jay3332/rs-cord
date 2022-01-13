@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["OpCode",""]],"struct":[["Intents","A set of bitflags which represent what gateway events the client should receive. These can be constructed manually, or by using the [`intents!`] macro."]]});
+initSidebarItems({"enum":[["OpCode","Represents an op-code which can tell the gateway what operation a sent payload is for."]],"struct":[["Intents","A set of bitflags which represent what gateway events the client should receive. These can be constructed manually, or by using the [`intents!`] macro."]]});

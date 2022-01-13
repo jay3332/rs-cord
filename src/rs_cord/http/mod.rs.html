@@ -236,6 +236,13 @@
 <span id="233">233</span>
 <span id="234">234</span>
 <span id="235">235</span>
+<span id="236">236</span>
+<span id="237">237</span>
+<span id="238">238</span>
+<span id="239">239</span>
+<span id="240">240</span>
+<span id="241">241</span>
+<span id="242">242</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::constants::DISCORD_API_URL</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">route</span>, <span class="ident">types</span>, <span class="ident">ThreadSafeError</span>, <span class="ident">ThreadSafeResult</span>};
 
@@ -470,7 +477,14 @@
             .<span class="ident">send_expecting_json</span>::<span class="op">&lt;</span><span class="ident">types::user::UserData</span><span class="op">&gt;</span>()
             .<span class="kw">await</span>
     }
+
+    <span class="doccomment">/// GET /users/:user_id</span>
+    <span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">get_user</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">user_id</span>: <span class="ident">u64</span>) -&gt; <span class="ident">ThreadSafeResult</span><span class="op">&lt;</span><span class="ident">types::user::UserData</span><span class="op">&gt;</span> {
+        <span class="self">self</span>.<span class="ident">request</span>(<span class="macro">route!</span>(<span class="ident">GET</span>, <span class="string">&quot;/users/{user_id}&quot;</span>, <span class="ident">user_id</span> <span class="op">=</span> <span class="ident">user_id</span>))
+            .<span class="ident">send_expecting_json</span>::<span class="op">&lt;</span><span class="ident">types::user::UserData</span><span class="op">&gt;</span>()
+            .<span class="kw">await</span>
+    }
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rs_cord" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (1409c015b 2022-01-11)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rs_cord" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (1bd4fdc94 2022-01-12)" ></div>
 </body></html>
