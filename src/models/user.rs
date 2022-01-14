@@ -188,7 +188,7 @@ impl User {
     }
 }
 
-super::impl_created_at!(User); 
+super::impl_created_at!(User);
 
 bitflags! {
     /// A set of bitflags representing special flags of a user.

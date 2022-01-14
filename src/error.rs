@@ -19,7 +19,7 @@ pub enum Error {
     Generic(ThreadSafeError),
 
     /// Some item was not found in the cache.
-    /// 
+    ///
     /// This is NOT to be confused with the `NotFound` HTTP error. This is for the internal cache, stored in memory.
     NotFound(NotFoundError),
 

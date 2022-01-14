@@ -1,11 +1,11 @@
-use crate::ClientState;
 use crate::types::message::MessageData;
+use crate::ClientState;
 
 /// Represents a Discord message sent in a text channel.
 #[derive(Clone, Debug)]
 pub struct Message {
     state: ClientState,
-    
+
     /// The snowflake ID of this message.
     pub id: u64,
 

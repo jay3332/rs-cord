@@ -1,3 +1,4 @@
+pub mod events;
 pub mod state;
 
 use std::fmt::Display;
@@ -6,6 +7,8 @@ use std::sync::Arc;
 use crate::gateway::Gateway;
 use crate::http::HttpClient;
 use crate::{Intents, User};
+
+pub use events::EventHandler;
 pub use state::ClientState;
 
 use tokio::sync::Mutex;
@@ -27,6 +30,9 @@ pub struct Client {
     /// - [`Intents`]
     pub intents: Intents,
 
+    /// The main event handler being used by the client.
+    pub(crate) handler: Option<Arc<EventHandler>>,
+
     /// The authentication token to be used.
     pub(crate) token: Option<String>,
 
@@ -46,6 +52,7 @@ impl Client {
             http: None,
             gateway: None,
             intents: Intents::non_privileged(),
+            handler: None,
             token: None,
             user: None,
         }
@@ -57,6 +64,16 @@ impl Client {
         client.init_http();
 
         client
+    }
+
+    /// Sets the event handler for gateway events.
+    ///
+    /// # See
+    /// [`EventHandler`]
+    pub fn with_event_handler(mut self, handler: EventHandler) -> Self {
+        self.handler = Some(Arc::new(handler));
+
+        self
     }
 
     /// Set the authentication token to be used.
@@ -124,7 +141,7 @@ impl Client {
         }
 
         self.gateway = Some(Arc::new(Mutex::new(
-            Gateway::new(self.http.clone().unwrap(), self.intents).await?,
+            Gateway::new(self.state(), self.intents).await?,
         )));
 
         Ok(())
