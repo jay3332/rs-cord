@@ -7,7 +7,7 @@ pub enum NotFoundError {
     /// A user was not found in the cache.
     UserNotFound(
         /// The given ID that the user should have.
-        u64
+        u64,
     ),
 }
 

@@ -2,7 +2,7 @@ use crate::constants::RECEIVE_TIMEOUT;
 use crate::http::HttpClient;
 use crate::internal::prelude::*;
 use crate::types::gateway::{GetGatewayBotData, WsDispatchEvent, WsInboundEvent};
-use crate::Intents;
+use crate::{ClientState, EventHandler, Intents};
 
 use super::GatewayError;
 use super::WsStream;
@@ -39,9 +39,11 @@ pub struct Gateway {
     pub(crate) intents: Intents,
     pub info: GetGatewayBotData,
     pub stream: WsStream,
-    latency: Option<f64>,
 
+    handler: Option<Arc<EventHandler>>,
+    latency: Option<f64>,
     ratelimiter: OnceCell<Arc<LeakyBucket>>,
+    state: ClientState,
 
     pub(crate) alive_since: Option<Instant>,
     pub(crate) heartbeat_interval: Option<u16>,
@@ -52,8 +54,8 @@ pub struct Gateway {
 }
 
 impl Gateway {
-    pub async fn new(http: Arc<HttpClient>, intents: Intents) -> Result<Self> {
-        if http.token.is_none() {
+    pub async fn new(state: ClientState, intents: Intents) -> Result<Self> {
+        if state.http.token.is_none() {
             return Err(Error::from(
                 "A token is required in order to initiate the gateway.",
             ));
@@ -68,7 +70,7 @@ impl Gateway {
                 .build(),
         );
 
-        let info = http.get_gateway_bot().await.map_err(Error::from)?;
+        let info = state.http.get_gateway_bot().await.map_err(Error::from)?;
 
         let (stream, _) = connect_async_with_config(
             (&info).url.clone(),
@@ -85,10 +87,12 @@ impl Gateway {
         let _ = ratelimiter.set(_ratelimiter);
 
         Ok(Self {
-            http,
+            http: state.http.clone(),
             info: info.clone(),
             intents,
             stream,
+            handler: state.client.handler.clone(),
+            state: state.clone(),
             latency: None,
             alive_since: None,
             heartbeat_interval: None,
@@ -201,7 +205,7 @@ impl Gateway {
                                         data.trace
                                     );
                                 }
-                                _ => {}
+                                e => self.dispatch_event(e).await,
                             }
                         }
                         _ => {}
@@ -221,6 +225,23 @@ impl Gateway {
         Ok(true) // If we somehow get here, start a new session.
     }
 
+    pub async fn dispatch_event(&self, event: WsDispatchEvent) {
+        if let Some(f) = match event {
+            WsDispatchEvent::Ready(_data) => {
+                info!("Ready event received.");
+
+                self.handler
+                    .as_ref()
+                    .map(|h| h.ws.ready.as_ref().map(|f| f(&self.state)))
+            }
+            _ => return,
+        }
+        .flatten()
+        {
+            f.await;
+        }
+    }
+
     pub async fn recv_json(&mut self) -> Result<Option<MessageType>> {
         handle_ws_message(
             match tokio::time::timeout(RECEIVE_TIMEOUT, self.stream.next()).await {
@@ -238,13 +259,14 @@ impl Gateway {
     }
 
     pub async fn send_json_no_ratelimit(&mut self, payload: &Value) -> Result<()> {
-        self.stream.send(
-            serde_json::to_string(payload)
-                .map(Message::Text)
-                .map_err(Error::from)?
-        )
-        .await
-        .map_err(Error::from)
+        self.stream
+            .send(
+                serde_json::to_string(payload)
+                    .map(Message::Text)
+                    .map_err(Error::from)?,
+            )
+            .await
+            .map_err(Error::from)
     }
 
     pub async fn try_heartbeat(&mut self) -> Result<()> {

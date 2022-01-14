@@ -697,7 +697,7 @@ pub struct VoiceServerUpdateData {
     pub token: String,
     pub guild_id: Snowflake,
 
-    // if "None", disconnect from the voice server and 
+    // if "None", disconnect from the voice server and
     // only attempt to reconnect when a new voice server is allocated.
     pub endpoint: Option<String>,
 }
