@@ -5,7 +5,7 @@ pub mod message;
 pub mod timestamp;
 pub mod user;
 
-pub use asset::Asset;
+pub use asset::{Asset, AssetQuality};
 pub use color::{Color, Colour};
 pub use gateway::Intents;
 pub use message::Message;

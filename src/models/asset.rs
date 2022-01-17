@@ -8,6 +8,21 @@ pub const ALLOWED_FORMATS: [&str; 5] = ["png", "jpg", "jpeg", "webp", "gif"];
 
 pub const ALLOWED_SIZES: [u16; 9] = [16, 32, 64, 128, 256, 512, 1024, 2048, 4096];
 
+/// Represents the quality of an asset.
+/// 
+/// # Note
+/// Asset quality is only applicable to ones with the WebP format.
+/// 
+/// This defaults to [`Lossy`][`AssetQuality::Lossy`].
+#[derive(Clone, Debug)]
+pub enum AssetQuality {
+    /// Lossy image quality. Smaller filesize with a compromise of image quality.
+    Lossy,
+
+    /// Lossless image quality. Larger filesize with no compromise of image quality.
+    Lossless,
+}
+
 /// Represents a Discord asset, such as an avatar or guild icon.
 #[derive(Clone, Debug)]
 pub struct Asset {
@@ -29,6 +44,14 @@ pub struct Asset {
 
     /// The size of this asset.
     pub size: Option<u16>,
+
+    /// The quality setting of this asset.
+    /// 
+    /// Currently, this will only show differences in WebP assets.
+    /// 
+    /// # See
+    /// [`AssetQuality`]
+    pub quality: AssetQuality,
 }
 
 impl Asset {
@@ -40,6 +63,7 @@ impl Asset {
             static_format: None,
             animated,
             size: None,
+            quality: AssetQuality::Lossy,
         }
     }
 
@@ -65,12 +89,22 @@ impl Asset {
             "".to_string()
         };
 
+        let quality = if self.format() == "webp" {
+            format!("{}quality={}", if self.size.is_some() { "&" } else { "?" }, match self.quality {
+                AssetQuality::Lossy => "lossy",
+                AssetQuality::Lossless => "lossless",
+            })
+        } else {
+            "".to_string()
+        };
+
         format!(
-            "{}/{}.{}{}",
+            "{}/{}.{}{}{}",
             DISCORD_CDN_URL,
             self.path,
             self.format(),
-            size
+            size,
+            quality,
         )
     }
 
@@ -79,7 +113,7 @@ impl Asset {
     /// # Panics
     /// - The format is not one of `png`, `jpg`, `jpeg`, `webp`, or `gif`.
     pub fn with_format(&self, format: impl Display) -> Self {
-        let entity = format.to_string();
+        let entity = format.to_string().to_lowercase();
 
         if !ALLOWED_FORMATS.contains(&entity.as_str()) {
             panic!("The format must be one of `png`, `jpg`, `jpeg`, `webp`, or `gif`.");
@@ -96,7 +130,7 @@ impl Asset {
     /// # Panics
     /// - The format is not one of `png`, `jpg`, `jpeg`, `webp`, or `gif`.
     pub fn with_static_format(&self, format: impl Display) -> Self {
-        let entity = format.to_string();
+        let entity = format.to_string().to_lowercase();
 
         if !ALLOWED_FORMATS.contains(&entity.as_str()) {
             panic!("The static format must be one of `png`, `jpg`, `jpeg`, `webp`, or `gif`.");
@@ -119,6 +153,20 @@ impl Asset {
 
         let mut new = self.clone();
         new.size = Some(size);
+
+        new
+    }
+
+    /// Sets the asset quality of this asset.
+    /// 
+    /// # Note
+    /// This will only show effect on WebP assets.
+    /// 
+    /// # See
+    /// [`AssetQuality`]
+    pub fn with_quality(&self, quality: AssetQuality) -> Self {
+        let mut new = self.clone();
+        new.quality = quality;
 
         new
     }
