@@ -1,1 +1,1 @@
-initSidebarItems({"constant":[["ALLOWED_FORMATS",""],["ALLOWED_SIZES",""]],"struct":[["Asset","Represents a Discord asset, such as an avatar or guild icon."]]});
+initSidebarItems({"constant":[["ALLOWED_FORMATS",""],["ALLOWED_SIZES",""]],"enum":[["AssetQuality","Represents the quality of an asset."]],"struct":[["Asset","Represents a Discord asset, such as an avatar or guild icon."]]});
