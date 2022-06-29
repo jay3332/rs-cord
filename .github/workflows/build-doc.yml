@@ -1,10 +1,13 @@
-name: GitHub Pages
+name: Documentation
 
 on:
   push:
     branches:
       - main
   pull_request:
+
+env:
+  CARGO_TERM_COLOR: always
 
 jobs:
   deploy:
@@ -17,6 +20,9 @@ jobs:
         with:
             toolchain: nightly
             override: true
+
+      - name: Setup cache
+        uses: Swatinem/rust-cache@v1
 
       - run: cargo doc --all-features --no-deps
       - run: echo "<meta http-equiv=\"refresh\" content=\"0; url=rs_cord\">" > target/doc/index.html
