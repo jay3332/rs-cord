@@ -102,8 +102,8 @@ impl User {
 
     /// Whether or not this user is the client.
     #[must_use]
-    pub fn is_me(&self) -> bool {
-        self.id == self.state.user().id
+    pub async fn is_me(&self) -> bool {
+        self.id == self.state.user().await.id
     }
 
     /// The default avatar of this user if this user does not have an avatar. This may not be their actual avatar.

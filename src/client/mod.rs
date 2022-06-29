@@ -1,3 +1,4 @@
+pub mod cache;
 pub mod events;
 pub mod state;
 
@@ -8,10 +9,11 @@ use crate::gateway::Gateway;
 use crate::http::HttpClient;
 use crate::{Intents, User};
 
+use cache::Cache;
 pub use events::EventHandler;
 pub use state::ClientState;
 
-use tokio::sync::Mutex;
+use tokio::sync::{Mutex, RwLock};
 
 /// An authenticated client which will be able to interact with the Discord API,
 /// through both the REST and Gateway (websocket) APIs.
@@ -30,14 +32,14 @@ pub struct Client {
     /// - [`Intents`]
     pub intents: Intents,
 
+    /// The cache that this client is using.
+    pub cache: Arc<RwLock<Cache>>,
+
     /// The main event handler being used by the client.
-    pub(crate) handler: Option<Arc<EventHandler>>,
+    pub handler: Option<Arc<EventHandler>>,
 
     /// The authentication token to be used.
     pub(crate) token: Option<String>,
-
-    /// The current user that this client represents. Only applicable if the client has logged in.
-    pub(crate) user: Option<User>,
 }
 
 impl Client {
@@ -54,7 +56,7 @@ impl Client {
             intents: Intents::non_privileged(),
             handler: None,
             token: None,
-            user: None,
+            cache: Arc::new(RwLock::new(Cache::new())),
         }
     }
 
@@ -115,7 +117,7 @@ impl Client {
         self.init_http();
         self.init_gateway().await?;
 
-        self.user = Some(User::from_user_data(
+        self.cache.write().await.client_user = Some(User::from_user_data(
             self.state(),
             self.http.as_ref().unwrap().get_self().await?,
         ));

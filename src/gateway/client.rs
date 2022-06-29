@@ -232,7 +232,7 @@ impl Gateway {
 
                 self.handler
                     .as_ref()
-                    .map(|h| h.ws.ready.as_ref().map(|f| f(&self.state)))
+                    .map(|h| h.ws.ready.as_ref().map(|f| f(self.state.clone())))
             }
             _ => return,
         }

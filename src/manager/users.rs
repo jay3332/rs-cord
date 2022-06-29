@@ -3,7 +3,7 @@ use crate::{ClientState, User};
 
 use std::collections::HashMap;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct UserManager {
     state: ClientState,
 
