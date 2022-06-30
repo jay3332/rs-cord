@@ -22,7 +22,9 @@ documentation = "https://docs.rs/rs-cord/latest/rs_cord"
 description = "A high-level Rust crate around the Discord API, aimed to be easy and straight-forward to use."
 
 [dependencies]
-tokio = { version = "1", features = ["rt-multi-thread", "sync"]}
+thiserror = "1.0"
+tokio = { version = "1", features = ["sync", "time"] }
 tokio-tungstenite = "0.17.1"
 reqwest = { version = "0.11", features = ["json"] }
-thiserror = "1.0"
+futures-util = "0.3"
+serde = "1"
