@@ -1,7 +1,18 @@
 use serde::{Serialize, Deserialize};
-use crate::snowflake::{GuildSnowflake, ChannelSnowflake};
-
-type Snowflake = u64;
+use crate::types::application_command::*;
+use crate::types::application::*;
+use crate::types::channel::*;
+use crate::types::common::Snowflake;
+use crate::types::emoji::*;
+use crate::types::guild::*;
+use crate::types::invite::*;
+use crate::types::member::*;
+use crate::types::message::*;
+use crate::types::presence::*;
+use crate::types::role::*;
+use crate::types::sticker::*;
+use crate::types::user::*;
+use crate::types::voice::*;
 
 // Represents a websocket inbound event from Discord.
 #[derive(Clone, Debug, Serialize)]
@@ -24,6 +35,13 @@ pub enum WsInboundEvents {
     /// Sent in response to receiving a heartbeat to acknowledge that it has been received.
     HeartbeatAck,
 }
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(transparent)]
+pub struct ApplicationCommandPermissionsUpdateEvent {
+    pub permission: CommandPermission,
+}
+
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ReadyData {

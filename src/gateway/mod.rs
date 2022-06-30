@@ -12,7 +12,7 @@ use futures_util::stream::{SplitSink, SplitStream};
 use futures_util::{SinkExt, StreamExt};
 use crate::Error;
 use crate::http::Http;
-use crate::error::Result;
+use crate::error::{Result, WebsocketError};
 use crate::gateway::event::WsInboundEvents;
 
 type WebsocketStream = WebSocketStream<MaybeTlsStream<TcpStream>>;
@@ -48,7 +48,7 @@ pub struct Gateway {
     /// The heartbeat in received by Discord. The client will send a heartbeat
     /// to Discord's gateway at this interval to keep the websocket connection
     /// alive.
-    pub heartbeat_interval: u32,
+    pub heartbeat_interval: Option<u32>,
 
     /// The session ID initally received by Discord. Used for reconnection purposes.
     pub session_id: Option<String>,
@@ -62,15 +62,17 @@ pub struct Gateway {
     pub version: GatewayVersion,
 
     sender: SplitStream<WebsocketStream>,
-    receiver: SplitSink<WebsocketStream, Result<Message, WsError>>,
+    receiver: SplitSink<WebsocketStream, std::result::Result<Message, WsError>>,
 }
 
 impl Gateway {
     const RECEIVE_TIMEOUT: Duration = Duration::from_millis(500);
 
     pub async fn new(http: Arc<Http>) -> Result<Self> {
+        let url = "";
+
         let (stream, _) = connect_async_with_config(
-            todo!(),
+            url,
             Some(WebSocketConfig {
                 max_send_queue: None,
                 max_message_size: None,
@@ -79,16 +81,23 @@ impl Gateway {
             })
         ).await?;
 
+        let (sender, receiver) = stream.split();
+
         Ok(Self {
             http,
+            token: http.token,
+            url,
+            heartbeat_interval: None,
+            session_id: None,
+            seq: None,
+            version: GatewayVersion::V10,
+            sender,
+            receiver
         })
     }
 
     pub async fn prepare(&mut self) -> Result<()> {
-        self.        let (sender, receiver) = stream.split();
-
-        self.sendeevenevent.rsevent.tswtfevent.rscrevnevent.rsr = sender;
-        self.receiver = receiver;
+        let hello = self.poll_event().await.map_err(|_| WebsocketError::NoHello)?.ok_or(WebsocketError::NoHello)?;
 
         Ok(())
     }

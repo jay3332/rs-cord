@@ -43,7 +43,7 @@ impl Http {
     pub fn new<T: AsRef<str>>(token: T) -> Self {
         Self {
             client: Client::new(),
-            token,
+            token.as_ref().to_string(),
             application_id: None,
         }
     }

@@ -5,7 +5,7 @@ use std::{
 use std::sync::atomic::Ordering;
 
 /// Represents a Discord snowflake.
-pub trait Snowflake: Copy + Clone + Debug + Display + PartialEq + Eq + PartialOrd + Send + Sync {
+pub trait Snowflake: Clone + Debug + Display + PartialEq + Eq + PartialOrd + Send + Sync {
     /// Creates a new snowflake from a [`u64`].
     fn from_u64(n: u64) -> Self {
         Self::from_atomic_u64(AtomicU64::new(n))
@@ -38,7 +38,7 @@ pub trait Snowflake: Copy + Clone + Debug + Display + PartialEq + Eq + PartialOr
 macro_rules! impl_snowflake {
     ($($name:ident),+) => {
         $(
-            #[derive(Copy, Clone, Debug, PartialOrd, PartialEq)]
+            #[derive(Clone, Debug, PartialOrd, PartialEq)]
             pub struct $name(AtomicU64);
 
             impl Snowflake for $name {
@@ -86,7 +86,7 @@ macro_rules! impl_snowflake {
                     n.as_atomic_u64()
                 }
             }
-        ),+
+        )+
     };
 }
 
@@ -95,5 +95,5 @@ impl_snowflake!(
     ChannelSnowflake,
     MessageSnowflake,
     UserSnowflake,
-    GuildSnowflake,
+    GuildSnowflake
 );
