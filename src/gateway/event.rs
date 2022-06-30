@@ -5,7 +5,7 @@ type Snowflake = u64;
 
 // Represents a websocket inbound event from Discord.
 #[derive(Clone, Debug, Serialize)]
-pub enum WsInboundEvent {
+pub enum WsInboundEvents {
     /// The sequence and the event that was dispatched.
     Dispatch(u64, WsDispatchEvent), // (seq, event)
 

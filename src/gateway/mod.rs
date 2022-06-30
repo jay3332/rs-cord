@@ -2,13 +2,20 @@ mod event;
 
 use std::sync::Arc;
 use tokio::time::Duration;
+use tokio::net::TcpStream;
 use tokio_tungstenite::connect_async_with_config;
 use tokio_tungstenite::tungstenite::protocol::WebSocketConfig;
-use futures_util::stream::{SplitSink, SplitStream, SinkExt, StreamExt};
+use tokio_tungstenite::{WebSocketStream, MaybeTlsStream};
+use tokio_tungstenite::tungstenite::Message;
+use tokio_tungstenite::tungstenite::Error as WsError;
+use futures_util::stream::{SplitSink, SplitStream};
+use futures_util::{SinkExt, StreamExt};
 use crate::Error;
 use crate::http::Http;
 use crate::error::Result;
 use crate::gateway::event::WsInboundEvents;
+
+type WebsocketStream = WebSocketStream<MaybeTlsStream<TcpStream>>;
 
 #[repr(u8)]
 #[derive(Copy, Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
@@ -54,8 +61,8 @@ pub struct Gateway {
     /// [`GatewayVersion`] enum.
     pub version: GatewayVersion,
 
-    sender: SplitStream,
-    receiver: SplitSink,
+    sender: SplitStream<WebsocketStream>,
+    receiver: SplitSink<WebsocketStream, Result<Message, WsError>>,
 }
 
 impl Gateway {
