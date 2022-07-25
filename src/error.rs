@@ -1,14 +1,13 @@
+use reqwest::Error as ReqwestError;
 use thiserror::Error as _Error;
 use tokio_tungstenite::tungstenite::Error as TungsteniteError;
-use reqwest::Error as ReqwestError;
-
 
 #[derive(Debug, _Error)]
 pub enum WebsocketError {
     #[error("Error from tungstenite: `{0}`")]
     Tungstenite(#[from] TungsteniteError),
     #[error("Didn't receive `HELLO` event")]
-    NoHello
+    NoHello,
 }
 
 #[derive(Debug, _Error)]

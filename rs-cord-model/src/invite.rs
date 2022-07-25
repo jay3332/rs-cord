@@ -1,8 +1,8 @@
-use super::application::ApplicationData;
-use super::channel::ChannelData;
-use super::guild::{GuildData, ScheduledEventData};
-use super::member::MemberData;
-use super::user::UserData;
+use crate::application::ApplicationData;
+use crate::channel::ChannelData;
+use crate::guild::{GuildData, ScheduledEventData};
+use crate::member::MemberData;
+use crate::user::UserData;
 
 use serde::{Deserialize, Serialize};
 

@@ -1,8 +1,8 @@
+use std::sync::atomic::Ordering;
 use std::{
     fmt::{Debug, Display, Formatter, Result as FmtResult},
     sync::atomic::AtomicU64,
 };
-use std::sync::atomic::Ordering;
 
 /// Represents a Discord snowflake.
 pub trait Snowflake: Clone + Debug + Display + PartialEq + Eq + PartialOrd + Send + Sync {

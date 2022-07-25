@@ -1,4 +1,4 @@
-use super::Snowflake;
+use crate::Snowflake;
 
 use serde::{de::Error as DeserializeError, Deserialize, Deserializer, Serialize};
 use serde_json::Map;

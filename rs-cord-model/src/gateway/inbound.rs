@@ -1,18 +1,18 @@
-use serde::{Serialize, Deserialize};
-use crate::types::application_command::*;
-use crate::types::application::*;
-use crate::types::channel::*;
-use crate::types::common::Snowflake;
-use crate::types::emoji::*;
-use crate::types::guild::*;
-use crate::types::invite::*;
-use crate::types::member::*;
-use crate::types::message::*;
-use crate::types::presence::*;
-use crate::types::role::*;
-use crate::types::sticker::*;
-use crate::types::user::*;
-use crate::types::voice::*;
+use crate::application::*;
+use crate::application_command::*;
+use crate::channel::*;
+use crate::emoji::*;
+use crate::guild::*;
+use crate::invite::*;
+use crate::member::*;
+use crate::message::*;
+use crate::presence::*;
+use crate::role::*;
+use crate::sticker::*;
+use crate::user::*;
+use crate::voice::*;
+use crate::Snowflake;
+use serde::{Deserialize, Serialize};
 
 // Represents a websocket inbound event from Discord.
 #[derive(Clone, Debug, Serialize)]
@@ -41,7 +41,6 @@ pub enum WsInboundEvents {
 pub struct ApplicationCommandPermissionsUpdateEvent {
     pub permission: CommandPermission,
 }
-
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ReadyData {

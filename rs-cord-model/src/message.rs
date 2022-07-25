@@ -1,11 +1,11 @@
-use super::application::ApplicationData;
-use super::channel::ChannelData;
-use super::emoji::PartialEmojiData;
-use super::member::MemberData;
-use super::presence::ActivityData;
-use super::sticker::{StickerData, StickerItemData};
-use super::user::UserData;
-use super::Snowflake;
+use crate::application::ApplicationData;
+use crate::channel::ChannelData;
+use crate::emoji::PartialEmojiData;
+use crate::member::MemberData;
+use crate::presence::ActivityData;
+use crate::sticker::{StickerData, StickerItemData};
+use crate::user::UserData;
+use crate::Snowflake;
 
 use serde::{Deserialize, Serialize};
 

@@ -1,6 +1,6 @@
-use super::emoji::ActivityEmojiData;
-use super::user::UserData;
-use super::Snowflake;
+use crate::emoji::ActivityEmojiData;
+use crate::user::UserData;
+use crate::Snowflake;
 
 use serde::{Deserialize, Serialize};
 

@@ -1,5 +1,5 @@
 [package]
-name = "rs-cord"
+name = "rs-cord-model"
 version = "0.0.0"
 edition = "2021"
 authors = [
@@ -15,24 +15,11 @@ keywords = [
     "discord-bot",
 ]
 license = "MIT"
-readme = "README.md"
+readme = "../README.md"
 homepage = "https://github.com/jay3332/rs-cord"
 repository = "https://github.com/jay3332/rs-cord"
 documentation = "https://docs.rs/rs-cord/latest/rs_cord"
 description = "A high-level Rust crate around the Discord API, aimed to be easy and straight-forward to use."
 
-[workspace]
-members = [
-    "rs-cord-model"
-]
-
 [dependencies]
-thiserror = "1.0"
-tokio = { version = "1", features = ["sync", "time"] }
-tokio-tungstenite = "0.17"
-reqwest = { version = "0.11", features = ["json"] }
-futures-util = "0.3"
 serde = { version = "1", features = ["derive"] }
-serde_json = { version = "1" }
-rs-cord-model = { path = "rs-cord-model" }
-flate2 = { version = "1.0", features = ["zlib"], default-features = false }

@@ -10,9 +10,7 @@ pub struct ClientBuilder {
 
 impl ClientBuilder {
     fn new() -> Self {
-        Self {
-            token: None,
-        }
+        Self { token: None }
     }
 
     /// Specifies the token the client will use for HTTP requests and the gateway.
@@ -45,7 +43,9 @@ impl ClientBuilder {
     /// # Panics
     /// - The environment variable was not found.
     pub fn with_env_token<T: AsRef<OsStr> + Display>(mut self, key: T) -> Self {
-        self.with_token(env::var(key.as_ref()).expect(&*format!("no environment variable named {}", key)))
+        self.with_token(
+            env::var(key.as_ref()).expect(&*format!("no environment variable named {}", key)),
+        )
     }
 
     /// Builds the [`Client`].
@@ -58,7 +58,9 @@ impl ClientBuilder {
     /// - No intents were specified for the client.
     pub fn build(self) -> Result<Client, Error> {
         if self.token.is_none() {
-            return Err(Error::Library("No token specified for the client".to_string()));
+            return Err(Error::Library(
+                "No token specified for the client".to_string(),
+            ));
         }
 
         Ok(Client {

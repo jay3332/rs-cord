@@ -1,13 +1,13 @@
-use super::application::ApplicationData;
-use super::channel::ChannelData;
-use super::emoji::EmojiData;
-use super::member::MemberData;
-use super::presence::PresenceUpdateData;
-use super::role::RoleData;
-use super::sticker::StickerData;
-use super::user::UserData;
-use super::voice::{StageInstanceData, VoiceStateData};
-use super::Snowflake;
+use crate::application::ApplicationData;
+use crate::channel::ChannelData;
+use crate::emoji::EmojiData;
+use crate::member::MemberData;
+use crate::presence::PresenceUpdateData;
+use crate::role::RoleData;
+use crate::sticker::StickerData;
+use crate::user::UserData;
+use crate::voice::{StageInstanceData, VoiceStateData};
+use crate::Snowflake;
 
 use serde::{Deserialize, Serialize};
 
